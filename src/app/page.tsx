@@ -218,13 +218,9 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 2xl:gap-6">
               {/* Card 1: Kependudukan */}
               <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-[#e2e7ff]/80 group">
-                <div className="flex items-center justify-between gap-2 mb-3 2xl:mb-4">
+                <div className="mb-3 2xl:mb-4">
                   <span className="text-xs 2xl:text-sm text-[#3f4850] font-semibold uppercase tracking-wider">
                     Kependudukan
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] 2xl:text-xs font-semibold text-[#006c49] bg-[#6cf8bb]/30 px-2 2xl:px-2.5 py-0.5 rounded-full">
-                    <span className="material-symbols-outlined text-[14px] 2xl:text-[16px]">trending_up</span>
-                    +2.4% tahun ini
                   </span>
                 </div>
                 <div>
@@ -244,13 +240,9 @@ export default function LandingPage() {
 
               {/* Card 2: Kartu Keluarga */}
               <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-[#e2e7ff]/80 group">
-                <div className="flex items-center justify-between gap-2 mb-3 2xl:mb-4">
+                <div className="mb-3 2xl:mb-4">
                   <span className="text-xs 2xl:text-sm text-[#3f4850] font-semibold uppercase tracking-wider">
                     Kartu Keluarga
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] 2xl:text-xs font-semibold text-[#4d5d73] bg-[#d3e4fe]/60 px-2 2xl:px-2.5 py-0.5 rounded-full">
-                    <span className="material-symbols-outlined text-[14px] 2xl:text-[16px]">family_restroom</span>
-                    Rata-rata 2.7 jiwa/KK
                   </span>
                 </div>
                 <div>
@@ -270,13 +262,9 @@ export default function LandingPage() {
 
               {/* Card 3: Struktur Teritorial */}
               <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-[#e2e7ff]/80 group">
-                <div className="flex items-center justify-between gap-2 mb-3 2xl:mb-4">
+                <div className="mb-3 2xl:mb-4">
                   <span className="text-xs 2xl:text-sm text-[#3f4850] font-semibold uppercase tracking-wider">
                     Struktur Teritorial
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] 2xl:text-xs font-semibold text-[#006c49] bg-[#6cf8bb]/30 px-2 2xl:px-2.5 py-0.5 rounded-full">
-                    <span className="material-symbols-outlined text-[14px] 2xl:text-[16px]">check_circle</span>
-                    100% Terverifikasi
                   </span>
                 </div>
                 <div>
@@ -296,13 +284,9 @@ export default function LandingPage() {
 
               {/* Card 4: Digitalisasi Kelurahan */}
               <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-[#e2e7ff]/80 group">
-                <div className="flex items-center justify-between gap-2 mb-3 2xl:mb-4">
+                <div className="mb-3 2xl:mb-4">
                   <span className="text-xs 2xl:text-sm text-[#3f4850] font-semibold uppercase tracking-wider">
                     Digitalisasi Kelurahan
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] 2xl:text-xs font-semibold text-[#006194] bg-[#cce5ff]/70 px-2 2xl:px-2.5 py-0.5 rounded-full">
-                    <span className="material-symbols-outlined text-[14px] 2xl:text-[16px]">speed</span>
-                    Respons &lt; 2 Jam
                   </span>
                 </div>
                 <div>

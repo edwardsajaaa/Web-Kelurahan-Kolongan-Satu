@@ -192,7 +192,7 @@ export default function ActivitySlider() {
                 aria-label={`Lihat kegiatan ${index + 1}: ${slide.title}`}
                 className={`h-2 sm:h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                   isActive
-                    ? 'w-7 sm:w-9 bg-[#6cf8bb] shadow-[0_0_8px_rgba(108,248,187,0.7)]'
+                    ? 'w-7 sm:w-9 bg-white shadow-[0_0_8px_rgba(255,255,255,0.7)]'
                     : 'w-2 sm:w-2.5 bg-white/40 hover:bg-white/70'
                 }`}
               />
