@@ -143,44 +143,7 @@ export default function ActivitySlider() {
         );
       })}
 
-      {/* TOP BAR: Title & Slide Counter */}
-      <div className="absolute top-4 left-4 right-4 sm:top-6 sm:left-6 sm:right-6 2xl:top-8 2xl:left-8 2xl:right-8 z-20 flex items-center justify-between gap-3">
-        {/* Main Title Badge for Dokumentasi Kegiatan */}
-        <div className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 sm:px-4 2xl:px-5 py-1.5 sm:py-2 2xl:py-2.5 rounded-full shadow-md text-[#131b2e] text-xs sm:text-sm 2xl:text-base font-bold">
-          <span className="material-symbols-outlined text-[18px] sm:text-[20px] 2xl:text-[22px] text-[#006194]">
-            photo_library
-          </span>
-          <span>Dokumentasi Kegiatan Kelurahan</span>
-        </div>
 
-        {/* Right Badges: Slide counter and Play/Pause */}
-        <div className="flex items-center gap-2">
-          {/* Badge Kegiatan */}
-          <div className="hidden sm:inline-flex items-center gap-1.5 bg-[#131b2e]/70 backdrop-blur-md px-3 py-1.5 rounded-full text-xs 2xl:text-sm font-semibold text-white/90 border border-white/15">
-            <span className="w-2 h-2 rounded-full bg-[#6cf8bb] animate-pulse" />
-            <span>{currentSlide.badge}</span>
-          </div>
-
-          {/* Counter 01 / 05 */}
-          <div className="inline-flex items-center gap-1 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-full text-xs 2xl:text-sm font-mono font-semibold text-white border border-white/15">
-            <span className="text-[#93ccff]">0{currentIndex + 1}</span>
-            <span className="text-white/40">/</span>
-            <span>0{ACTIVITY_SLIDES.length}</span>
-          </div>
-
-          {/* Pause / Play Indicator Button */}
-          <button
-            onClick={() => setIsPaused((prev) => !prev)}
-            aria-label={isPaused ? 'Lanjutkan slide otomatis' : 'Jeda slide otomatis'}
-            title={isPaused ? 'Lanjutkan slide otomatis' : 'Jeda slide otomatis'}
-            className="w-8 h-8 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/15 text-white flex items-center justify-center transition-all cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-[16px]">
-              {isPaused ? 'play_arrow' : 'pause'}
-            </span>
-          </button>
-        </div>
-      </div>
 
       {/* NAVIGATION ARROWS (Left & Right) */}
       <button
