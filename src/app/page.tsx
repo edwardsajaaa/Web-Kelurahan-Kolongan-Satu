@@ -9,6 +9,7 @@ import ModalLetterRequest from '@/components/ModalLetterRequest';
 import ModalMonografiPrint from '@/components/ModalMonografiPrint';
 import ModalWhatsAppSimulator from '@/components/ModalWhatsAppSimulator';
 import ModalOfficialLetterPreview from '@/components/ModalOfficialLetterPreview';
+import ActivitySlider from '@/components/ActivitySlider';
 
 export default function LandingPage() {
   // Interactive modal states on the landing page
@@ -202,39 +203,8 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Panoramic Landscape Banner */}
-              <div className="relative w-full rounded-2xl 2xl:rounded-3xl overflow-hidden shadow-xl bg-[#e2e7ff] aspect-[16/9] md:aspect-[21/9] lg:aspect-[2.3/1] max-h-[500px] lg:max-h-[560px] 2xl:max-h-[680px] 3xl:max-h-[760px]">
-                <img
-                  className="w-full h-full object-cover"
-                  alt="Panoramic landscape of Kolongan Satu Tomohon"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAenCI7hD3sBSy9I3ZLMmlYcTsjUOO7t8oiwaxzLL2MoZkm5EBBlB979jk048SjT9Ef8cdn91HXAdE5JV8RH87-Aew0qF_76T8c7XZiv0ViJJSDJKomCCJCyYmA_0fpO5ELZ1g6ZzQqMkymOWsdsLlLqF1aG3f2h3G4-RYQAvQycF2vbisfjR-vZ5ypSOS17LcG34tcCZjYWIoG9iYCWkPnU0btOI7-ouwkczPSSTNOhgGXNsc2IrtrhQ"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#131b2e]/85 via-[#131b2e]/25 to-transparent" />
-
-                {/* Top Badge: Lokasi / Ketinggian */}
-                <div className="absolute top-4 left-4 sm:top-6 sm:left-6 2xl:top-8 2xl:left-8">
-                  <div className="inline-flex items-center gap-1.5 2xl:gap-2 bg-white/90 backdrop-blur-md px-3.5 2xl:px-5 py-1.5 2xl:py-2 rounded-full shadow-sm text-[#131b2e] text-xs 2xl:text-sm font-semibold">
-                    <span className="material-symbols-outlined text-[16px] 2xl:text-[20px] text-[#006194]">landscape</span>
-                    <span>Kawasan Sejuk Kaki Gunung Lokon • 750 mdpl</span>
-                  </div>
-                </div>
-
-                {/* Bottom Banner Content */}
-                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 2xl:bottom-8 2xl:left-8 2xl:right-8 flex flex-wrap items-end justify-between gap-4">
-                  <div className="max-w-xl 2xl:max-w-2xl text-white">
-                    <span className="text-xs 2xl:text-sm tracking-wider uppercase text-[#93ccff] font-semibold block mb-1">
-                      Ruang Harmonis &amp; Bersahaja
-                    </span>
-                    <h2 className="text-xl sm:text-2xl md:text-3xl 2xl:text-4xl 3xl:text-5xl text-white font-bold leading-snug">
-                      Jantung Budaya, Pertanian Subur, dan Keramahan Minahasa
-                    </h2>
-                  </div>
-                  <div className="hidden md:flex items-center gap-2 bg-white/85 backdrop-blur-md px-3.5 2xl:px-5 py-1.5 2xl:py-2 rounded-full text-xs 2xl:text-sm text-[#131b2e] font-medium shadow-sm">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#006c49] animate-pulse" />
-                    <span>Data Diperbarui: Triwulan II 2024</span>
-                  </div>
-                </div>
-              </div>
+              {/* Slider Dokumentasi Kegiatan */}
+              <ActivitySlider />
             </div>
           </section>
 
