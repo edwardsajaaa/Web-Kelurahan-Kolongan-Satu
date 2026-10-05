@@ -1,7 +1,7 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import { MonografiItem } from '@/data/monografiData';
-import { Search, Filter, Calendar, CheckCircle2, Clock, FileEdit, ChevronRight, Layers } from 'lucide-react';
+import { Search, Filter, CheckCircle2, Clock, FileEdit, ChevronRight } from 'lucide-react';
 
 interface CardFeedProps {
   items: MonografiItem[];
@@ -52,25 +52,23 @@ export default function CardFeed({
   });
 
   return (
-    <section className="w-full md:w-96 bg-slate-50 border-r border-slate-200/90 flex flex-col h-full overflow-hidden select-none">
+    <section className="w-full md:w-88 lg:w-96 bg-[#faf8ff] border-r border-[#dae2fd] flex flex-col h-full overflow-hidden select-none">
       {/* Header Panel */}
-      <div className="p-4 border-b border-slate-200/80 bg-white">
+      <div className="p-4 border-b border-[#e2e7ff] bg-white">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-sm font-bold text-slate-900 leading-tight">Arsip Monografi</h2>
-            <p className="text-[11px] text-slate-500">Papan Data Terverifikasi</p>
+            <h2 className="text-sm font-extrabold text-[#131b2e] leading-tight">Arsip Monografi</h2>
           </div>
 
           {/* Year Switcher Pills */}
-          <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200">
+          <div className="flex items-center bg-[#f2f3ff] p-0.5 rounded-xl border border-[#dae2fd]">
             <button
               onClick={() => onChangeYear(2024)}
               className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                 selectedYear === 2024
-                  ? 'bg-sky-700 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-primary text-white shadow-xs'
+                  : 'text-[#535f70] hover:text-[#131b2e]'
               }`}
-              title="Tahun 2024: Data Monografi Resmi Disahkan Lurah (Terkunci)"
             >
               2024 (Sah)
             </button>
@@ -78,31 +76,30 @@ export default function CardFeed({
               onClick={() => onChangeYear(2026)}
               className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center space-x-1 ${
                 selectedYear === 2026
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-primary text-white shadow-xs'
+                  : 'text-[#535f70] hover:text-[#131b2e]'
               }`}
-              title="Tahun 2026: Draf Pemutakhiran Berjalan"
             >
               <span>2026</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#006c49]"></span>
             </button>
           </div>
         </div>
 
         {/* Search input */}
         <div className="relative mb-2.5">
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-3.5 h-3.5 text-[#707881] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onChangeSearch(e.target.value)}
-            placeholder="Cari Jaga, ternak, air, sekolah..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition"
+            placeholder="Cari Jaga, kependudukan, ternak..."
+            className="w-full bg-[#faf8ff] border border-[#dae2fd] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#131b2e] placeholder-[#707881] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
           />
           {searchQuery && (
             <button
               onClick={() => onChangeSearch('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 hover:text-slate-600"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-[#707881] hover:text-[#131b2e]"
             >
               ✕
             </button>
@@ -117,10 +114,10 @@ export default function CardFeed({
               <button
                 key={cat.key}
                 onClick={() => onChangeCategory(cat.key)}
-                className={`px-2.5 py-1 rounded-lg whitespace-nowrap font-medium transition ${
+                className={`px-2.5 py-1 rounded-lg whitespace-nowrap font-semibold transition ${
                   isCatActive
-                    ? 'bg-slate-900 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200/80 hover:text-slate-900'
+                    ? 'bg-primary text-white shadow-xs'
+                    : 'bg-[#f2f3ff] text-[#3f4850] hover:bg-[#e2e7ff] hover:text-primary'
                 }`}
               >
                 {cat.label}
@@ -133,16 +130,16 @@ export default function CardFeed({
       {/* Card List Feed */}
       <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
         {filteredItems.length === 0 ? (
-          <div className="p-8 text-center text-slate-400">
-            <Filter className="w-8 h-8 mx-auto mb-2 opacity-40" />
-            <p className="text-xs font-semibold text-slate-600">Tidak ada modul yang cocok</p>
-            <p className="text-[11px] text-slate-400 mt-1">Coba ganti filter atau pilih tahun data lainnya</p>
+          <div className="p-8 text-center text-[#707881]">
+            <Filter className="w-8 h-8 mx-auto mb-2 opacity-40 text-[#006194]" />
+            <p className="text-xs font-bold text-[#131b2e]">Tidak ada modul yang cocok</p>
+            <p className="text-[11px] text-[#535f70] mt-1">Coba gunakan kata kunci lain atau reset filter</p>
             <button
               onClick={() => {
                 onChangeCategory('all');
                 onChangeSearch('');
               }}
-              className="mt-3 px-3 py-1 bg-slate-200 text-slate-700 text-xs rounded-lg hover:bg-slate-300 font-medium"
+              className="mt-3 px-3 py-1 bg-[#f2f3ff] text-primary border border-[#dae2fd] text-xs rounded-xl hover:bg-[#e2e7ff] font-bold transition"
             >
               Reset Filter
             </button>
@@ -157,19 +154,18 @@ export default function CardFeed({
                 onClick={() => onSelectItem(item.id)}
                 className={`p-3 rounded-2xl cursor-pointer border transition-all duration-200 flex space-x-3 relative group ${
                   isSelected
-                    ? 'bg-white border-slate-900 shadow-md shadow-slate-900/5 ring-1 ring-slate-900/5'
-                    : 'bg-white/80 border-slate-200/70 hover:bg-white hover:border-slate-300 hover:shadow-sm'
+                    ? 'bg-white border-2 border-primary shadow-sm ring-2 ring-primary/10'
+                    : 'bg-white border-[#e2e7ff] hover:border-[#dae2fd] hover:shadow-xs'
                 }`}
               >
                 {/* Thumbnail Image */}
-                <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100 relative">
+                <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-[#f2f3ff] relative">
                   <img
                     src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-                  <span className="absolute bottom-1 right-1 text-[9px] font-bold text-white px-1 rounded bg-black/50 backdrop-blur-xs">
+                  <span className="absolute bottom-1 right-1 text-[9px] font-bold text-white px-1 rounded bg-black/60 backdrop-blur-xs">
                     {item.year}
                   </span>
                 </div>
@@ -178,38 +174,38 @@ export default function CardFeed({
                 <div className="flex-1 min-w-0 flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-bold text-sky-700 tracking-wider uppercase truncate">
+                      <span className="text-[9px] font-bold text-primary tracking-wider uppercase truncate">
                         {item.category}
                       </span>
                       {item.statusTahapan === 'disahkan_lurah' ? (
-                        <span className="inline-flex items-center text-[9px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60" title="Resmi Disahkan Lurah Kolongan Satu">
-                          <CheckCircle2 className="w-2.5 h-2.5 mr-0.5 text-emerald-600" />
+                        <span className="inline-flex items-center text-[9px] font-bold text-[#006c49] bg-[#6cf8bb]/20 px-1.5 py-0.5 rounded-full border border-[#6cf8bb]/50">
+                          <CheckCircle2 className="w-2.5 h-2.5 mr-0.5 text-[#006c49]" />
                           Sah
                         </span>
                       ) : item.statusTahapan === 'diverifikasi_seklur' ? (
-                        <span className="inline-flex items-center text-[9px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60" title="Diverifikasi Seklur">
-                          <Clock className="w-2.5 h-2.5 mr-0.5 text-amber-600" />
+                        <span className="inline-flex items-center text-[9px] font-bold text-amber-800 bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-200">
+                          <Clock className="w-2.5 h-2.5 mr-0.5 text-amber-700" />
                           Paraf Seklur
                         </span>
                       ) : (
-                        <span className="inline-flex items-center text-[9px] font-semibold text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-200/60" title="Draf Masukan Pala/Kasie">
-                          <FileEdit className="w-2.5 h-2.5 mr-0.5 text-sky-600" />
+                        <span className="inline-flex items-center text-[9px] font-bold text-primary bg-[#e2e7ff] px-1.5 py-0.5 rounded-full border border-[#dae2fd]">
+                          <FileEdit className="w-2.5 h-2.5 mr-0.5 text-primary" />
                           Draf
                         </span>
                       )}
                     </div>
 
-                    <h3 className={`text-xs font-bold truncate mt-0.5 ${isSelected ? 'text-slate-900 font-extrabold' : 'text-slate-800'}`}>
+                    <h3 className={`text-xs font-bold truncate mt-0.5 ${isSelected ? 'text-[#131b2e] font-extrabold' : 'text-[#3f4850]'}`}>
                       {item.title}
                     </h3>
                   </div>
 
                   <div className="mt-1 flex items-center justify-between">
-                    <p className="text-[11px] text-slate-500 font-medium truncate">
+                    <p className="text-[11px] text-[#535f70] font-medium truncate">
                       {item.statsValue}
                     </p>
                     <ChevronRight className={`w-3.5 h-3.5 flex-shrink-0 transition ${
-                      isSelected ? 'text-slate-900 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                      isSelected ? 'text-primary translate-x-0.5' : 'text-[#bfc7d2] group-hover:text-primary'
                     }`} />
                   </div>
                 </div>
@@ -220,9 +216,9 @@ export default function CardFeed({
       </div>
 
       {/* Footer Info */}
-      <div className="p-2.5 border-t border-slate-200 bg-white/90 text-center">
-        <p className="text-[10px] text-slate-500">
-          Menampilkan <span className="font-bold text-slate-800">{filteredItems.length}</span> modul monografi aktif
+      <div className="p-2.5 border-t border-[#dae2fd] bg-white text-center">
+        <p className="text-[10px] text-[#535f70]">
+          Total <span className="font-bold text-[#131b2e]">{filteredItems.length}</span> modul monografi aktif
         </p>
       </div>
     </section>

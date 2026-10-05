@@ -191,20 +191,20 @@ export default function PortalPage() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-slate-100 font-sans text-slate-800 antialiased overflow-hidden flex-col md:flex-row">
+    <div className="flex h-screen w-full bg-[#faf8ff] font-sans text-[#131b2e] antialiased overflow-hidden flex-col md:flex-row">
       {/* Toast Notification Alert */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-[9999] bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl border border-sky-500/40 flex items-center space-x-3 animate-in slide-in-from-top-4 duration-300 max-w-md">
-          <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0">
+        <div className="fixed top-5 right-5 z-[9999] bg-white text-[#131b2e] px-4 py-3 rounded-2xl shadow-xl border border-[#dae2fd] flex items-center space-x-3 animate-in slide-in-from-top-4 duration-300 max-w-md">
+          <div className="w-8 h-8 rounded-xl bg-[#6cf8bb]/20 text-[#006c49] flex items-center justify-center flex-shrink-0">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div className="flex-1 text-xs leading-relaxed">
-            <p className="font-bold text-sky-300">Pemberitahuan Sistem</p>
-            <p className="text-slate-200 mt-0.5">{toastMessage}</p>
+            <p className="font-bold text-primary">Pemberitahuan Sistem</p>
+            <p className="text-[#3f4850] mt-0.5">{toastMessage}</p>
           </div>
           <button
             onClick={() => setToastMessage(null)}
-            className="text-slate-400 hover:text-white text-xs ml-2"
+            className="text-[#707881] hover:text-[#131b2e] text-xs ml-2"
           >
             ✕
           </button>
@@ -212,31 +212,31 @@ export default function PortalPage() {
       )}
 
       {/* Top Mobile Bar */}
-      <div className="md:hidden flex items-center justify-between p-3 bg-white border-b border-slate-200 z-30">
+      <div className="md:hidden flex items-center justify-between p-3 bg-white border-b border-[#dae2fd] z-30">
         <div className="flex items-center space-x-2">
-          <Link href="/" className="p-1 text-slate-600 hover:text-slate-900">
+          <Link href="/" className="p-1 text-[#535f70] hover:text-[#131b2e]">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="h-8 w-8 bg-sky-800 text-white rounded-xl flex items-center justify-center font-bold text-xs">
+          <div className="h-8 w-8 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-xs">
             K1
           </div>
           <div>
-            <h1 className="text-xs font-bold text-slate-900 leading-tight">PORTAL KOLONGAN SATU</h1>
-            <p className="text-[10px] text-slate-500">Tomohon Tengah, Kota Tomohon</p>
+            <h1 className="text-xs font-bold text-[#131b2e] leading-tight">PORTAL KOLONGAN SATU</h1>
+            <p className="text-[10px] text-[#535f70]">Tomohon Tengah, Kota Tomohon</p>
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setIsWhatsAppOpen(true)}
-            className="p-2 bg-emerald-50 text-emerald-700 rounded-xl text-xs font-semibold"
+            className="p-2 bg-[#f2f3ff] text-primary rounded-xl text-xs font-semibold"
             title="Simulasi WhatsApp"
           >
             <Send className="w-4 h-4" />
           </button>
           <button
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-            className="p-2 bg-slate-100 text-slate-700 rounded-xl"
+            className="p-2 bg-[#f2f3ff] text-[#131b2e] rounded-xl"
           >
             {isMobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -245,17 +245,17 @@ export default function PortalPage() {
 
       {/* 1. KOLOM KIRI: SIDEBAR NAVIGASI */}
       <div className={`${isMobileSidebarOpen ? 'block fixed inset-0 z-40 md:relative' : 'hidden md:flex'} h-full flex-col`}>
-        <div className="hidden md:flex items-center justify-between px-4 py-2 bg-sky-950 text-xs text-sky-200 border-b border-sky-900">
-          <Link href="/" className="inline-flex items-center gap-1.5 hover:text-white transition-colors">
+        <div className="hidden md:flex items-center justify-between px-4 py-2.5 bg-white text-xs text-[#535f70] border-b border-[#dae2fd]">
+          <Link href="/" className="inline-flex items-center gap-1.5 text-primary font-bold hover:text-[#004d77] transition-colors">
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Kembali ke Landing Page</span>
+            <span>Kembali ke Beranda</span>
           </Link>
         </div>
         <Sidebar
           currentOfficial={currentOfficial}
           onSelectOfficial={(off) => {
             setCurrentOfficial(off);
-            showToast(`Peran pengguna aktif berganti menjadi: ${off.name} (${off.roleTitle})`);
+            showToast(`Peran pengguna aktif: ${off.name} (${off.roleTitle})`);
           }}
           activeNav={activeNav}
           onSelectNav={handleNavSelect}

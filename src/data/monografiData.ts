@@ -96,7 +96,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     statsLabel: 'Populasi Warga',
     statsValue: '285 Jiwa • 108 KK',
     badgeLabel: 'Sentra Kantor & Ibadah',
-    image: 'https://images.unsplash.com/photo-1590059390046-565403063539?w=900&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?w=900&auto=format&fit=crop&q=80',
     palaName: 'Devid P.N. Tasie / Antonius Kapojos',
     kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
     description: 'Kawasan jantung administrasi dan fasilitas sosial Kelurahan Kolongan Satu. Berdekatan dengan kompleks Kantor Kelurahan, gedung ibadah GMIM Syalom, dan fasilitas Posyandu Melati.',
