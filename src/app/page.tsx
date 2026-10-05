@@ -80,12 +80,12 @@ export default function LandingPage() {
             >
               Profil &amp; Sejarah
             </a>
-            <a
-              href="#monografi-ringkas"
+            <Link
+              href="/monografi"
               className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
             >
               Monografi
-            </a>
+            </Link>
             <a
               href="#layanan-cepat"
               className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
@@ -134,13 +134,13 @@ export default function LandingPage() {
             >
               Profil &amp; Sejarah
             </a>
-            <a
-              href="#monografi-ringkas"
+            <Link
+              href="/monografi"
               onClick={() => setMobileMenuOpen(false)}
               className="text-[14px] text-[#3f4850] font-medium py-1.5"
             >
               Monografi
-            </a>
+            </Link>
             <a
               href="#layanan-cepat"
               onClick={() => setMobileMenuOpen(false)}
@@ -186,13 +186,13 @@ export default function LandingPage() {
 
                 {/* Hero CTAs */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 2xl:gap-4 w-full sm:w-auto">
-                  <a
-                    href="#monografi-ringkas"
+                  <Link
+                    href="/monografi"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#006194] hover:bg-[#007bb9] text-white px-7 2xl:px-9 py-3 2xl:py-4 rounded-full text-sm 2xl:text-base font-semibold transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5"
                   >
                     <span>Jelajahi Monografi</span>
                     <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
-                  </a>
+                  </Link>
                   <button
                     onClick={() => setIsLetterModalOpen(true)}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-[#f2f3ff] text-[#131b2e] border border-[#e2e7ff] px-6 2xl:px-8 py-3 2xl:py-4 rounded-full text-sm 2xl:text-base font-medium transition-all duration-300 hover:border-[#bfc7d2] shadow-xs cursor-pointer"
@@ -496,7 +496,7 @@ export default function LandingPage() {
                 </div>
                 <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
                   <Link
-                    href="/portal"
+                    href="/monografi"
                     className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all"
                   >
                     <span>Buka Monografi</span>
@@ -696,9 +696,9 @@ export default function LandingPage() {
                 <Link href="/portal" className="text-[#3f4850] hover:text-[#006194] transition-colors">
                   Peta Wilayah Lingkungan
                 </Link>
-                <a href="#monografi-ringkas" className="text-[#3f4850] hover:text-[#006194] transition-colors">
-                  Statistik Demografi
-                </a>
+                <Link href="/monografi" className="text-[#3f4850] hover:text-[#006194] transition-colors">
+                  Statistik Monografi
+                </Link>
                 <button
                   onClick={() => setIsLetterModalOpen(true)}
                   className="text-left text-[#3f4850] hover:text-[#006194] transition-colors cursor-pointer"
