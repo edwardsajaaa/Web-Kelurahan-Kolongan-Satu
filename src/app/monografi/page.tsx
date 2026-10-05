@@ -52,6 +52,11 @@ export default function MonografiPage() {
         }
       });
     };
+
+    return () => {
+      delete (window as any).filterSection;
+      delete (window as any).handleSearch;
+    };
   }, []);
 
   return (

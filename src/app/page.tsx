@@ -5,11 +5,13 @@ import { MONOGRAFI_ITEMS } from '@/data/monografiData';
 import { OFFICIALS } from '@/data/officialsData';
 import { INITIAL_LETTERS, LetterRequest } from '@/data/lettersData';
 
-import ModalLetterRequest from '@/components/ModalLetterRequest';
-import ModalMonografiPrint from '@/components/ModalMonografiPrint';
-import ModalWhatsAppSimulator from '@/components/ModalWhatsAppSimulator';
-import ModalOfficialLetterPreview from '@/components/ModalOfficialLetterPreview';
+import dynamic from 'next/dynamic';
 import ActivitySlider from '@/components/ActivitySlider';
+
+const ModalLetterRequest = dynamic(() => import('@/components/ModalLetterRequest'), { ssr: false });
+const ModalMonografiPrint = dynamic(() => import('@/components/ModalMonografiPrint'), { ssr: false });
+const ModalWhatsAppSimulator = dynamic(() => import('@/components/ModalWhatsAppSimulator'), { ssr: false });
+const ModalOfficialLetterPreview = dynamic(() => import('@/components/ModalOfficialLetterPreview'), { ssr: false });
 
 export default function LandingPage() {
   // Interactive modal states on the landing page

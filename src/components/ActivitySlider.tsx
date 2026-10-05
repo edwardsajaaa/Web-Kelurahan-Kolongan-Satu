@@ -132,6 +132,8 @@ export default function ActivitySlider() {
             <img
               src={slide.imageUrl}
               alt={slide.alt}
+              loading={index === 0 ? 'eager' : 'lazy'}
+              decoding="async"
               className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${
                 isActive ? 'scale-105' : 'scale-100'
               }`}
