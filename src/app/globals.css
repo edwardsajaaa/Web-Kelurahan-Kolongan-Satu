@@ -16,6 +16,13 @@
   }
 }
 
+/* Fluid responsive scaling for ultra-wide displays (4K/8K) and browser zoom-out */
+@media (min-width: 1921px) {
+  html {
+    font-size: calc(16px * (100vw / 1920px));
+  }
+}
+
 /* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -66,7 +73,7 @@
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;
+  font-size: 1.5rem;
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;

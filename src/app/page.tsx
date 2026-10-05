@@ -46,7 +46,7 @@ export default function LandingPage() {
       {/* 1. HEADER & NAVBAR (Fluid Responsive)                        */}
       {/* ============================================================ */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#ffffff]/92 backdrop-blur-xl border-b border-[#e2e7ff]/80 shadow-[0_1px_12px_rgba(0,0,0,0.04)] transition-all">
-        <div className="h-20 2xl:h-24 w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 flex items-center justify-between gap-4">
+        <div className="h-20 2xl:h-24 w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 flex items-center justify-between gap-4">
           {/* Logo & Brand */}
           <Link href="/" className="flex items-center gap-3 2xl:gap-4 group">
             <div className="p-1 2xl:p-1.5 bg-[#f2f3ff] rounded-full shadow-xs shrink-0 group-hover:scale-105 transition-transform">
@@ -173,7 +173,7 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-gradient-to-b from-[#cce5ff]/40 via-[#faf8ff] to-[#faf8ff] pointer-events-none -z-10" />
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] 2xl:w-[1300px] 3xl:w-[1600px] h-[360px] 2xl:h-[500px] bg-[#006194]/6 rounded-full blur-3xl pointer-events-none -z-10" />
 
-            <div className="w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 pt-6 2xl:pt-10">
+            <div className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 pt-6 2xl:pt-10">
               {/* Hero Title & Lead */}
               <div className="flex flex-col items-center text-center max-w-3xl 2xl:max-w-4xl mx-auto pt-6 pb-4 2xl:pt-8 2xl:pb-6 mb-8 2xl:mb-12">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl 2xl:text-6xl 3xl:text-7xl text-[#131b2e] font-bold tracking-tight mb-3 2xl:mb-5 leading-[1.15]">
@@ -212,7 +212,7 @@ export default function LandingPage() {
           {/* 3. FLOATING QUICK-STATS STRIP (Fluid Grid)                   */}
           {/* ============================================================ */}
           <section
-            className="relative z-10 w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 -mt-8 sm:-mt-12 2xl:-mt-16 mb-12 2xl:mb-16"
+            className="relative z-10 w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 -mt-8 sm:-mt-12 2xl:-mt-16 mb-12 2xl:mb-16"
             id="monografi-ringkas"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 2xl:gap-6">
@@ -309,7 +309,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 4. VISI & MISI KELURAHAN (Dipimpin Lurah)                    */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
             <div className="bg-[#eaedff] rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#dae2fd]">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 2xl:gap-12 items-center">
                 {/* Photo & Name Lurah */}
@@ -356,9 +356,9 @@ export default function LandingPage() {
                     </blockquote>
                   </div>
 
-                  {/* MISI LIST */}
-                  <div className="space-y-2.5 2xl:space-y-3">
-                    <div className="flex items-center gap-2 mb-1">
+                  {/* MISI BOX */}
+                  <div className="bg-white/90 backdrop-blur-xs rounded-xl 2xl:rounded-2xl p-5 2xl:p-6 border border-[#dae2fd] shadow-2xs space-y-3.5 2xl:space-y-4">
+                    <div className="flex items-center gap-2">
                       <span className="px-2.5 py-0.5 bg-[#006c49] text-white text-[11px] 2xl:text-xs font-bold rounded-full uppercase tracking-wider">
                         Misi
                       </span>
@@ -366,7 +366,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="grid grid-cols-1 gap-2.5 2xl:gap-3">
-                      <div className="flex items-start gap-3 bg-white/80 rounded-xl p-3 2xl:p-4 border border-[#dae2fd] transition-all hover:bg-white">
+                      <div className="flex items-start gap-3 bg-[#f2f3ff]/80 rounded-xl p-3 2xl:p-3.5 border border-[#dae2fd]/80 transition-all hover:bg-[#f2f3ff]">
                         <div className="w-7 h-7 2xl:w-8 2xl:h-8 rounded-lg bg-[#cce5ff] text-[#006194] font-bold text-xs 2xl:text-sm flex items-center justify-center shrink-0 mt-0.5">
                           1
                         </div>
@@ -375,7 +375,7 @@ export default function LandingPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-3 bg-white/80 rounded-xl p-3 2xl:p-4 border border-[#dae2fd] transition-all hover:bg-white">
+                      <div className="flex items-start gap-3 bg-[#f2f3ff]/80 rounded-xl p-3 2xl:p-3.5 border border-[#dae2fd]/80 transition-all hover:bg-[#f2f3ff]">
                         <div className="w-7 h-7 2xl:w-8 2xl:h-8 rounded-lg bg-[#cce5ff] text-[#006194] font-bold text-xs 2xl:text-sm flex items-center justify-center shrink-0 mt-0.5">
                           2
                         </div>
@@ -384,7 +384,7 @@ export default function LandingPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-start gap-3 bg-white/80 rounded-xl p-3 2xl:p-4 border border-[#dae2fd] transition-all hover:bg-white">
+                      <div className="flex items-start gap-3 bg-[#f2f3ff]/80 rounded-xl p-3 2xl:p-3.5 border border-[#dae2fd]/80 transition-all hover:bg-[#f2f3ff]">
                         <div className="w-7 h-7 2xl:w-8 2xl:h-8 rounded-lg bg-[#cce5ff] text-[#006194] font-bold text-xs 2xl:text-sm flex items-center justify-center shrink-0 mt-0.5">
                           3
                         </div>
@@ -402,7 +402,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 5. SEJARAH & ASAL-USUL                                       */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16" id="sejarah-wilayah">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16" id="sejarah-wilayah">
             <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#e2e7ff]">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-[#eaedff] gap-2">
                 <div>
@@ -465,7 +465,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 6. PUSAT LAYANAN WARGA (Fluid Grid)                          */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-2">
               <div>
                 <span className="text-xs 2xl:text-sm text-[#006194] font-bold tracking-wider uppercase block mb-1">
@@ -561,7 +561,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 7. CIVIC TRANSPARENCY & KKT COLLABORATION STRIP              */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
             <div className="bg-[#f2f3ff] rounded-2xl 2xl:rounded-3xl p-6 sm:p-8 2xl:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 2xl:gap-10 border border-[#dae2fd]">
               <div className="flex items-center gap-4 2xl:gap-6">
                 <div className="w-14 h-14 2xl:w-18 2xl:h-18 rounded-full bg-[#cce5ff] flex items-center justify-center text-[#006194] shrink-0 shadow-sm">
@@ -591,7 +591,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 8. GEOGRAPHIC LOCATION & CONTACT SNIPPET                     */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 2xl:gap-10 items-center bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-8 2xl:p-12 shadow-sm border border-[#e2e7ff]">
               {/* Left: Office Location Details */}
               <div className="lg:col-span-6 space-y-3 2xl:space-y-5 text-left">
@@ -619,21 +619,42 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
+                <div className="pt-1">
+                  <a
+                    href="https://www.google.com/maps/place/Kolongan+Satu,+Kec.+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-[#006194] hover:bg-[#007bb9] text-white px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all duration-300"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">near_me</span>
+                    <span>Petunjuk Arah Google Maps</span>
+                    <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                  </a>
+                </div>
               </div>
 
               {/* Right: Embedded Interactive Map Container */}
               <div className="lg:col-span-6 w-full">
-                <div
-                  className="w-full h-64 2xl:h-80 rounded-xl 2xl:rounded-2xl bg-cover bg-center shadow-inner relative overflow-hidden border border-[#dae2fd]"
-                  style={{
-                    backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAUiqPhn42UokknKeUswz1P06tnkcKZzMlNf9t-9eiXr8UGfS-Vx1oUgh0yslaxoV8P5TyA-f8jTnfdo_IQrkFjNKm8Fkjr-ADTbvVI5HLZPqjH6WtIlIORDFgCi6fsNA4kMt9XaHoulZIrXESt820D0LnGLe0NEx6tXcXnAckjuwUJWmxsja0-PsI_ZVHAxsXaLXAXbaVINjr78NgH3-rfbYWjfxOPSqtvIk0YQpvoZ9t6qhpra_1ecg')`,
-                  }}
-                >
-                  <div className="absolute inset-0 bg-[#006194]/10 hover:bg-transparent transition-colors" />
-                  <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-3.5 2xl:px-5 py-1.5 2xl:py-2 rounded-full text-[#131b2e] text-xs 2xl:text-sm font-medium shadow-sm flex items-center gap-1.5 border border-[#dae2fd]">
-                    <span className="w-2 h-2 rounded-full bg-[#006c49]" />
-                    <span>Titik Koordinat Kelurahan Kolongan Satu</span>
-                  </div>
+                <div className="w-full h-72 sm:h-80 2xl:h-96 rounded-xl 2xl:rounded-2xl shadow-inner relative overflow-hidden border border-[#dae2fd] bg-[#f2f3ff] group">
+                  <iframe
+                    title="Peta Lokasi Kelurahan Kolongan Satu, Tomohon"
+                    src="https://maps.google.com/maps?q=Kolongan+Satu,+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                  <a
+                    href="https://www.google.com/maps/place/Kolongan+Satu,+Kec.+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-3 right-3 bg-white/95 hover:bg-[#006194] text-[#131b2e] hover:text-white backdrop-blur-md px-3.5 2xl:px-4 py-1.5 2xl:py-2 rounded-full text-xs 2xl:text-sm font-semibold shadow-md flex items-center gap-1.5 border border-[#dae2fd] hover:border-[#006194] transition-all duration-300 group-hover:scale-105"
+                  >
+                    <span className="material-symbols-outlined text-[16px] 2xl:text-[18px] text-[#006194] group-hover:text-white transition-colors">
+                      open_in_new
+                    </span>
+                    <span>Buka di Google Maps</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -645,7 +666,7 @@ export default function LandingPage() {
       {/* 9. FOOTER (Full Bleed Fluid Responsive)                      */}
       {/* ============================================================ */}
       <footer className="w-full bg-[#f2f3ff] text-[#3f4850] pt-12 2xl:pt-16 pb-8 2xl:pb-12 border-t border-[#dae2fd] shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-        <div className="w-full max-w-7xl xl:max-w-[1360px] 2xl:max-w-[1536px] 3xl:max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12">
+        <div className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 2xl:gap-12 mb-10 2xl:mb-14">
             {/* Col 1: About */}
             <div className="flex flex-col gap-2.5 2xl:gap-4">
