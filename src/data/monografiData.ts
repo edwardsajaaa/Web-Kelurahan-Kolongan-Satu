@@ -216,8 +216,8 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     metrics: {
       totalWarga: 304,
       kepalaKeluarga: 107,
-      pria: 148,
-      wanita: 156,
+      pria: 149,
+      wanita: 155,
       customMetrics: [
         { label: 'Populasi Babi', value: '180 Ekor', color: 'rose' },
         { label: 'Keluarga Peternak', value: '26 KK', color: 'amber' },
@@ -238,7 +238,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     tableData: {
       headers: ['Indikator', 'Jumlah', 'Satuan', 'Keterangan'],
       rows: [
-        ['Jumlah Jiwa', 304, 'Jiwa', 'L: 148, P: 156'],
+        ['Jumlah Jiwa', 304, 'Jiwa', 'L: 149, P: 155'],
         ['Kepala Keluarga', 107, 'KK', 'Register 2024'],
         ['Kandang Ternak Terverifikasi', 24, 'Lokasi', 'Memenuhi jarak sanitasi'],
         ['Pos Kamling Jaga 4', 1, 'Unit', 'Petugas jaga 4 orang/malam'],
@@ -268,8 +268,8 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     metrics: {
       totalWarga: 290,
       kepalaKeluarga: 108,
-      pria: 142,
-      wanita: 148,
+      pria: 141,
+      wanita: 149,
       customMetrics: [
         { label: 'Nasabah Bank Sampah', value: '74 KK', color: 'emerald' },
         { label: 'Ruang Terbuka Hijau', value: '4.2 Ha', color: 'teal' },
@@ -290,7 +290,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     tableData: {
       headers: ['Indikator', 'Jumlah', 'Satuan', 'Keterangan'],
       rows: [
-        ['Jumlah Jiwa', 290, 'Jiwa', 'L: 142, P: 148'],
+        ['Jumlah Jiwa', 290, 'Jiwa', 'L: 141, P: 149'],
         ['Kepala Keluarga', 108, 'KK', 'Status aktif'],
         ['Koleksi Sampah Terpilah', 150, 'Kg/bulan', 'Dikelola TPS3R Jaga 5'],
         ['Penerangan Tenaga Surya', 8, 'Titik', 'Pengadaan APB-Kel 2024'],
@@ -310,8 +310,8 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
     description: 'Data agregat resmi papan monografi fisik Kelurahan Kolongan Satu Tahun 2024 yang memuat 1.484 jiwa, 540 Kepala Keluarga, persebaran 5 Lingkungan Jaga, batas teritorial, dan sistem keamanan kelurahan.',
     detailedNotes: [
-      'Batas Teritorial: Utara (Kelurahan Kolongan), Selatan (Kelurahan Talete I), Timur (Kelurahan Matani I), Barat (Kelurahan Kamasi).',
-      'Total luas wilayah administrasi 84,5 Hektar.',
+      'Batas Wilayah: Utara (Kelurahan Kolongan), Selatan (Kelurahan Kamasi), Timur (Kelurahan Paslaten Tiga), Barat (Kelurahan Kamasi).',
+      'Total luas wilayah administrasi 48,05 Hektar (Pemukiman 34,50 Ha, Pertanian 9,50 Ha, Pekarangan 4,00 Ha, Lahan Tidur 0,05 Ha).',
       'Sistem keamanan jaga malam melibatkan 15 personel satuan Linmas/Hansip resmi dengan SK Kelurahan.',
       'Pertumbuhan penduduk alami tahun 2024 stabil di angka 1.2% per tahun.'
     ],
@@ -326,7 +326,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
         { label: 'Lingkungan (Jaga)', value: '5 Wilayah', color: 'sky' },
         { label: 'Anggota Satuan Linmas', value: '15 Personel', color: 'emerald' },
         { label: 'Pos Ronda Aktif', value: '5 Unit', color: 'blue' },
-        { label: 'Luas Wilayah Total', value: '84.5 Ha', color: 'purple' },
+        { label: 'Luas Wilayah Total', value: '48.05 Ha', color: 'purple' },
       ]
     },
     chartData: {
@@ -346,8 +346,8 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
         ['Lingkungan I', 'Meky M. Turangan / Athanasius Ricky Trie', 310, 105, 152, 158],
         ['Lingkungan II', 'Devid P.N. Tasie / Antonius Kapojos', 285, 108, 139, 146],
         ['Lingkungan III', 'Agustinus Sapanany / Paulus Wuntuale', 295, 112, 144, 151],
-        ['Lingkungan IV', 'Petronella Pusung / Jerry Maweike', 304, 107, 148, 156],
-        ['Lingkungan V', 'Vifi Timang / Hein Wilson Woh', 290, 108, 142, 148],
+        ['Lingkungan IV', 'Petronella Pusung / Jerry Maweike', 304, 107, 149, 155],
+        ['Lingkungan V', 'Vifi Timang / Hein Wilson Woh', 290, 108, 141, 149],
         ['TOTAL KELURAHAN', 'Kelurahan Kolongan Satu, Tomohon Tengah', 1484, 540, 725, 759],
       ]
     }

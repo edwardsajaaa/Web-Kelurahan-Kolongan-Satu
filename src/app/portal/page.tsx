@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { MONOGRAFI_ITEMS, MonografiItem } from '@/data/monografiData';
+import { MONOGRAFI_2024 } from '@/data/monografi2024';
 import { OFFICIALS, Official } from '@/data/officialsData';
 import { INITIAL_LETTERS, LetterRequest } from '@/data/lettersData';
 import { INITIAL_REPORTS, CitizenReport } from '@/data/reportsData';

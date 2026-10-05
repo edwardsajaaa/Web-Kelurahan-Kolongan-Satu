@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MONOGRAFI_ITEMS } from '@/data/monografiData';
 import { OFFICIALS } from '@/data/officialsData';
 import { INITIAL_LETTERS, LetterRequest } from '@/data/lettersData';
+import { MONOGRAFI_2024 } from '@/data/monografi2024';
 
 import dynamic from 'next/dynamic';
 import ActivitySlider from '@/components/ActivitySlider';
@@ -227,16 +228,16 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
-                    1.484
+                    {MONOGRAFI_2024.demografi.totalPenduduk.toLocaleString('id-ID')}
                   </div>
                   <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
                     Total Penduduk (Jiwa)
                   </div>
                 </div>
                 <div className="pt-3 2xl:pt-4 mt-4 2xl:mt-6 bg-[#f2f3ff]/70 -mx-6 2xl:-mx-8 -mb-6 2xl:-mb-8 px-6 2xl:px-8 pb-3 2xl:pb-4 rounded-b-2xl 2xl:rounded-b-3xl flex items-center justify-between text-[#3f4850] text-xs 2xl:text-sm font-medium border-t border-[#e2e7ff]/70">
-                  <span>748 Laki-laki</span>
+                  <span>{MONOGRAFI_2024.demografi.lakiLaki.toLocaleString('id-ID')} Laki-laki</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-[#bfc7d2]" />
-                  <span>736 Perempuan</span>
+                  <span>{MONOGRAFI_2024.demografi.perempuan.toLocaleString('id-ID')} Perempuan</span>
                 </div>
               </div>
 
@@ -249,7 +250,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
-                    540
+                    {MONOGRAFI_2024.demografi.kepalaKeluarga.toLocaleString('id-ID')}
                   </div>
                   <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
                     Kepala Keluarga (KK)
@@ -271,7 +272,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
-                    5
+                    {MONOGRAFI_2024.jaga.length}
                   </div>
                   <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
                     Wilayah Lingkungan (Jaga I - V)
