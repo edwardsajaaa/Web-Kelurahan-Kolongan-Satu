@@ -189,3 +189,5 @@ export const MONOGRAFI_2024: MasterMonografi2024 = {
     },
   ],
 };
+
+export const DATA_MONOGRAFI_2024 = MONOGRAFI_2024;
