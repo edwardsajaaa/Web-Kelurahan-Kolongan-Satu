@@ -96,6 +96,11 @@ export default function PortalPage() {
 
   // Actions
   const handleApproveByLurah = async (itemId: string) => {
+    const previousList = [...monografiList];
+    const targetItem = monografiList.find((i) => i.id === itemId);
+    const itemTitle = targetItem ? targetItem.title : 'Data Monografi';
+
+    // Optimistic UI Update
     setMonografiList((prev) =>
       prev.map((item) =>
         item.id === itemId
@@ -109,8 +114,10 @@ export default function PortalPage() {
       )
     );
 
+    showToast(`Data "${itemTitle}" berhasil disahkan secara digital oleh Lurah Theresia J. Kaunang, SE dan resmi diterbitkan ke publik!`);
+
     try {
-      await fetch('/api/monografi', {
+      const res = await fetch('/api/monografi', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -119,14 +126,24 @@ export default function PortalPage() {
           officialName: 'Lurah Theresia J. Kaunang, SE',
         }),
       });
-    } catch (e) {
-      console.warn('Gagal sinkronisasi monografi ke API:', e);
-    }
 
-    showToast(`Data "${activeDetail.title}" berhasil disahkan secara digital oleh Lurah Theresia J. Kaunang, SE dan resmi diterbitkan ke publik!`);
+      if (!res.ok) {
+        throw new Error('Gagal menyimpan pengesahan ke server.');
+      }
+    } catch (e: any) {
+      console.warn('Gagal sinkronisasi pengesahan monografi ke API, mengembalikan status:', e);
+      // Rollback on error
+      setMonografiList(previousList);
+      showToast(`Peringatan: Gagal sinkronisasi pengesahan ke server (${e.message || 'Koneksi error'}). Status dikembalikan.`);
+    }
   };
 
   const handleVerifyBySeklur = async (itemId: string) => {
+    const previousList = [...monografiList];
+    const targetItem = monografiList.find((i) => i.id === itemId);
+    const itemTitle = targetItem ? targetItem.title : 'Data Monografi';
+
+    // Optimistic UI Update
     setMonografiList((prev) =>
       prev.map((item) =>
         item.id === itemId
@@ -140,8 +157,10 @@ export default function PortalPage() {
       )
     );
 
+    showToast(`Data "${itemTitle}" telah diverifikasi administratif oleh Seklur Ferromel L. Pua, S.Kom!`);
+
     try {
-      await fetch('/api/monografi', {
+      const res = await fetch('/api/monografi', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -150,11 +169,16 @@ export default function PortalPage() {
           officialName: 'Seklur Ferromel L. Pua, S.Kom',
         }),
       });
-    } catch (e) {
-      console.warn('Gagal verifikasi monografi ke API:', e);
-    }
 
-    showToast(`Data "${activeDetail.title}" telah diverifikasi administratif oleh Seklur Ferromel L. Pua, S.Kom! Notifikasi otomatis dikirimkan ke WhatsApp Lurah.`);
+      if (!res.ok) {
+        throw new Error('Gagal menyimpan paraf verifikasi ke server.');
+      }
+    } catch (e: any) {
+      console.warn('Gagal verifikasi monografi ke API, mengembalikan status:', e);
+      // Rollback on error
+      setMonografiList(previousList);
+      showToast(`Peringatan: Gagal sinkronisasi verifikasi ke server (${e.message || 'Koneksi error'}). Status dikembalikan.`);
+    }
   };
 
   const handleUpdateLetterStatus = async (id: string, newStatus: LetterRequest['statusSurat'], note?: string) => {

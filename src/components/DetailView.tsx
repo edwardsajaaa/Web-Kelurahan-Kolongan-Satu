@@ -121,7 +121,7 @@ export default function DetailView({
                   className="px-4 py-1.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-[#004d77] transition flex items-center space-x-1.5 shadow-xs"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  <span>Sahkan Data</span>
+                  <span>Sahkan & Terbitkan Data</span>
                 </button>
               )}
             </div>
@@ -149,7 +149,7 @@ export default function DetailView({
               className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-[#004d77] transition flex items-center space-x-1.5 shadow-xs whitespace-nowrap"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Verifikasi Data</span>
+              <span>Paraf / Verifikasi Draf</span>
             </button>
           </div>
         )}
