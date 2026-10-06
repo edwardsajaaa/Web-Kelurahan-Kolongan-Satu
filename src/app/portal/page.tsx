@@ -64,8 +64,38 @@ export default function PortalPage() {
   // Find currently active monografi item
   const activeDetail = monografiList.find((c) => c.id === selectedId) || monografiList[0];
 
+  // Initial fetch from backend APIs
+  React.useEffect(() => {
+    async function loadBackendData() {
+      try {
+        const [resLetters, resReports] = await Promise.all([
+          fetch('/api/surat'),
+          fetch('/api/lapor'),
+        ]);
+
+        if (resLetters.ok) {
+          const dataLetters = await resLetters.json();
+          if (dataLetters.success && dataLetters.data) {
+            setLetters(dataLetters.data);
+          }
+        }
+
+        if (resReports.ok) {
+          const dataReports = await resReports.json();
+          if (dataReports.success && dataReports.data) {
+            setReports(dataReports.data);
+          }
+        }
+      } catch (err) {
+        console.warn('Menggunakan data awal lokal:', err);
+      }
+    }
+
+    loadBackendData();
+  }, []);
+
   // Actions
-  const handleApproveByLurah = (itemId: string) => {
+  const handleApproveByLurah = async (itemId: string) => {
     setMonografiList((prev) =>
       prev.map((item) =>
         item.id === itemId
@@ -78,10 +108,25 @@ export default function PortalPage() {
           : item
       )
     );
+
+    try {
+      await fetch('/api/monografi', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: itemId,
+          statusTahapan: 'disahkan_lurah',
+          officialName: 'Lurah Theresia J. Kaunang, SE',
+        }),
+      });
+    } catch (e) {
+      console.warn('Gagal sinkronisasi monografi ke API:', e);
+    }
+
     showToast(`Data "${activeDetail.title}" berhasil disahkan secara digital oleh Lurah Theresia J. Kaunang, SE dan resmi diterbitkan ke publik!`);
   };
 
-  const handleVerifyBySeklur = (itemId: string) => {
+  const handleVerifyBySeklur = async (itemId: string) => {
     setMonografiList((prev) =>
       prev.map((item) =>
         item.id === itemId
@@ -94,10 +139,25 @@ export default function PortalPage() {
           : item
       )
     );
+
+    try {
+      await fetch('/api/monografi', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: itemId,
+          statusTahapan: 'diverifikasi_seklur',
+          officialName: 'Seklur Ferromel L. Pua, S.Kom',
+        }),
+      });
+    } catch (e) {
+      console.warn('Gagal verifikasi monografi ke API:', e);
+    }
+
     showToast(`Data "${activeDetail.title}" telah diverifikasi administratif oleh Seklur Ferromel L. Pua, S.Kom! Notifikasi otomatis dikirimkan ke WhatsApp Lurah.`);
   };
 
-  const handleUpdateLetterStatus = (id: string, newStatus: LetterRequest['statusSurat'], note?: string) => {
+  const handleUpdateLetterStatus = async (id: string, newStatus: LetterRequest['statusSurat'], note?: string) => {
     setLetters((prev) =>
       prev.map((l) =>
         l.id === id
@@ -120,20 +180,70 @@ export default function PortalPage() {
           : l
       )
     );
+
+    try {
+      await fetch('/api/surat', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          statusSurat: newStatus,
+          catatanPetugas: note,
+          officialName: currentOfficial.name,
+        }),
+      });
+    } catch (e) {
+      console.warn('Gagal memperbarui status surat ke API:', e);
+    }
+
     showToast(`Status permohonan surat berhasil diperbarui ke: ${newStatus.replace('_', ' ').toUpperCase()}`);
   };
 
-  const handleAddLetter = (newLetter: LetterRequest) => {
+  const handleAddLetter = async (newLetter: LetterRequest) => {
     setLetters((prev) => [newLetter, ...prev]);
+
+    try {
+      const res = await fetch('/api/surat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newLetter),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data?.id) {
+          setLetters((prev) => prev.map((l) => (l.noRegistrasi === newLetter.noRegistrasi ? json.data : l)));
+        }
+      }
+    } catch (e) {
+      console.warn('Gagal menyimpan surat ke database API:', e);
+    }
+
     showToast(`Permohonan surat baru berhasil diajukan dengan nomor ${newLetter.noRegistrasi}`);
   };
 
-  const handleAddReport = (newReport: CitizenReport) => {
+  const handleAddReport = async (newReport: CitizenReport) => {
     setReports((prev) => [newReport, ...prev]);
+
+    try {
+      const res = await fetch('/api/lapor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newReport),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data?.id) {
+          setReports((prev) => prev.map((r) => (r.ticketNo === newReport.ticketNo ? json.data : r)));
+        }
+      }
+    } catch (e) {
+      console.warn('Gagal menyimpan laporan ke database API:', e);
+    }
+
     showToast(`Laporan insiden berhasil dikirim dengan tiket ${newReport.ticketNo}`);
   };
 
-  const handleUpdateReportStatus = (id: string, newStatus: CitizenReport['status'], tanggapan?: string) => {
+  const handleUpdateReportStatus = async (id: string, newStatus: CitizenReport['status'], tanggapan?: string) => {
     setReports((prev) =>
       prev.map((r) =>
         r.id === id
@@ -147,6 +257,21 @@ export default function PortalPage() {
           : r
       )
     );
+
+    try {
+      await fetch('/api/lapor', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          status: newStatus,
+          tanggapanPetugas: tanggapan,
+        }),
+      });
+    } catch (e) {
+      console.warn('Gagal memperbarui laporan ke API:', e);
+    }
+
     showToast(`Status laporan pengaduan berhasil diperbarui ke: ${newStatus.toUpperCase()}`);
   };
 
