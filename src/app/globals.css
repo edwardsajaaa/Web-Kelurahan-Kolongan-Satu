@@ -56,15 +56,25 @@
 
 /* Print Styles for Official Documents */
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 10mm 12mm;
+  }
   body {
     background: white !important;
     color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  .no-print {
+  .no-print, header, footer, nav {
     display: none !important;
   }
   .print-only {
     display: block !important;
+  }
+  .page-break {
+    page-break-after: always;
+    break-after: page;
   }
 }
 
