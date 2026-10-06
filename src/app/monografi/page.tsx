@@ -160,97 +160,72 @@ export default function MonografiPage() {
         <div className="flex flex-col w-full">
 
           {/* TOP HERO & META BANNER */}
-          <section className="relative w-full bg-gradient-to-b from-[#e2e7ff]/40 via-[#faf8ff] to-[#faf8ff] px-4 sm:px-6 lg:px-8 py-8 sm:py-10 overflow-hidden">
-            <div className="max-w-7xl mx-auto flex flex-col gap-6 relative z-10">
+          <section className="relative w-full bg-gradient-to-b from-[#e2e7ff]/30 via-[#faf8ff] to-[#faf8ff] px-4 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-hidden">
+            <div className="max-w-7xl mx-auto flex flex-col gap-5 relative z-10">
               
-              <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <button
                   onClick={handlePrint}
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white hover:bg-[#f2f3ff] text-[#131b2e] shadow-xs text-xs font-semibold border border-[#e2e7ff] transition-all cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-base">print</span>
-                  <span>Cetak Lembar Monografi</span>
+                  <span>Cetak / Unduh PDF</span>
                 </button>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#6cf8bb]/20 text-[#006c49] text-xs font-semibold border border-[#6cf8bb]/40">
                   <span className="w-2 h-2 rounded-full bg-[#006c49] animate-pulse" />
-                  <span>Tahun Berjalan 2024</span>
+                  <span>Data Faktual 2024</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
                 <div className="lg:col-span-8 space-y-2">
-                  <p className="text-xs text-[#006194] tracking-widest uppercase font-bold">
-                    Portal Transparansi Monografi Wilayah
-                  </p>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-[#131b2e] leading-tight">
-                    Monografi Digital Kelurahan Kolongan Satu
+                  <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#006194] bg-[#cce5ff]/50 px-2.5 py-1 rounded-md">
+                    <span className="material-symbols-outlined text-sm">bar_chart</span>
+                    <span>Profil &amp; Statistik Resmi</span>
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#131b2e] leading-tight">
+                    Monografi Kelurahan Kolongan Satu
                   </h1>
                   <p className="text-sm sm:text-base text-[#3f4850] max-w-2xl leading-relaxed">
-                    Berdasarkan Register Papan Monografi Faktual Pemerintah Kelurahan Kolongan Satu, Kecamatan Tomohon Tengah, Kota Tomohon.
+                    Data statistik kependudukan, batas wilayah, serta sarana prasarana resmi Kelurahan Kolongan Satu, Kota Tomohon.
                   </p>
                 </div>
 
-                <div className="lg:col-span-4 flex flex-col gap-2 p-4 sm:p-5 rounded-2xl bg-white/95 backdrop-blur-md shadow-xs border border-[#bfc7d2]/30">
-                  <div className="flex items-center justify-between text-xs sm:text-sm text-[#3f4850]">
-                    <span>Status Validasi</span>
-                    <span className="font-semibold text-[#006c49] flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm">check_circle</span> 100% Faktual 2024
+                <div className="lg:col-span-4 grid grid-cols-2 gap-3 p-4 rounded-2xl bg-white shadow-xs border border-[#e2e7ff]">
+                  <div className="p-2.5 rounded-xl bg-[#f2f3ff]">
+                    <span className="text-[11px] text-[#3f4850] block font-medium">Status Validasi</span>
+                    <span className="text-sm font-bold text-[#006c49] flex items-center gap-1 mt-0.5">
+                      <span className="material-symbols-outlined text-base">check_circle</span> Terverifikasi
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-xs sm:text-sm text-[#3f4850]">
-                    <span>Struktur Karakter Tanah</span>
-                    <span className="font-semibold text-[#131b2e]">Lempung Hitam Vulkanik</span>
+                  <div className="p-2.5 rounded-xl bg-[#f2f3ff]">
+                    <span className="text-[11px] text-[#3f4850] block font-medium">Wilayah</span>
+                    <span className="text-sm font-bold text-[#006194] mt-0.5 block">5 Jaga</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs sm:text-sm text-[#3f4850]">
-                    <span>Zona Administratif</span>
-                    <span className="font-semibold text-[#006194]">5 Lingkungan Jaga</span>
+                  <div className="p-2.5 rounded-xl bg-[#f2f3ff]">
+                    <span className="text-[11px] text-[#3f4850] block font-medium">Luas Wilayah</span>
+                    <span className="text-sm font-bold text-[#131b2e] mt-0.5 block">48,05 Ha</span>
                   </div>
-                  <div className="flex items-center justify-between text-xs sm:text-sm text-[#3f4850]">
-                    <span>Kualitas Sanitasi</span>
-                    <span className="font-semibold text-[#006c49]">100% Layak &amp; ODF</span>
+                  <div className="p-2.5 rounded-xl bg-[#f2f3ff]">
+                    <span className="text-[11px] text-[#3f4850] block font-medium">Sanitasi</span>
+                    <span className="text-sm font-bold text-[#006c49] mt-0.5 block">100% ODF</span>
                   </div>
                 </div>
               </div>
 
-              {/* PERIODE SELECTOR CARD */}
-              <div className="w-full bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-xs border border-[#bfc7d2]/30 flex flex-col gap-3">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-[#eaedff]">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-[#cce5ff] flex items-center justify-center text-[#006194]">
-                        <span className="material-symbols-outlined text-base">calendar_month</span>
-                      </div>
-                      <span className="text-xs sm:text-sm font-bold text-[#131b2e]">Periode Data Monografi:</span>
-                    </div>
-
-                    <div className="relative inline-flex items-center">
-                      <select
-                        aria-label="Pilih Periode Monografi"
-                        value={selectedPeriod}
-                        onChange={(e) => setSelectedPeriod(e.target.value)}
-                        className="appearance-none bg-[#f2f3ff] hover:bg-[#eaedff] text-[#131b2e] text-xs sm:text-sm pl-3.5 pr-8 py-1.5 rounded-full border border-[#eaedff] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#006194] transition-colors"
-                      >
-                        <option value="2024">Tahun 2024 (Data Faktual Terverifikasi)</option>
-                        <option value="2024-s2">Semester II 2024 (Validasi Terkini)</option>
-                        <option value="2023">Tahun 2023 (Arsip Tahunan Terbit)</option>
-                        <option value="2022">Tahun 2022 (Arsip Monografi)</option>
-                      </select>
-                      <span className="material-symbols-outlined absolute right-2.5 text-[#707881] text-base pointer-events-none">expand_more</span>
-                    </div>
-
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#6cf8bb]/30 text-[#002113] text-xs font-semibold">
-                      <span className="w-2 h-2 rounded-full bg-[#006c49] animate-pulse" />
-                      Tahun Berjalan 2024
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-1.5 bg-[#f2f3ff] p-1 rounded-full border border-[#eaedff] self-start lg:self-auto">
-                    <span className="text-[11px] font-semibold text-[#3f4850] px-2">Pilih Cepat:</span>
-                    {['2024', '2023', '2022', '2021'].map((yr) => (
+              {/* PERIODE SELECTOR BAR (CLEAN & SIMPLE) */}
+              <div className="w-full bg-white rounded-2xl p-3.5 sm:p-4 shadow-xs border border-[#e2e7ff] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="font-semibold text-[#131b2e] flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[#006194] text-base">calendar_today</span>
+                    Tahun Data:
+                  </span>
+                  <div className="flex items-center gap-1 bg-[#f2f3ff] p-1 rounded-full border border-[#eaedff]">
+                    {['2024', '2023', '2022'].map((yr) => (
                       <button
                         key={yr}
                         onClick={() => setSelectedPeriod(yr)}
-                        className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                        className={`px-3 py-1 rounded-full font-bold transition-all cursor-pointer ${
                           selectedPeriod === yr
                             ? 'bg-[#006194] text-white shadow-xs'
                             : 'text-[#3f4850] hover:text-[#131b2e] hover:bg-white'
@@ -262,21 +237,10 @@ export default function MonografiPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-0.5 text-xs text-[#3f4850]">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#006194] text-base shrink-0">event_available</span>
-                    <span><strong className="text-[#131b2e] font-semibold">Sensus Lapangan:</strong> 15 Juli – 10 Agustus 2024</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#006c49] text-base shrink-0">update</span>
-                    <span><strong className="text-[#131b2e] font-semibold">Terakhir Diperbarui:</strong> 1 Oktober 2024, 09:30 WITA</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#4d5d73] text-base shrink-0">handshake</span>
-                    <span className="truncate" title="Kemitraan KKT 149 Unsrat & Pemkel Kolongan Satu">
-                      <strong className="text-[#131b2e] font-semibold">Verifikator:</strong> KKT 149 Unsrat &amp; Kelurahan Kolongan Satu
-                    </span>
-                  </div>
+                <div className="flex items-center gap-4 text-[#3f4850] text-[11px] sm:text-xs">
+                  <span>Pembaruan: <strong className="text-[#131b2e]">Oktober 2024</strong></span>
+                  <span>&bull;</span>
+                  <span>Verifikator: <strong className="text-[#131b2e]">Kelurahan &amp; KKT 149 Unsrat</strong></span>
                 </div>
               </div>
 
