@@ -148,19 +148,34 @@ ON CONFLICT (ticket_no) DO NOTHING;
 -- ===================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- ===================================================
+ALTER TABLE public.lingkungan ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.roles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.periode_tahun ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.monografi_rekap ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.layanan_surat ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.laporan_warga ENABLE ROW LEVEL SECURITY;
 
--- 1. Publik dapat membaca seluruh data surat (untuk cek resi permohonan mandiri)
+-- 1. Master Data Publik (Lingkungan, Peran, Periode)
+CREATE POLICY "Public Read Lingkungan" ON public.lingkungan FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public Read Roles" ON public.roles FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public Read Periode" ON public.periode_tahun FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public Read User Profiles" ON public.user_profiles FOR SELECT TO anon, authenticated USING (true);
+
+-- 2. Publik dapat membaca seluruh data surat (untuk cek resi permohonan mandiri)
 CREATE POLICY "Public Read Surat" ON public.layanan_surat FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY "Public Insert Surat" ON public.layanan_surat FOR INSERT TO anon, authenticated WITH CHECK (true);
 CREATE POLICY "Staff Update Surat" ON public.layanan_surat FOR UPDATE TO anon, authenticated USING (true);
 
--- 2. Publik dapat membaca dan membuat laporan
+-- 3. Publik dapat membaca dan membuat laporan
 CREATE POLICY "Public Read Laporan" ON public.laporan_warga FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY "Public Insert Laporan" ON public.laporan_warga FOR INSERT TO anon, authenticated WITH CHECK (true);
 CREATE POLICY "Staff Update Laporan" ON public.laporan_warga FOR UPDATE TO anon, authenticated USING (true);
 
--- 3. Publik dapat membaca data monografi
+-- 4. Publik dapat membaca data monografi & audit logs
 CREATE POLICY "Public Read Monografi" ON public.monografi_rekap FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Staff Update Monografi" ON public.monografi_rekap FOR ALL TO anon, authenticated USING (true);
+CREATE POLICY "Public Read Audit Logs" ON public.audit_logs FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Public Insert Audit Logs" ON public.audit_logs FOR INSERT TO anon, authenticated WITH CHECK (true);
+
