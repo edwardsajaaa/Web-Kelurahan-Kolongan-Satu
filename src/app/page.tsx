@@ -28,14 +28,43 @@ export default function LandingPage() {
   const currentOfficial = OFFICIALS[0];
   const activeMonografi = MONOGRAFI_ITEMS[0];
 
-  const handleAddLetter = (newLetter: LetterRequest) => {
+  const handleAddLetter = async (newLetter: LetterRequest) => {
     setLetters((prev) => [newLetter, ...prev]);
+    try {
+      const res = await fetch('/api/surat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newLetter),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.data?.id) {
+          setLetters((prev) => prev.map((l) => (l.noRegistrasi === newLetter.noRegistrasi ? json.data : l)));
+        }
+      }
+    } catch (e) {
+      console.warn('Gagal menyimpan surat via API:', e);
+    }
   };
 
-  const handleUpdateLetterStatus = (id: string, newStatus: LetterRequest['statusSurat'], note?: string) => {
+  const handleUpdateLetterStatus = async (id: string, newStatus: LetterRequest['statusSurat'], note?: string) => {
     setLetters((prev) =>
       prev.map((l) => (l.id === id ? { ...l, statusSurat: newStatus, catatanPetugas: note || l.catatanPetugas } : l))
     );
+    try {
+      await fetch('/api/surat', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          statusSurat: newStatus,
+          catatanPetugas: note,
+          officialName: currentOfficial.name,
+        }),
+      });
+    } catch (e) {
+      console.warn('Gagal update status surat via API:', e);
+    }
   };
 
   const handlePrintLetter = (letter: LetterRequest) => {
