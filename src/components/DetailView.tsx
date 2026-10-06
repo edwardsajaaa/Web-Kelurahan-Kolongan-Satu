@@ -20,6 +20,7 @@ interface DetailViewProps {
   currentOfficial: Official;
   onApproveItem?: (id: string) => void;
   onVerifySeklur?: (id: string) => void;
+  onOpenEditModal?: (item: MonografiItem) => void;
   onOpenLetterModal: () => void;
   onOpenReportModal: () => void;
   onOpenPrintPreview: (item: MonografiItem) => void;
@@ -31,6 +32,7 @@ export default function DetailView({
   currentOfficial,
   onApproveItem,
   onVerifySeklur,
+  onOpenEditModal,
   onOpenLetterModal,
   onOpenReportModal,
   onOpenPrintPreview,
@@ -68,8 +70,19 @@ export default function DetailView({
             </div>
           </div>
 
-          {/* Validation Status Badge */}
+          {/* Validation Status Badge & Edit Action */}
           <div className="flex items-center space-x-2 flex-shrink-0">
+            {onOpenEditModal && (
+              <button
+                onClick={() => onOpenEditModal(item)}
+                className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-white hover:bg-[#e2e7ff] text-primary border border-[#dae2fd] rounded-full text-xs font-bold shadow-xs transition cursor-pointer"
+                title="Edit rincian angka & informasi monografi"
+              >
+                <FileEdit className="w-3.5 h-3.5 text-primary" />
+                <span>Edit Data</span>
+              </button>
+            )}
+
             {item.statusTahapan === 'disahkan_lurah' ? (
               <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-[#6cf8bb]/20 text-[#006c49] border border-[#6cf8bb]/50 rounded-full text-xs font-bold shadow-xs">
                 <CheckCircle2 className="w-4 h-4 text-[#006c49]" />

@@ -16,6 +16,7 @@ import ModalWhatsAppSimulator from '@/components/ModalWhatsAppSimulator';
 import ModalOfficialLetterPreview from '@/components/ModalOfficialLetterPreview';
 import ModalMonografiPrint from '@/components/ModalMonografiPrint';
 import ModalSqlSchema from '@/components/ModalSqlSchema';
+import ModalEditMonografi from '@/components/ModalEditMonografi';
 
 import { Menu, X, Send, CheckCircle2, ArrowLeft } from 'lucide-react';
 
@@ -44,6 +45,8 @@ export default function PortalPage() {
   const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [isPrintLetterOpen, setIsPrintLetterOpen] = useState(false);
   const [isPrintMonografiOpen, setIsPrintMonografiOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editTargetItem, setEditTargetItem] = useState<MonografiItem | null>(null);
 
   // Selected item for print preview
   const [printLetterTarget, setPrintLetterTarget] = useState<LetterRequest | null>(null);
@@ -178,6 +181,38 @@ export default function PortalPage() {
       // Rollback on error
       setMonografiList(previousList);
       showToast(`Peringatan: Gagal sinkronisasi verifikasi ke server (${e.message || 'Koneksi error'}). Status dikembalikan.`);
+    }
+  };
+
+  const handleOpenEditModal = (item: MonografiItem) => {
+    setEditTargetItem(item);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveMonografiEdit = async (updatedItem: MonografiItem) => {
+    const prevList = [...monografiList];
+
+    // Optimistic UI update
+    setMonografiList((prev) =>
+      prev.map((m) => (m.id === updatedItem.id ? updatedItem : m))
+    );
+
+    showToast(`Perubahan data "${updatedItem.title}" berhasil disimpan!`);
+
+    try {
+      const res = await fetch('/api/monografi', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedItem),
+      });
+
+      if (!res.ok) {
+        throw new Error('Gagal menyimpan pembaruan ke server');
+      }
+    } catch (err: any) {
+      console.warn('Gagal simpan edit monografi ke API:', err);
+      setMonografiList(prevList);
+      showToast(`Peringatan: Gagal sinkronisasi ke server (${err.message}). Status dikembalikan.`);
     }
   };
 
@@ -415,6 +450,7 @@ export default function PortalPage() {
         currentOfficial={currentOfficial}
         onApproveItem={handleApproveByLurah}
         onVerifySeklur={handleVerifyBySeklur}
+        onOpenEditModal={handleOpenEditModal}
         onOpenLetterModal={() => setIsLetterModalOpen(true)}
         onOpenReportModal={() => setIsReportModalOpen(true)}
         onOpenPrintPreview={(item) => setIsPrintMonografiOpen(true)}
@@ -469,6 +505,14 @@ export default function PortalPage() {
       <ModalSqlSchema
         isOpen={isSqlModalOpen}
         onClose={() => setIsSqlModalOpen(false)}
+      />
+
+      {/* MODAL 7: EDIT DATA MONOGRAFI APARATUR */}
+      <ModalEditMonografi
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        item={editTargetItem || activeDetail}
+        onSave={handleSaveMonografiEdit}
       />
     </div>
   );
