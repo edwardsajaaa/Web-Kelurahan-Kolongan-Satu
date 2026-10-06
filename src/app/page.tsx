@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { MONOGRAFI_ITEMS } from '@/data/monografiData';
 import { OFFICIALS } from '@/data/officialsData';
 import { INITIAL_LETTERS, LetterRequest } from '@/data/lettersData';
-import { MONOGRAFI_2024 } from '@/data/monografi2024';
 
 import dynamic from 'next/dynamic';
 import ActivitySlider from '@/components/ActivitySlider';
 import IntegratedMonografiSection from '@/components/IntegratedMonografiSection';
+import { AvailableYear, CURRENT_ACTIVE_YEAR, DATA_MONOGRAFI_2024, DATA_MONOGRAFI_2025 } from '@/data';
 
 const ModalLetterRequest = dynamic(() => import('@/components/ModalLetterRequest'), { ssr: false });
 const ModalMonografiPrint = dynamic(() => import('@/components/ModalMonografiPrint'), { ssr: false });
@@ -23,6 +23,14 @@ export default function LandingPage() {
   const [isPrintLetterOpen, setIsPrintLetterOpen] = useState(false);
   const [printLetterTarget, setPrintLetterTarget] = useState<LetterRequest | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedYear, setSelectedYear] = useState<AvailableYear>(CURRENT_ACTIVE_YEAR);
+
+  const is2025 = selectedYear === 2025;
+  const currentTotalPenduduk = is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_jiwa : DATA_MONOGRAFI_2024.demografi.totalPenduduk;
+  const currentLakiLaki = is2025 ? DATA_MONOGRAFI_2025.kependudukan.laki_laki : DATA_MONOGRAFI_2024.demografi.lakiLaki;
+  const currentPerempuan = is2025 ? DATA_MONOGRAFI_2025.kependudukan.perempuan : DATA_MONOGRAFI_2024.demografi.perempuan;
+  const currentTotalKK = is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_kk : DATA_MONOGRAFI_2024.demografi.kepalaKeluarga;
+  const currentLuasHa = is2025 ? DATA_MONOGRAFI_2025.wilayah.luas_total_ha : DATA_MONOGRAFI_2024.geografis.luasTotalHa;
 
   // Data
   const [letters, setLetters] = useState<LetterRequest[]>(INITIAL_LETTERS);
@@ -247,16 +255,16 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
-                    {MONOGRAFI_2024.demografi.totalPenduduk.toLocaleString('id-ID')}
+                    {currentTotalPenduduk.toLocaleString('id-ID')}
                   </div>
                   <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
-                    Total Penduduk (Jiwa)
+                    Total Penduduk (Jiwa) &bull; {selectedYear}
                   </div>
                 </div>
                 <div className="pt-3 2xl:pt-4 mt-4 2xl:mt-6 bg-[#f2f3ff]/70 -mx-6 2xl:-mx-8 -mb-6 2xl:-mb-8 px-6 2xl:px-8 pb-3 2xl:pb-4 rounded-b-2xl 2xl:rounded-b-3xl flex items-center justify-between text-[#3f4850] text-xs 2xl:text-sm font-medium border-t border-[#e2e7ff]/70">
-                  <span>{MONOGRAFI_2024.demografi.lakiLaki.toLocaleString('id-ID')} Laki-laki</span>
+                  <span>{currentLakiLaki.toLocaleString('id-ID')} Laki-laki</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-[#bfc7d2]" />
-                  <span>{MONOGRAFI_2024.demografi.perempuan.toLocaleString('id-ID')} Perempuan</span>
+                  <span>{currentPerempuan.toLocaleString('id-ID')} Perempuan</span>
                 </div>
               </div>
 
@@ -269,7 +277,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
-                    {MONOGRAFI_2024.demografi.kepalaKeluarga.toLocaleString('id-ID')}
+                    {currentTotalKK.toLocaleString('id-ID')}
                   </div>
                   <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
                     Kepala Keluarga (KK)
@@ -278,7 +286,7 @@ export default function LandingPage() {
                 <div className="pt-3 2xl:pt-4 mt-4 2xl:mt-6 bg-[#f2f3ff]/70 -mx-6 2xl:-mx-8 -mb-6 2xl:-mb-8 px-6 2xl:px-8 pb-3 2xl:pb-4 rounded-b-2xl 2xl:rounded-b-3xl flex items-center justify-between text-[#3f4850] text-xs 2xl:text-sm font-medium border-t border-[#e2e7ff]/70">
                   <span>Tercatat Dukcapil</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-[#bfc7d2]" />
-                  <span>100% Ber-KTP</span>
+                  <span>{is2025 ? 'Hak Pilih 1.245' : '100% Ber-KTP'}</span>
                 </div>
               </div>
 
@@ -286,21 +294,21 @@ export default function LandingPage() {
               <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-[#e2e7ff]/80 group">
                 <div className="mb-3 2xl:mb-4">
                   <span className="text-xs 2xl:text-sm text-[#3f4850] font-semibold uppercase tracking-wider">
-                    Struktur Teritorial
+                    Luas Wilayah
                   </span>
                 </div>
                 <div>
                   <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
-                    {MONOGRAFI_2024.jaga.length}
+                    {currentLuasHa.toLocaleString('id-ID')}
                   </div>
                   <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
-                    Wilayah Lingkungan (Jaga I - V)
+                    Hektar (Ha)
                   </div>
                 </div>
                 <div className="pt-3 2xl:pt-4 mt-4 2xl:mt-6 bg-[#f2f3ff]/70 -mx-6 2xl:-mx-8 -mb-6 2xl:-mb-8 px-6 2xl:px-8 pb-3 2xl:pb-4 rounded-b-2xl 2xl:rounded-b-3xl flex items-center justify-between text-[#3f4850] text-xs 2xl:text-sm font-medium border-t border-[#e2e7ff]/70">
-                  <span>5 Kepala Lingkungan (Pala)</span>
+                  <span>5 Lingkungan (Jaga)</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-[#bfc7d2]" />
-                  <span>10 Mevrouw</span>
+                  <span>{is2025 ? '700–900 mdpl' : '10 Mevrouw'}</span>
                 </div>
               </div>
 
@@ -331,7 +339,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 3.5. INTEGRATED MONOGRAFI SECTION (Seluruh Variabel Lengkap) */}
           {/* ============================================================ */}
-          <IntegratedMonografiSection />
+          <IntegratedMonografiSection selectedYear={selectedYear} onYearChange={setSelectedYear} />
 
           {/* ============================================================ */}
           {/* 4. VISI & MISI KELURAHAN (Dipimpin Lurah)                    */}
@@ -518,7 +526,7 @@ export default function LandingPage() {
                     Monografi Kependudukan
                   </h3>
                   <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                    Statistik 1.484 jiwa, kelompok umur produktif, dan data pendidikan warga terverifikasi.
+                    Statistik {currentTotalPenduduk.toLocaleString('id-ID')} jiwa ({selectedYear}), kelompok umur produktif, dan data pendidikan warga terverifikasi.
                   </p>
                 </div>
                 <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
