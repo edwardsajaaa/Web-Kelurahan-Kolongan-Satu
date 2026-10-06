@@ -160,6 +160,65 @@ export async function updateLetterStatus(
   return updatedLetter;
 }
 
+export async function findLetterByRegistration(query: string): Promise<LetterRequest | null> {
+  const clean = query.trim().toLowerCase();
+  if (!clean) return null;
+
+  if (isServerSupabaseConfigured) {
+    try {
+      const serverClient = createServerClient();
+      const { data, error } = await (serverClient as any)
+        .from('layanan_surat')
+        .select('*')
+        .or(`no_registrasi.ilike.%${clean}%,nik_pemohon.ilike.%${clean}%`)
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data) {
+        const isi = (data.isi_permohonan as any) || {};
+        return {
+          id: data.id,
+          noRegistrasi: data.no_registrasi,
+          nikPemohon: data.nik_pemohon,
+          namaPemohon: data.nama_pemohon,
+          nomorWaPemohon: data.nomor_wa_pemohon,
+          jenisSurat: data.jenis_surat,
+          lingkunganId: isi.lingkunganId || 1,
+          tujuanKeperluan: isi.keperluan || isi.tujuanKeperluan || '',
+          alamatLengkap: isi.alamatLengkap || `Lingkungan ${isi.lingkunganId || 1}, Kolongan Satu`,
+          pekerjaan: isi.pekerjaan || 'Warga',
+          berkasLampiranUrl: data.berkas_lampiran_url || undefined,
+          berkasName: isi.berkasName || 'Lampiran.pdf',
+          statusSurat: data.status_surat as LetterRequest['statusSurat'],
+          statusLabel:
+            data.status_surat === 'selesai_disahkan'
+              ? 'Selesai & Disahkan Lurah'
+              : data.status_surat === 'diparaf_seklur'
+              ? 'Diparaf Seklur Ferromel'
+              : data.status_surat === 'diverifikasi_staf'
+              ? 'Diverifikasi Staf Karlin'
+              : 'Diajukan Warga',
+          catatanPetugas: data.catatan_petugas || undefined,
+          diparafOleh: data.diparaf_oleh || undefined,
+          disahkanOleh: data.disahkan_oleh || undefined,
+          tanggalDiajukan: new Date(data.created_at).toLocaleDateString('id-ID'),
+          tanggalSelesai: data.status_surat === 'selesai_disahkan' ? new Date(data.updated_at || data.created_at).toLocaleDateString('id-ID') : undefined,
+        };
+      }
+    } catch (err) {
+      console.warn('[Supabase] Gagal mencari surat di database, mencari di memori lokal:', err);
+    }
+  }
+
+  const found = inMemoryLetters.find(
+    (l) =>
+      l.noRegistrasi.toLowerCase().includes(clean) ||
+      l.nikPemohon.toLowerCase().includes(clean) ||
+      l.id.toLowerCase() === clean
+  );
+  return found || null;
+}
+
 // ==========================================
 // 2. LAPORAN WARGA (REPORTS)
 // ==========================================

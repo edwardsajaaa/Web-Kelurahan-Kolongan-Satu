@@ -1,8 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchLetters, submitLetter, updateLetterStatus } from '@/lib/supabase/service';
+import { fetchLetters, submitLetter, updateLetterStatus, findLetterByRegistration } from '@/lib/supabase/service';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = req.nextUrl;
+    const query =
+      searchParams.get('no_registrasi') ||
+      searchParams.get('noRegistrasi') ||
+      searchParams.get('q') ||
+      searchParams.get('nik');
+
+    if (query) {
+      const letter = await findLetterByRegistration(query);
+      if (!letter) {
+        return NextResponse.json(
+          { success: false, data: null, message: 'Nomor registrasi atau NIK tidak ditemukan.' },
+          { status: 404 }
+        );
+      }
+      return NextResponse.json({ success: true, data: letter });
+    }
+
     const letters = await fetchLetters();
     return NextResponse.json({ success: true, data: letters });
   } catch (error: any) {
@@ -17,25 +35,40 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    if (!body.nikPemohon || !body.namaPemohon || !body.jenisSurat) {
+    const nik = body.nik_pemohon || body.nikPemohon;
+    const nama = body.nama_pemohon || body.namaPemohon;
+    const wa = body.nomor_wa_pemohon || body.nomorWaPemohon || '';
+    const jenis = body.jenis_surat || body.jenisSurat;
+    const lingkungan = Number(body.lingkungan_id || body.lingkunganId) || 1;
+    const isi = body.isi_permohonan || {};
+
+    if (!nik || !nama || !jenis) {
       return NextResponse.json(
         { success: false, error: 'NIK, Nama Pemohon, dan Jenis Surat wajib diisi.' },
         { status: 400 }
       );
     }
 
+    const generatedReg =
+      body.no_registrasi ||
+      body.noRegistrasi ||
+      `REG-K1-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
     const newLetter = await submitLetter({
-      noRegistrasi: body.noRegistrasi || `REG-KKT-${Date.now().toString().slice(-4)}`,
-      nikPemohon: body.nikPemohon,
-      namaPemohon: body.namaPemohon,
-      nomorWaPemohon: body.nomorWaPemohon || '',
-      jenisSurat: body.jenisSurat,
-      lingkunganId: Number(body.lingkunganId) || 1,
-      tujuanKeperluan: body.tujuanKeperluan || '',
-      alamatLengkap: body.alamatLengkap || `Lingkungan ${body.lingkunganId || 1}, Kolongan Satu`,
-      pekerjaan: body.pekerjaan || 'Warga',
-      berkasLampiranUrl: body.berkasLampiranUrl,
-      berkasName: body.berkasName || 'Lampiran_Dokumen.pdf',
+      noRegistrasi: generatedReg,
+      nikPemohon: nik,
+      namaPemohon: nama,
+      nomorWaPemohon: wa,
+      jenisSurat: jenis,
+      lingkunganId: lingkungan,
+      tujuanKeperluan: body.tujuanKeperluan || isi.tujuanKeperluan || isi.keperluan || '',
+      alamatLengkap:
+        body.alamatLengkap ||
+        isi.alamatLengkap ||
+        `Lingkungan ${lingkungan}, Kelurahan Kolongan Satu`,
+      pekerjaan: body.pekerjaan || isi.pekerjaan || 'Warga',
+      berkasLampiranUrl: body.berkasLampiranUrl || body.berkas_lampiran_url,
+      berkasName: body.berkasName || isi.berkasName || 'Lampiran_Dokumen.pdf',
       statusSurat: 'diajukan',
       statusLabel: 'Diajukan Warga',
       tanggalDiajukan: new Date().toLocaleDateString('id-ID', {
@@ -45,7 +78,14 @@ export async function POST(req: NextRequest) {
       }),
     });
 
-    return NextResponse.json({ success: true, data: newLetter }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: newLetter,
+        no_registrasi: newLetter.noRegistrasi,
+      },
+      { status: 201 }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || 'Gagal mengajukan surat' },
