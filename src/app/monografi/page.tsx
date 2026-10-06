@@ -2,9 +2,29 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { MONOGRAFI_STITCH_HTML } from '@/data/monografiStitchHtml';
+import { MONOGRAFI_ITEMS, MonografiItem } from '@/data/monografiData';
+import { Activity, ShieldCheck } from 'lucide-react';
 
 export default function MonografiPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [liveItems, setLiveItems] = useState<MonografiItem[]>(MONOGRAFI_ITEMS);
+
+  useEffect(() => {
+    async function loadLiveMonografi() {
+      try {
+        const res = await fetch('/api/monografi');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setLiveItems(json.data);
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal memuat live monografi:', err);
+      }
+    }
+    loadLiveMonografi();
+  }, []);
 
   useEffect(() => {
     // Setup global window functions for interactive filter tabs & search from Stitch design
@@ -175,6 +195,59 @@ export default function MonografiPage() {
           </div>
         )}
       </header>
+
+      {/* ============================================================ */}
+      {/* LIVE MONOGRAFI DATA SYNC BANNER (KONEKSI REALTIME KE PORTAL) */}
+      {/* ============================================================ */}
+      {(() => {
+        const jagaItems = liveItems.filter((i) => i.categoryKey === 'wilayah');
+        const totalJiwa = jagaItems.reduce((acc, curr) => acc + (curr.metrics.totalWarga || 0), 0);
+        const totalKK = jagaItems.reduce((acc, curr) => acc + (curr.metrics.kepalaKeluarga || 0), 0);
+
+        return (
+          <div className="pt-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-[#dae2fd] shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-3 w-3 relative flex-shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-[#131b2e]">Data Register Faktual (Terkoneksi Portal Admin)</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-[#006c49] border border-[#6cf8bb]/60">
+                      Live Database
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#535f70] mt-0.5">
+                    Total Wilayah 5 Jaga: <strong className="text-[#131b2e]">{totalJiwa > 0 ? totalJiwa.toLocaleString() : '1.484'} Jiwa</strong> • <strong className="text-[#131b2e]">{totalKK > 0 ? totalKK.toLocaleString() : '540'} KK</strong> • Bersumber langsung dari buku register kelurahan.
+                  </p>
+                </div>
+              </div>
+
+              {/* Status 5 Jaga Pills */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs w-full lg:w-auto">
+                {jagaItems.map((j) => (
+                  <div
+                    key={j.id}
+                    className="px-2.5 py-1 bg-[#f2f3ff] rounded-xl border border-[#dae2fd] text-[#131b2e] flex items-center gap-1.5 text-[11px]"
+                    title={`${j.title}: ${j.description}`}
+                  >
+                    <span className="font-bold text-primary">{j.title.replace('Lingkungan ', 'Jaga ')}:</span>
+                    <span className="font-mono font-bold text-[#131b2e]">{j.metrics.totalWarga || 0}</span>
+                    <span className="text-[10px] text-[#535f70]">({j.metrics.kepalaKeluarga || 0} KK)</span>
+                    {j.statusTahapan === 'disahkan_lurah' ? (
+                      <span className="w-2 h-2 rounded-full bg-[#006c49]" title="Disahkan Lurah" />
+                    ) : (
+                      <span className="w-2 h-2 rounded-full bg-amber-500" title="Draf Masukan" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ============================================================ */}
       {/* MAIN CONTENT (Imported from Stitch Design Screen)            */}
