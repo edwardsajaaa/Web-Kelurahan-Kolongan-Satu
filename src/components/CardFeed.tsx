@@ -70,17 +70,17 @@ export default function CardFeed({
                   : 'text-[#535f70] hover:text-[#131b2e]'
               }`}
             >
-              2024 (Sah)
+              2024 (Arsip)
             </button>
             <button
-              onClick={() => onChangeYear(2026)}
+              onClick={() => onChangeYear(2025)}
               className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center space-x-1 ${
-                selectedYear === 2026
+                selectedYear === 2025
                   ? 'bg-primary text-white shadow-xs'
                   : 'text-[#535f70] hover:text-[#131b2e]'
               }`}
             >
-              <span>2026</span>
+              <span>2025 (Terbaru)</span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#006c49]"></span>
             </button>
           </div>

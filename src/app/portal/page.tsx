@@ -23,8 +23,8 @@ import { Menu, X, Send, CheckCircle2, ArrowLeft } from 'lucide-react';
 export default function PortalPage() {
   // Master data states
   const [monografiList, setMonografiList] = useState<MonografiItem[]>(MONOGRAFI_ITEMS);
-  const [selectedId, setSelectedId] = useState<string>('lingk-3');
-  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [selectedId, setSelectedId] = useState<string>('kependudukan-2025');
+  const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   
@@ -437,7 +437,13 @@ export default function PortalPage() {
           }
         }}
         selectedYear={selectedYear}
-        onChangeYear={(yr) => setSelectedYear(yr)}
+        onChangeYear={(yr) => {
+          setSelectedYear(yr);
+          const firstInYear = monografiList.find((m) => m.year === yr);
+          if (firstInYear) {
+            setSelectedId(firstInYear.id);
+          }
+        }}
         selectedCategory={selectedCategory}
         onChangeCategory={(cat) => setSelectedCategory(cat)}
         searchQuery={searchQuery}
