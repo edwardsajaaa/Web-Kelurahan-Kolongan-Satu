@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchMonografiItems, updateMonografiTahapan } from '@/lib/supabase/service';
+import {
+  fetchMonografiItems,
+  updateMonografiTahapan,
+  updateMonografiContent,
+} from '@/lib/supabase/service';
 
 export async function GET() {
   try {
@@ -8,6 +12,36 @@ export async function GET() {
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || 'Gagal memuat data monografi' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, ...updatedFields } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: 'ID Monografi wajib diberikan.' },
+        { status: 400 }
+      );
+    }
+
+    const updated = await updateMonografiContent(id, updatedFields);
+
+    if (!updated) {
+      return NextResponse.json(
+        { success: false, error: 'Modul monografi tidak ditemukan.' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data: updated });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message || 'Gagal memperbarui rincian data monografi' },
       { status: 500 }
     );
   }

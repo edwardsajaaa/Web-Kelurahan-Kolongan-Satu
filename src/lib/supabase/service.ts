@@ -377,3 +377,33 @@ export async function updateMonografiTahapan(
 
   return updatedItem;
 }
+
+export async function updateMonografiContent(
+  id: string,
+  updatedData: Partial<MonografiItem>
+): Promise<MonografiItem | null> {
+  let updatedItem: MonografiItem | null = null;
+
+  inMemoryMonografi = inMemoryMonografi.map((m) => {
+    if (m.id === id) {
+      updatedItem = {
+        ...m,
+        ...updatedData,
+        id: m.id,
+        statusTahapan: updatedData.statusTahapan || 'draft',
+        badgeLabel:
+          updatedData.statusTahapan === 'disahkan_lurah'
+            ? 'Disahkan Lurah (Publikasi Sah)'
+            : updatedData.statusTahapan === 'diverifikasi_seklur'
+            ? 'Diverifikasi Seklur'
+            : 'Draf Masukan (Menunggu Verifikasi)',
+        lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Pembaruan Data Lapangan`,
+      };
+      return updatedItem;
+    }
+    return m;
+  });
+
+  return updatedItem;
+}
+
