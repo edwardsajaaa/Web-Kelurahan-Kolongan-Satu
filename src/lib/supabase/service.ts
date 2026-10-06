@@ -17,13 +17,13 @@ export async function fetchLetters(): Promise<LetterRequest[]> {
   if (isServerSupabaseConfigured) {
     try {
       const serverClient = createServerClient();
-      const { data, error } = await serverClient
+      const { data, error } = await (serverClient as any)
         .from('layanan_surat')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data.map((item) => {
+        return (data as any[]).map((item) => {
           const isi = (item.isi_permohonan as any) || {};
           return {
             id: item.id,
@@ -73,7 +73,7 @@ export async function submitLetter(letter: Omit<LetterRequest, 'id'>): Promise<L
   if (isServerSupabaseConfigured) {
     try {
       const serverClient = createServerClient();
-      const { data, error } = await serverClient
+      const { data, error } = await (serverClient as any)
         .from('layanan_surat')
         .insert({
           no_registrasi: letter.noRegistrasi,
@@ -95,7 +95,7 @@ export async function submitLetter(letter: Omit<LetterRequest, 'id'>): Promise<L
         .single();
 
       if (!error && data) {
-        fullLetter.id = data.id;
+        fullLetter.id = (data as any).id;
       }
     } catch (err) {
       console.warn('[Supabase] Failed to insert letter, saving in memory:', err);
@@ -125,16 +125,10 @@ export async function updateLetterStatus(
       if (newStatus === 'diparaf_seklur') updatePayload.diparaf_oleh = officialName || 'Ferromel L. Pua, S.Kom';
       if (newStatus === 'selesai_disahkan') updatePayload.disahkan_oleh = officialName || 'Theresia J. Kaunang, SE';
 
-      const { data, error } = await serverClient
+      await (serverClient as any)
         .from('layanan_surat')
         .update(updatePayload)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (!error && data) {
-        // Updated in DB successfully
-      }
+        .eq('id', id);
     } catch (err) {
       console.warn('[Supabase] Failed to update letter in DB:', err);
     }
@@ -174,15 +168,15 @@ export async function fetchReports(): Promise<CitizenReport[]> {
   if (isServerSupabaseConfigured) {
     try {
       const serverClient = createServerClient();
-      const { data, error } = await serverClient
+      const { data, error } = await (serverClient as any)
         .from('laporan_warga')
         .select('*')
         .order('dilaporkan_pada', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data.map((item) => ({
+        return (data as any[]).map((item) => ({
           id: item.id,
-          ticketNo: (item as any).ticket_no || `LAP-${item.id.slice(0, 8)}`,
+          ticketNo: item.ticket_no || `LAP-${item.id.slice(0, 8)}`,
           namaWarga: item.nama_warga,
           kontakWarga: item.kontak_warga,
           lingkunganId: item.lingkungan_id,
@@ -197,9 +191,9 @@ export async function fetchReports(): Promise<CitizenReport[]> {
               : item.status === 'dalam_tindakan'
               ? 'Sedang Dalam Tindakan'
               : 'Menunggu Tanggapan',
-          tanggapanPetugas: (item as any).tanggapan_petugas || undefined,
+          tanggapanPetugas: item.tanggapan_petugas || undefined,
           dilaporkanPada: new Date(item.dilaporkan_pada).toLocaleDateString('id-ID'),
-          diselesaikanPada: (item as any).diselesaikan_pada ? new Date((item as any).diselesaikan_pada).toLocaleDateString('id-ID') : undefined,
+          diselesaikanPada: item.diselesaikan_pada ? new Date(item.diselesaikan_pada).toLocaleDateString('id-ID') : undefined,
         }));
       }
     } catch (err) {
@@ -220,7 +214,7 @@ export async function submitReport(report: Omit<CitizenReport, 'id'>): Promise<C
   if (isServerSupabaseConfigured) {
     try {
       const serverClient = createServerClient();
-      const { data, error } = await serverClient
+      const { data, error } = await (serverClient as any)
         .from('laporan_warga')
         .insert({
           ticket_no: report.ticketNo,
@@ -236,7 +230,7 @@ export async function submitReport(report: Omit<CitizenReport, 'id'>): Promise<C
         .single();
 
       if (!error && data) {
-        fullReport.id = data.id;
+        fullReport.id = (data as any).id;
       }
     } catch (err) {
       console.warn('[Supabase] Failed to insert report, saving in memory:', err);
@@ -263,7 +257,7 @@ export async function updateReportStatus(
       if (responseNote) payload.tanggapan_petugas = responseNote;
       if (newStatus === 'selesai') payload.diselesaikan_pada = new Date().toISOString();
 
-      await serverClient
+      await (serverClient as any)
         .from('laporan_warga')
         .update(payload)
         .eq('id', id);
