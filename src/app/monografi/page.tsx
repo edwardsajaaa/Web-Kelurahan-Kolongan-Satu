@@ -112,14 +112,6 @@ export default function MonografiPage() {
           </nav>
 
           <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#006194] text-white hover:bg-[#007bb9] text-xs sm:text-sm font-semibold transition-colors shadow-sm cursor-pointer"
-            >
-              <span className="material-symbols-outlined text-base sm:text-lg">picture_as_pdf</span>
-              <span className="hidden sm:inline">Unduh Monografi (PDF)</span>
-            </button>
-
             <div className="hidden md:flex items-center gap-3 pl-3 border-l border-[#bfc7d2]/40">
               <div className="text-right">
                 <p className="text-xs font-bold text-[#131b2e] leading-tight">Theresia J. Kaunang, SE</p>
@@ -145,10 +137,6 @@ export default function MonografiPage() {
             <Link href="/" onClick={() => setMobileMenuOpen(false)} className="text-sm text-[#3f4850] font-medium py-1.5">Beranda</Link>
             <Link href="/monografi" onClick={() => setMobileMenuOpen(false)} className="text-sm text-[#006194] font-semibold py-1.5">Monografi Wilayah</Link>
             <Link href="/portal" onClick={() => setMobileMenuOpen(false)} className="text-sm text-[#3f4850] font-medium py-1.5">Layanan Mandiri / Portal</Link>
-            <button onClick={() => { handlePrint(); setMobileMenuOpen(false); }} className="mt-2 inline-flex items-center justify-center gap-2 text-sm font-semibold text-white bg-[#006194] py-2.5 rounded-full shadow-sm">
-              <span className="material-symbols-outlined text-lg">print</span>
-              <span>Cetak / Unduh PDF</span>
-            </button>
           </div>
         )}
       </header>
@@ -156,26 +144,12 @@ export default function MonografiPage() {
       {/* ============================================================ */}
       {/* 2. MAIN BODY                                                 */}
       {/* ============================================================ */}
-      <main className="w-full pt-20 bg-[#faf8ff] flex-1">
+      <main className="w-full pt-20 bg-[#faf8ff] flex-1 no-print">
         <div className="flex flex-col w-full">
 
           {/* TOP HERO & META BANNER */}
           <section className="relative w-full bg-gradient-to-b from-[#e2e7ff]/30 via-[#faf8ff] to-[#faf8ff] px-4 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-hidden">
             <div className="max-w-7xl mx-auto flex flex-col gap-5 relative z-10">
-              
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <button
-                  onClick={handlePrint}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white hover:bg-[#f2f3ff] text-[#131b2e] shadow-xs text-xs font-semibold border border-[#e2e7ff] transition-all cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-base">print</span>
-                  <span>Cetak / Unduh PDF</span>
-                </button>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#6cf8bb]/20 text-[#006c49] text-xs font-semibold border border-[#6cf8bb]/40">
-                  <span className="w-2 h-2 rounded-full bg-[#006c49] animate-pulse" />
-                  <span>Data Faktual 2024</span>
-                </div>
-              </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
                 <div className="lg:col-span-8 space-y-2">
@@ -1552,9 +1526,50 @@ export default function MonografiPage() {
           )}
 
           {/* ============================================================ */}
+          {/* SECTION CETAK & UNDUH LAPORAN RESMI (DIPINDAH KE BAWAH)      */}
+          {/* ============================================================ */}
+          <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 no-print">
+            <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-white via-white to-[#f2f3ff] shadow-sm border border-[#e2e7ff] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#cce5ff] text-[#006194] text-xs font-bold">
+                  <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+                  <span>Dokumen Laporan Resmi 3 Halaman</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#131b2e]">
+                  Cetak &amp; Unduh Laporan Resmi Monografi
+                </h3>
+                <p className="text-xs sm:text-sm text-[#3f4850] leading-relaxed">
+                  Laporan resmi terstruktur format baku pemerintahan (Kop Surat Pemkot Tomohon, register rekapitulasi data teknis Jaga I–V, tabel demografi terpadu, dan lembar pengesahan tanda tangan Lurah). Siap cetak atau unduh ke PDF dalam 1–3 halaman rapi.
+                </p>
+                <div className="flex flex-wrap items-center gap-4 pt-1 text-xs text-[#006c49] font-medium">
+                  <span className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-base">check_circle</span> Format A4 Standar
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-base">check_circle</span> Rincian Teknis 5 Jaga
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="material-symbols-outlined text-base">check_circle</span> Pengesahan Lurah &amp; Seklur
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full md:w-auto">
+                <button
+                  onClick={handlePrint}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-3.5 rounded-full bg-[#006194] text-white hover:bg-[#007bb9] text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-xl">print</span>
+                  <span>Cetak / Unduh Laporan Resmi (PDF)</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* ============================================================ */}
           {/* BANNER KEMITRAAN DIGITALISASI 2025                            */}
           {/* ============================================================ */}
-          <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
+          <section className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 no-print">
             <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#006194] to-[#007bb9] text-white shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center text-[#006194] shadow-xs shrink-0">
@@ -1589,7 +1604,7 @@ export default function MonografiPage() {
       {/* ============================================================ */}
       {/* FOOTER                                                       */}
       {/* ============================================================ */}
-      <footer className="w-full bg-white mt-8 border-t border-[#eaedff] shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      <footer className="w-full bg-white mt-8 border-t border-[#eaedff] shadow-[0_1px_8px_rgba(0,0,0,0.04)] no-print">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-[#eaedff]">
             <div className="space-y-1">
@@ -1618,6 +1633,592 @@ export default function MonografiPage() {
           </div>
         </div>
       </footer>
+
+      {/* ============================================================ */}
+      {/* LAPORAN MONOGRAFI RESMI PEMERINTAHAN (PRINT / PDF 3 HALAMAN) */}
+      {/* ============================================================ */}
+      <div id="official-monografi-print-report" className="print-only hidden font-serif text-black bg-white p-2 text-[11px] leading-snug">
+        
+        {/* ==================== HALAMAN 1 DARI 3 ==================== */}
+        <div className="page-break pb-4">
+          {/* KOP SURAT PEMERINTAH */}
+          <div className="text-center border-b-[3px] border-black pb-2 mb-3 relative">
+            <div className="flex items-center justify-center gap-4">
+              <div className="w-14 h-14 border border-black rounded-full flex items-center justify-center font-bold text-base shrink-0">
+                ⭐
+              </div>
+              <div>
+                <h3 className="text-sm font-bold tracking-wider uppercase m-0 leading-tight">PEMERINTAH KOTA TOMOHON</h3>
+                <h2 className="text-base font-extrabold tracking-wide uppercase m-0 leading-tight">KECAMATAN TOMOHON TENGAH</h2>
+                <h1 className="text-lg font-black tracking-widest uppercase m-0 leading-tight">KELURAHAN KOLONGAN SATU</h1>
+                <p className="text-[10px] m-0 font-sans text-gray-700 leading-tight">
+                  Alamat: Jl. Kolongan Raya, Kec. Tomohon Tengah, Kota Tomohon, Sulawesi Utara - Kode Pos: 95438
+                </p>
+              </div>
+            </div>
+            <div className="border-b border-black mt-2 pt-0.5" />
+          </div>
+
+          {/* JUDUL DOKUMEN & REGISTER */}
+          <div className="text-center mb-3">
+            <h2 className="text-sm font-bold uppercase underline tracking-wider m-0">
+              BUKU REKAPITULASI MONOGRAFI KELURAHAN
+            </h2>
+            <p className="text-[10px] font-sans m-0">
+              Nomor Register Data: <strong>140 / 08 / K1 / MON / VII / 2024</strong> &bull; Periode: <strong>Tahun Anggaran 2024</strong>
+            </p>
+          </div>
+
+          {/* BAGIAN I: DATA GEOGRAFIS & TATA GUNA LAHAN */}
+          <div className="mb-3">
+            <h3 className="text-[11px] font-bold uppercase bg-gray-200 px-2 py-0.5 border border-black mb-1.5">
+              I. IDENTITAS KEWILAYAHAN, BATAS &amp; TATA GUNA LAHAN
+            </h3>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              <div className="border border-black p-2">
+                <p className="font-bold mb-1 underline">A. Batas Wilayah Administratif (4 Penjuru):</p>
+                <table className="w-full text-[10px]">
+                  <tbody>
+                    <tr><td className="w-20 font-semibold">Utara</td><td>: Kelurahan Paslaten Satu, Kec. Tomohon Timur</td></tr>
+                    <tr><td className="font-semibold">Selatan</td><td>: Kelurahan Talete Dua, Kec. Tomohon Tengah</td></tr>
+                    <tr><td className="font-semibold">Timur</td><td>: Kelurahan Kolongan, Kec. Tomohon Tengah</td></tr>
+                    <tr><td className="font-semibold">Barat</td><td>: Kelurahan Kamasi, Akses Kaki Gn. Lokon</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="border border-black p-2">
+                <p className="font-bold mb-1 underline">B. Parameter Geografis Pokok:</p>
+                <table className="w-full text-[10px]">
+                  <tbody>
+                    <tr><td className="w-28 font-semibold">Luas Wilayah Total</td><td>: <strong>48,05 Hektar</strong> (Terukur Resmi BPN)</td></tr>
+                    <tr><td className="font-semibold">Jumlah Lingkungan</td><td>: <strong>5 Lingkungan Jaga</strong> (Jaga I s/d V)</td></tr>
+                    <tr><td className="font-semibold">Karakteristik Tanah</td><td>: Lempung Hitam Vulkanik Subur</td></tr>
+                    <tr><td className="font-semibold">Status Konflik Lahan</td><td>: 0% (Nihil / Bebas Sengketa)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <p className="font-bold text-[10px] mb-1">C. Distribusi &amp; Alokasi Peruntukan Lahan Faktual (48,05 Ha):</p>
+            <table className="w-full border-collapse border border-black text-[10px] text-left">
+              <thead>
+                <tr className="bg-gray-100 border-b border-black">
+                  <th className="border border-black px-1.5 py-0.5 text-center w-8">No</th>
+                  <th className="border border-black px-2 py-0.5">Klasifikasi / Peruntukan Lahan</th>
+                  <th className="border border-black px-2 py-0.5 text-right w-20">Luas (Ha)</th>
+                  <th className="border border-black px-2 py-0.5 text-right w-16">Rasio (%)</th>
+                  <th className="border border-black px-2 py-0.5">Keterangan Faktual Register</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">1</td>
+                  <td className="border border-black px-2 py-0.5">Kawasan Pemukiman &amp; Perumahan Warga</td>
+                  <td className="border border-black px-2 py-0.5 text-right font-bold">34,50</td>
+                  <td className="border border-black px-2 py-0.5 text-right">71,80%</td>
+                  <td className="border border-black px-2 py-0.5">Tersebar padat teratur pada Jaga I s/d Jaga V</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">2</td>
+                  <td className="border border-black px-2 py-0.5">Pertanian, Ladang &amp; Hortikultura</td>
+                  <td className="border border-black px-2 py-0.5 text-right font-bold">9,50</td>
+                  <td className="border border-black px-2 py-0.5 text-right">19,77%</td>
+                  <td className="border border-black px-2 py-0.5">Komoditas sayuran segar &amp; tanaman hias</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">3</td>
+                  <td className="border border-black px-2 py-0.5">Pekarangan Rumah &amp; Budidaya Ternak</td>
+                  <td className="border border-black px-2 py-0.5 text-right font-bold">4,00</td>
+                  <td className="border border-black px-2 py-0.5 text-right">8,32%</td>
+                  <td className="border border-black px-2 py-0.5">Pekarangan asri warga dan kandang tradisional</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">4</td>
+                  <td className="border border-black px-2 py-0.5">Lahan Tidur / Jalur Resapan Air</td>
+                  <td className="border border-black px-2 py-0.5 text-right font-bold">0,05</td>
+                  <td className="border border-black px-2 py-0.5 text-right">0,11%</td>
+                  <td className="border border-black px-2 py-0.5">Kawasan tangkapan resapan air alami</td>
+                </tr>
+                <tr className="bg-gray-100 font-bold border-t border-black">
+                  <td className="border border-black px-2 py-0.5 text-center" colSpan={2}>TOTAL LUAS WILAYAH TERVERIFIKASI</td>
+                  <td className="border border-black px-2 py-0.5 text-right">48,05</td>
+                  <td className="border border-black px-2 py-0.5 text-right">100,00%</td>
+                  <td className="border border-black px-2 py-0.5">Papan Monografi Lembar A-1 Faktual</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* BAGIAN II: DEMOGRAFI & REKAPITULASI 5 JAGA */}
+          <div className="mb-2">
+            <h3 className="text-[11px] font-bold uppercase bg-gray-200 px-2 py-0.5 border border-black mb-1.5">
+              II. REKAPITULASI KEPENDUDUKAN TINGKAT LINGKUNGAN (JAGA I s/d JAGA V)
+            </h3>
+            <table className="w-full border-collapse border border-black text-[10px] text-left mb-2">
+              <thead>
+                <tr className="bg-gray-100 border-b border-black text-center">
+                  <th className="border border-black px-1.5 py-0.5 w-8">No</th>
+                  <th className="border border-black px-2 py-0.5 text-left">Nama Lingkungan</th>
+                  <th className="border border-black px-2 py-0.5 w-16">Jml KK</th>
+                  <th className="border border-black px-2 py-0.5 w-16">Laki-Laki</th>
+                  <th className="border border-black px-2 py-0.5 w-16">Perempuan</th>
+                  <th className="border border-black px-2 py-0.5 w-20">Total Jiwa</th>
+                  <th className="border border-black px-2 py-0.5 w-14">Sex Ratio</th>
+                  <th className="border border-black px-2 py-0.5 text-left">Kepala Lingkungan (PALA)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">1</td>
+                  <td className="border border-black px-2 py-0.5 font-bold">Lingkungan I (Jaga 1)</td>
+                  <td className="border border-black px-2 py-0.5 text-center">105 KK</td>
+                  <td className="border border-black px-2 py-0.5 text-center">152 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">158 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center font-bold">310 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">96,2</td>
+                  <td className="border border-black px-2 py-0.5">Meky Mario Turangan / Athanasius Ricky Trie</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">2</td>
+                  <td className="border border-black px-2 py-0.5 font-bold">Lingkungan II (Jaga 2)</td>
+                  <td className="border border-black px-2 py-0.5 text-center">108 KK</td>
+                  <td className="border border-black px-2 py-0.5 text-center">139 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">146 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center font-bold">285 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">95,2</td>
+                  <td className="border border-black px-2 py-0.5">Devid P.N. Tasie / Antonius Kapojos</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">3</td>
+                  <td className="border border-black px-2 py-0.5 font-bold">Lingkungan III (Jaga 3)</td>
+                  <td className="border border-black px-2 py-0.5 text-center">112 KK</td>
+                  <td className="border border-black px-2 py-0.5 text-center">144 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">151 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center font-bold">295 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">95,4</td>
+                  <td className="border border-black px-2 py-0.5">Agustinus Sapanany / Paulus Wuntuale</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">4</td>
+                  <td className="border border-black px-2 py-0.5 font-bold">Lingkungan IV (Jaga 4)</td>
+                  <td className="border border-black px-2 py-0.5 text-center">107 KK</td>
+                  <td className="border border-black px-2 py-0.5 text-center">149 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">155 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center font-bold">304 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">96,1</td>
+                  <td className="border border-black px-2 py-0.5">Stenly Posumah / Djoni Kapele</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">5</td>
+                  <td className="border border-black px-2 py-0.5 font-bold">Lingkungan V (Jaga 5)</td>
+                  <td className="border border-black px-2 py-0.5 text-center">108 KK</td>
+                  <td className="border border-black px-2 py-0.5 text-center">141 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">149 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center font-bold">290 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5 text-center">94,6</td>
+                  <td className="border border-black px-2 py-0.5">Joutje Rumagit / Fredi Rumagit</td>
+                </tr>
+                <tr className="bg-gray-100 font-bold border-t border-black text-center">
+                  <td className="border border-black px-2 py-0.5" colSpan={2}>TOTAL REKAPITULASI RESMI</td>
+                  <td className="border border-black px-2 py-0.5">540 KK</td>
+                  <td className="border border-black px-2 py-0.5">725 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5">759 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5">1.484 Jiwa</td>
+                  <td className="border border-black px-2 py-0.5">95,5</td>
+                  <td className="border border-black px-2 py-0.5 text-left">Rata-rata: 2,75 Jiwa / KK</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="flex justify-between items-center text-[9px] text-gray-700 italic border-t border-gray-400 pt-1">
+              <span>* Data Berdasarkan Register Kependudukan Faktual Kelurahan Kolongan Satu Tahun 2024</span>
+              <span>Halaman 1 dari 3</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ==================== HALAMAN 2 DARI 3 ==================== */}
+        <div className="page-break pb-4 pt-2">
+          {/* HEADER HALAMAN 2 */}
+          <div className="flex justify-between items-center border-b border-black pb-1 mb-3 text-[10px] font-sans">
+            <span className="font-bold uppercase tracking-wider">PEMERINTAH KOTA TOMOHON &bull; KELURAHAN KOLONGAN SATU</span>
+            <span className="font-semibold">LAMPIRAN DATA TEKNIS &bull; HALAMAN 2 DARI 3</span>
+          </div>
+
+          {/* BAGIAN III: STRUKTUR USIA & PENDIDIKAN */}
+          <div className="mb-3">
+            <h3 className="text-[11px] font-bold uppercase bg-gray-200 px-2 py-0.5 border border-black mb-1.5">
+              III. STRUKTUR DEMOGRAFI KELOMPOK UMUR &amp; TINGKAT PENDIDIKAN FORMAL
+            </h3>
+            
+            <div className="grid grid-cols-2 gap-2 mb-2">
+              {/* Tabel Kelompok Umur */}
+              <div>
+                <p className="font-bold text-[10px] mb-1">A. Komposisi Usia &amp; Tenaga Kerja:</p>
+                <table className="w-full border-collapse border border-black text-[10px] text-left">
+                  <thead>
+                    <tr className="bg-gray-100 border-b border-black">
+                      <th className="border border-black px-1.5 py-0.5">Kelompok Umur</th>
+                      <th className="border border-black px-1.5 py-0.5 text-right">Jiwa</th>
+                      <th className="border border-black px-1.5 py-0.5 text-right">%</th>
+                      <th className="border border-black px-1.5 py-0.5">Klasifikasi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5">0 – 6 Tahun</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">109</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">7,34%</td>
+                      <td className="border border-black px-1.5 py-0.5">Balita / Prasekolah</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5">7 – 18 Tahun</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">222</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">14,96%</td>
+                      <td className="border border-black px-1.5 py-0.5">Usia Sekolah Wajib</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5 font-bold">18 – 56 Th (Bekerja)</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">494</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">33,29%</td>
+                      <td className="border border-black px-1.5 py-0.5">Angkatan Kerja Aktif</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5 font-bold">18 – 56 Th (IRT/Pencari)</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">382</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">25,74%</td>
+                      <td className="border border-black px-1.5 py-0.5">Produktif Mengurus RT</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5">&gt; 56 Tahun</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">277</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">18,67%</td>
+                      <td className="border border-black px-1.5 py-0.5">Lanjut Usia (Lansia)</td>
+                    </tr>
+                    <tr className="bg-gray-100 font-bold border-t border-black">
+                      <td className="border border-black px-1.5 py-0.5">TOTAL POPULASI</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">1.484</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">100%</td>
+                      <td className="border border-black px-1.5 py-0.5">Dep. Ratio: 69,4%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Tabel Tingkat Kelulusan Pendidikan */}
+              <div>
+                <p className="font-bold text-[10px] mb-1">B. Tingkat Kelulusan Pendidikan Formal:</p>
+                <table className="w-full border-collapse border border-black text-[10px] text-left">
+                  <thead>
+                    <tr className="bg-gray-100 border-b border-black">
+                      <th className="border border-black px-1.5 py-0.5">Tingkat Pendidikan</th>
+                      <th className="border border-black px-1.5 py-0.5 text-right">Lulusan</th>
+                      <th className="border border-black px-1.5 py-0.5 text-right">%</th>
+                      <th className="border border-black px-1.5 py-0.5">Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5">SD / Sederajat</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">78</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">7,68%</td>
+                      <td className="border border-black px-1.5 py-0.5">1 SD di Kelurahan</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5">SMP / Sederajat</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">154</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">15,16%</td>
+                      <td className="border border-black px-1.5 py-0.5">Pendidikan Dasar</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5 font-bold">SMA / SMK / MA</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">520</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">51,18%</td>
+                      <td className="border border-black px-1.5 py-0.5">Kelulusan Terbanyak</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5">Sarjana S1</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">212</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">20,87%</td>
+                      <td className="border border-black px-1.5 py-0.5">Pendidikan Tinggi</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-1.5 py-0.5">Diploma &amp; Pascasarjana</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right font-bold">50</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">4,92%</td>
+                      <td className="border border-black px-1.5 py-0.5">Spesialis &amp; Magister</td>
+                    </tr>
+                    <tr className="bg-gray-100 font-bold border-t border-black">
+                      <td className="border border-black px-1.5 py-0.5">TOTAL LULUSAN</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">1.016</td>
+                      <td className="border border-black px-1.5 py-0.5 text-right">100%</td>
+                      <td className="border border-black px-1.5 py-0.5">Melek Aksara: 100%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* BAGIAN IV: MATA PENCAHARIAN & KESEJAHTERAAN SOSIAL */}
+          <div className="mb-3">
+            <h3 className="text-[11px] font-bold uppercase bg-gray-200 px-2 py-0.5 border border-black mb-1.5">
+              IV. SEKTOR MATA PENCAHARIAN &amp; KESEJAHTERAAN SOSIAL
+            </h3>
+            
+            <div className="grid grid-cols-12 gap-2 mb-2">
+              <div className="col-span-8">
+                <p className="font-bold text-[10px] mb-1">A. Distribusi Pekerjaan Utama (494 Jiwa Angkatan Bekerja):</p>
+                <table className="w-full border-collapse border border-black text-[10px] text-left">
+                  <thead>
+                    <tr className="bg-gray-100 border-b border-black">
+                      <th className="border border-black px-2 py-0.5">Sektor Pekerjaan / Lapangan Usaha</th>
+                      <th className="border border-black px-2 py-0.5 text-right w-16">Jumlah</th>
+                      <th className="border border-black px-2 py-0.5 text-right w-16">Rasio</th>
+                      <th className="border border-black px-2 py-0.5">Karakteristik Usaha</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border border-black px-2 py-0.5">Wiraswasta, Warung Makan, Kios &amp; Kuliner</td>
+                      <td className="border border-black px-2 py-0.5 text-right font-bold">148 Jiwa</td>
+                      <td className="border border-black px-2 py-0.5 text-right">29,96%</td>
+                      <td className="border border-black px-2 py-0.5">Pusat perdagangan mikro &amp; kue basah</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-2 py-0.5">Petani, Pekebun Hortikultura &amp; Bunga</td>
+                      <td className="border border-black px-2 py-0.5 text-right font-bold">114 Jiwa</td>
+                      <td className="border border-black px-2 py-0.5 text-right">23,08%</td>
+                      <td className="border border-black px-2 py-0.5">Sayur organik &amp; bunga krisan Tomohon</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-2 py-0.5">Pertukangan Kayu, Batu, Las &amp; Bengkel</td>
+                      <td className="border border-black px-2 py-0.5 text-right font-bold">89 Jiwa</td>
+                      <td className="border border-black px-2 py-0.5 text-right">18,02%</td>
+                      <td className="border border-black px-2 py-0.5">Konstruksi dan kerajinan rumah panggung</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-2 py-0.5">Aparatur Sipil Negara (ASN, TNI, Polri)</td>
+                      <td className="border border-black px-2 py-0.5 text-right font-bold">58 Jiwa</td>
+                      <td className="border border-black px-2 py-0.5 text-right">11,74%</td>
+                      <td className="border border-black px-2 py-0.5">Pegawai Pemkot Tomohon &amp; instansi vertikal</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-2 py-0.5">Guru, Dosen &amp; Tenaga Kependidikan</td>
+                      <td className="border border-black px-2 py-0.5 text-right font-bold">45 Jiwa</td>
+                      <td className="border border-black px-2 py-0.5 text-right">9,11%</td>
+                      <td className="border border-black px-2 py-0.5">Pendidik di SD, SMP, SMA, dan Perguruan Tinggi</td>
+                    </tr>
+                    <tr>
+                      <td className="border border-black px-2 py-0.5">Karyawan Swasta, Ojek &amp; Transportasi</td>
+                      <td className="border border-black px-2 py-0.5 text-right font-bold">40 Jiwa</td>
+                      <td className="border border-black px-2 py-0.5 text-right">8,10%</td>
+                      <td className="border border-black px-2 py-0.5">Jasa transportasi dan perdagangan modern</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="col-span-4 border border-black p-2">
+                <p className="font-bold text-[10px] mb-1 underline">B. Data Khusus Disabilitas:</p>
+                <p className="text-[9px] mb-1 leading-snug">Warga berkebutuhan khusus terdaftar dalam pembinaan Dinas Sosial Kota Tomohon:</p>
+                <ul className="text-[10px] space-y-0.5 mb-2 pl-3 list-disc">
+                  <li>Tuna Rungu / Wicara: <strong>2 Orang</strong></li>
+                  <li>Tuna Netra: <strong>1 Orang</strong></li>
+                  <li>Lumpuh / Disabilitas Fisik: <strong>1 Orang</strong></li>
+                  <li>Binaan Kebutuhan Khusus: <strong>1 Orang</strong></li>
+                </ul>
+                <div className="bg-gray-100 p-1 border border-gray-400 text-[9px] italic">
+                  * 100% Warga disabilitas tercatat menerima akses kesehatan berkala Posyandu dan bansos PKH.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* BAGIAN V: PETERNAKAN & SUMBER AIR */}
+          <div className="mb-2">
+            <h3 className="text-[11px] font-bold uppercase bg-gray-200 px-2 py-0.5 border border-black mb-1.5">
+              V. POTENSI PETERNAKAN, SUMBER DAYA AIR &amp; SANITASI
+            </h3>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="border border-black p-2">
+                <p className="font-bold text-[10px] mb-1 underline">A. Sektor Peternakan Warga (Total 1.825 Ekor):</p>
+                <table className="w-full text-[10px]">
+                  <tbody>
+                    <tr><td className="font-semibold">Unggas / Ayam</td><td>: <strong>1.450 Ekor</strong> (79,45% - Buras &amp; Petelur Swadaya)</td></tr>
+                    <tr><td className="font-semibold">Ternak Babi</td><td>: <strong>340 Ekor</strong> (18,63% - Kandang Berjarak Higienis)</td></tr>
+                    <tr><td className="font-semibold">Ternak Sapi</td><td>: <strong>35 Ekor</strong> (1,92% - Penggembalaan Terpadu)</td></tr>
+                    <tr><td className="font-semibold">Higienitas Kandang</td><td>: <strong>98,2%</strong> Sesuai SOP Dinas Pertanian Kota Tomohon</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="border border-black p-2">
+                <p className="font-bold text-[10px] mb-1 underline">B. Ketahanan Air Bersih &amp; Sanitasi Lingkungan:</p>
+                <table className="w-full text-[10px]">
+                  <tbody>
+                    <tr><td className="font-semibold">Pelanggan PDAM</td><td>: <strong>467 KK</strong> (86,48% - Jaringan Pipa Tomohon)</td></tr>
+                    <tr><td className="font-semibold">Sumur Pompa / Gali</td><td>: <strong>73 KK</strong> (13,52% - 14 Titik Sumur Bersih Sah)</td></tr>
+                    <tr><td className="font-semibold">MCK Komunal</td><td>: 3 Unit Terbangun &amp; Berfungsi Baik</td></tr>
+                    <tr><td className="font-semibold">Status Sanitasi</td><td>: <strong>100% ODF</strong> (Seluruh KK Memiliki Jamban Sehat)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center text-[9px] text-gray-700 italic border-t border-gray-400 pt-1 mt-2">
+              <span>* Data Lapangan Terverifikasi Dinas Pertanian dan Puskesmas Tomohon Tengah</span>
+              <span>Halaman 2 dari 3</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ==================== HALAMAN 3 DARI 3 ==================== */}
+        <div className="pb-4 pt-2">
+          {/* HEADER HALAMAN 3 */}
+          <div className="flex justify-between items-center border-b border-black pb-1 mb-3 text-[10px] font-sans">
+            <span className="font-bold uppercase tracking-wider">PEMERINTAH KOTA TOMOHON &bull; KELURAHAN KOLONGAN SATU</span>
+            <span className="font-semibold">LAMPIRAN SARANA &amp; PENGESAHAN &bull; HALAMAN 3 DARI 3</span>
+          </div>
+
+          {/* BAGIAN VI: SARANA KELEMBAGAAN & FASILITAS PUBLIK */}
+          <div className="mb-3">
+            <h3 className="text-[11px] font-bold uppercase bg-gray-200 px-2 py-0.5 border border-black mb-1.5">
+              VI. INVENTARISASI SARANA PRASARANA, KELEMBAGAAN &amp; FASILITAS PUBLIK
+            </h3>
+            
+            <table className="w-full border-collapse border border-black text-[10px] text-left mb-3">
+              <thead>
+                <tr className="bg-gray-100 border-b border-black">
+                  <th className="border border-black px-1.5 py-0.5 text-center w-8">No</th>
+                  <th className="border border-black px-2 py-0.5">Bidang Fasilitas Publik</th>
+                  <th className="border border-black px-2 py-0.5 w-32">Kuantitas / Jumlah</th>
+                  <th className="border border-black px-2 py-0.5 w-28">Kondisi Fisik</th>
+                  <th className="border border-black px-2 py-0.5">Keterangan Fungsi Operasional</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">1</td>
+                  <td className="border border-black px-2 py-0.5 font-bold">Kantor Kelurahan Kolongan Satu</td>
+                  <td className="border border-black px-2 py-0.5">1 Unit Gedung Utama</td>
+                  <td className="border border-black px-2 py-0.5 font-semibold">Permanen / Baik</td>
+                  <td className="border border-black px-2 py-0.5">Pusat pelayanan administrasi &amp; rapat warga</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">2</td>
+                  <td className="border border-black px-2 py-0.5">Keamanan Linmas &amp; Kamtibmas</td>
+                  <td className="border border-black px-2 py-0.5">12 Anggota Linmas, 2 Babinsa</td>
+                  <td className="border border-black px-2 py-0.5">Siaga Aktif</td>
+                  <td className="border border-black px-2 py-0.5">Patroli berkala dan koordinasi Polsek/Koramil</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">3</td>
+                  <td className="border border-black px-2 py-0.5">Organisasi Kemasyarakatan</td>
+                  <td className="border border-black px-2 py-0.5">PKK, LPM, Karang Taruna</td>
+                  <td className="border border-black px-2 py-0.5">Aktif Rutin</td>
+                  <td className="border border-black px-2 py-0.5">Program sosial, gotong royong, &amp; posyandu</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">4</td>
+                  <td className="border border-black px-2 py-0.5">Gereja Protestan (GMIM)</td>
+                  <td className="border border-black px-2 py-0.5">4 Gedung Gereja</td>
+                  <td className="border border-black px-2 py-0.5">Kondisi Prima</td>
+                  <td className="border border-black px-2 py-0.5">Pelayanan jemaat Protestan aktif beribadah</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">5</td>
+                  <td className="border border-black px-2 py-0.5">Gereja Katolik</td>
+                  <td className="border border-black px-2 py-0.5">1 Gedung Gereja</td>
+                  <td className="border border-black px-2 py-0.5">Kondisi Prima</td>
+                  <td className="border border-black px-2 py-0.5">Stasi peribadatan jemaat Katolik terpadu</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">6</td>
+                  <td className="border border-black px-2 py-0.5">Sarana Pendidikan Dasar &amp; Khusus</td>
+                  <td className="border border-black px-2 py-0.5">1 SD Negeri, 1 SLB C</td>
+                  <td className="border border-black px-2 py-0.5">Aktif Mengajar</td>
+                  <td className="border border-black px-2 py-0.5">Wajib belajar 9 tahun dan pendidikan inklusi</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">7</td>
+                  <td className="border border-black px-2 py-0.5">Kesehatan (Posyandu &amp; Pustu)</td>
+                  <td className="border border-black px-2 py-0.5">2 Posyandu, 1 Pustu, 3 Dokter</td>
+                  <td className="border border-black px-2 py-0.5">Pelayanan Rutin</td>
+                  <td className="border border-black px-2 py-0.5">Cek kesehatan balita, lansia &amp; obat-obatan</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">8</td>
+                  <td className="border border-black px-2 py-0.5">Jaringan Jalan Utama &amp; Lingkungan</td>
+                  <td className="border border-black px-2 py-0.5">4,5 Km Hotmix, 2,8 Km Beton</td>
+                  <td className="border border-black px-2 py-0.5">Kondisi Mantap</td>
+                  <td className="border border-black px-2 py-0.5">Jalur lingkar Tomohon &amp; penghubung antar-Jaga</td>
+                </tr>
+                <tr>
+                  <td className="border border-black px-1.5 py-0.5 text-center">9</td>
+                  <td className="border border-black px-2 py-0.5">Sanitasi &amp; Persampahan</td>
+                  <td className="border border-black px-2 py-0.5">1 TPS &amp; Truk DLH Pemkot</td>
+                  <td className="border border-black px-2 py-0.5">Jadwal Harian</td>
+                  <td className="border border-black px-2 py-0.5">Pengangkutan sampah terjadwal seluruh Jaga</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* BAGIAN VII: LEMBAR PENGESAHAN DOKUMEN RESMI (LEGALITAS LURAH) */}
+          <div className="border border-black p-3 bg-gray-50/50 mb-3">
+            <h3 className="text-[11px] font-bold uppercase text-center underline tracking-wider mb-2">
+              LEMBAR PENGESAHAN &amp; PENETAPAN DOKUMEN MONOGRAFI RESMI
+            </h3>
+            <p className="text-[10px] text-justify leading-relaxed mb-4">
+              Demikian Buku Laporan Monografi Kelurahan Kolongan Satu, Kecamatan Tomohon Tengah, Kota Tomohon Tahun 2024 ini disusun secara faktual berdasarkan register buku induk kependudukan, pemetaan batas ruang wilayah, dan rekapitulasi potensi kemasyarakatan terkini. Dokumen ini disahkan sebagai rujukan resmi perencanaan pembangunan, transparansi publik, dan pelayanan administrasi pemerintahan daerah.
+            </p>
+
+            <div className="flex justify-between items-start text-[10px] px-6">
+              {/* Kolom Tanda Tangan Sekretaris */}
+              <div className="text-center w-64">
+                <p className="mb-0">Mengetahui &amp; Memverifikasi,</p>
+                <p className="font-bold mb-12">SEKRETARIS KELURAHAN KOLONGAN SATU</p>
+                <p className="font-bold underline text-[11px] mb-0">FERROMEL L. PUA, S.Kom</p>
+                <p className="text-[9px] text-gray-700">NIP. 19850412 201102 1 002</p>
+              </div>
+
+              {/* Stempel Kelurahan Tempat */}
+              <div className="text-center pt-2">
+                <div className="w-20 h-20 border border-dashed border-gray-400 rounded-full flex items-center justify-center text-[8px] text-gray-400 uppercase italic">
+                  [Cap Stempel Dinas]
+                </div>
+              </div>
+
+              {/* Kolom Tanda Tangan Lurah */}
+              <div className="text-center w-64">
+                <p className="mb-0">Ditetapkan di: Tomohon</p>
+                <p className="mb-0">Pada tanggal: 15 Juli 2024</p>
+                <p className="font-bold mb-12">LURAH KOLONGAN SATU,</p>
+                <p className="font-bold underline text-[11px] mb-0">THERESIA J. KAUNANG, SE</p>
+                <p className="text-[9px] text-gray-700">NIP. 19680702 199903 2 001</p>
+              </div>
+            </div>
+          </div>
+
+          {/* TEMBUSAN & ARSIP */}
+          <div className="text-[9px] text-gray-700">
+            <p className="font-bold mb-0.5">Tembusan Kepada Yth:</p>
+            <ol className="list-decimal pl-4 space-y-0 text-[8.5px]">
+              <li>Walikota Tomohon (sebagai laporan)</li>
+              <li>Camat Tomohon Tengah, Kota Tomohon</li>
+              <li>Kepala Badan Pusat Statistik (BPS) Kota Tomohon</li>
+              <li>Pertinggal / Arsip Resmi Kelurahan Kolongan Satu</li>
+            </ol>
+            <div className="flex justify-between items-center italic border-t border-gray-400 pt-1 mt-2">
+              <span>* Dokumen Sah Dicetak Melalui Sistem Informasi Monografi Digital Kelurahan Kolongan Satu</span>
+              <span>Halaman 3 dari 3 (Selesai)</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
     </div>
   );
 }
