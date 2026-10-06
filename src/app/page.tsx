@@ -193,12 +193,12 @@ export default function LandingPage() {
       {/* ============================================================ */}
       {/* MAIN CONTENT                                                */}
       {/* ============================================================ */}
-      <main className="w-full pt-20 2xl:pt-24 flex-1">
+      <main className="w-full pt-20 2xl:pt-24 flex-1 print:pt-0 print:p-0">
         <div className="flex flex-col w-full">
           {/* ============================================================ */}
           {/* 2. HERO SHOWCASE SECTION (Fluid Container)                   */}
           {/* ============================================================ */}
-          <section className="relative w-full overflow-hidden pb-8 2xl:pb-12">
+          <section className="relative w-full overflow-hidden pb-8 2xl:pb-12 no-print">
             {/* Ambient Background Glow (Full Bleed) */}
             <div className="absolute inset-0 bg-gradient-to-b from-[#cce5ff]/40 via-[#faf8ff] to-[#faf8ff] pointer-events-none -z-10" />
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] 2xl:w-[1300px] 3xl:w-[1600px] h-[360px] 2xl:h-[500px] bg-[#006194]/6 rounded-full blur-3xl pointer-events-none -z-10" />
@@ -242,7 +242,7 @@ export default function LandingPage() {
           {/* 3. FLOATING QUICK-STATS STRIP (Fluid Grid)                   */}
           {/* ============================================================ */}
           <section
-            className="relative z-10 w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 -mt-8 sm:-mt-12 2xl:-mt-16 mb-12 2xl:mb-16"
+            className="relative z-10 w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 -mt-8 sm:-mt-12 2xl:-mt-16 mb-12 2xl:mb-16 no-print"
             id="monografi-ringkas"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 2xl:gap-6">
@@ -344,7 +344,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 4. VISI & MISI KELURAHAN (Dipimpin Lurah)                    */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print">
             <div className="bg-[#eaedff] rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#dae2fd]">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 2xl:gap-12 items-center">
                 {/* Photo & Name Lurah */}
@@ -437,7 +437,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 5. SEJARAH & ASAL-USUL                                       */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16" id="sejarah-wilayah">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print" id="sejarah-wilayah">
             <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#e2e7ff]">
               <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-[#eaedff] gap-2">
                 <div>
@@ -500,7 +500,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 6. PUSAT LAYANAN WARGA (Fluid Grid)                          */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print" id="layanan-cepat">
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-2">
               <div>
                 <span className="text-xs 2xl:text-sm text-[#006194] font-bold tracking-wider uppercase block mb-1">
@@ -596,7 +596,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 7. CIVIC TRANSPARENCY & KKT COLLABORATION STRIP              */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print">
             <div className="bg-[#f2f3ff] rounded-2xl 2xl:rounded-3xl p-6 sm:p-8 2xl:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 2xl:gap-10 border border-[#dae2fd]">
               <div className="flex items-center gap-4 2xl:gap-6">
                 <div className="w-14 h-14 2xl:w-18 2xl:h-18 rounded-full bg-[#cce5ff] flex items-center justify-center text-[#006194] shrink-0 shadow-sm">
@@ -626,7 +626,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 8. GEOGRAPHIC LOCATION & CONTACT SNIPPET                     */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 2xl:gap-10 items-center bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-8 2xl:p-12 shadow-sm border border-[#e2e7ff]">
               {/* Left: Office Location Details */}
               <div className="lg:col-span-6 space-y-3 2xl:space-y-5 text-left">
@@ -700,7 +700,7 @@ export default function LandingPage() {
       {/* ============================================================ */}
       {/* 9. FOOTER (Full Bleed Fluid Responsive)                      */}
       {/* ============================================================ */}
-      <footer className="w-full bg-[#f2f3ff] text-[#3f4850] pt-12 2xl:pt-16 pb-8 2xl:pb-12 border-t border-[#dae2fd] shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      <footer className="w-full bg-[#f2f3ff] text-[#3f4850] pt-12 2xl:pt-16 pb-8 2xl:pb-12 border-t border-[#dae2fd] shadow-[0_1px_8px_rgba(0,0,0,0.04)] no-print">
         <div className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 2xl:gap-12 mb-10 2xl:mb-14">
             {/* Col 1: About */}

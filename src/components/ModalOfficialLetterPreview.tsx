@@ -21,8 +21,8 @@ export default function ModalOfficialLetterPreview({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-3xl max-h-[95vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200 print:static print:p-0 print:bg-white print:block">
+      <div className="bg-white w-full max-w-3xl max-h-[95vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 print:max-w-none print:max-h-none print:rounded-none print:border-none print:shadow-none print:overflow-visible">
         {/* Top Control Bar (Hidden on print) */}
         <div className="no-print p-4 border-b border-slate-200 bg-slate-900 text-white flex items-center justify-between">
           <div className="flex items-center space-x-2.5">
@@ -50,7 +50,7 @@ export default function ModalOfficialLetterPreview({
         </div>
 
         {/* Printable Official Paper Layout */}
-        <div className="flex-1 overflow-y-auto p-8 md:p-12 bg-white text-slate-900 font-serif leading-relaxed">
+        <div className="flex-1 overflow-y-auto p-8 md:p-12 bg-white text-slate-900 font-serif leading-relaxed print:p-0 print:overflow-visible">
           {/* KOP SURAT RESMI */}
           <div className="text-center border-b-4 border-double border-slate-900 pb-3 mb-6 relative">
             {/* Logo Lambang Daerah Kota Tomohon placeholder */}

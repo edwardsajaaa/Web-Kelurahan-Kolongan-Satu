@@ -101,51 +101,37 @@ export default function IntegratedMonografiSection({
       {/* ============================================================ */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-5 border-b border-[#e2e7ff] gap-4 no-print">
         <div>
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <div className="inline-flex items-center gap-1.5 bg-[#cce5ff]/70 px-3 2xl:px-4 py-1 2xl:py-1.5 rounded-full text-[#006194] text-xs 2xl:text-sm font-bold">
-              <span className="material-symbols-outlined text-[16px] 2xl:text-[18px]">verified</span>
-              <span>Data Monografi Multi-Periode Kelurahan</span>
-            </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <h2 className="text-2xl sm:text-3xl 2xl:text-4xl text-[#131b2e] font-bold tracking-tight">
+              Monografi Kelurahan {activeYear}
+            </h2>
 
-            {/* Year Badge Selector (2024 vs 2025) */}
+            {/* Year Selector (2024 vs 2025) */}
             <div className="inline-flex items-center bg-[#f2f3ff] p-1 rounded-full border border-[#dae2fd]">
-              <button
-                onClick={() => handleYearToggle(2024)}
-                className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                  activeYear === 2024
-                    ? 'bg-[#006194] text-white shadow-xs'
-                    : 'text-[#535f70] hover:text-[#131b2e]'
-                }`}
-              >
-                2024 (Arsip)
-              </button>
-              <button
-                onClick={() => handleYearToggle(2025)}
-                className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                  activeYear === 2025
-                    ? 'bg-[#006194] text-white shadow-xs'
-                    : 'text-[#535f70] hover:text-[#131b2e]'
-                }`}
-              >
-                <span>2025 (Terbaru)</span>
-                <span className="w-2 h-2 rounded-full bg-[#6cf8bb]"></span>
-              </button>
+              {([2024, 2025] as AvailableYear[]).map((yr) => (
+                <button
+                  key={yr}
+                  onClick={() => handleYearToggle(yr)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    activeYear === yr
+                      ? 'bg-[#006194] text-white shadow-xs'
+                      : 'text-[#535f70] hover:text-[#131b2e]'
+                  }`}
+                >
+                  {yr}
+                </button>
+              ))}
             </div>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold tracking-tight">
-            Monografi Lengkap Kelurahan Kolongan Satu {activeYear}
-          </h2>
-          <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] mt-1.5 max-w-3xl leading-relaxed">
-            {is2025 ? (
-              <span>
-                Data mutakhir Tahun 2025 (Total <strong className="text-[#006194]">1.512 Jiwa</strong>, luas wilayah <strong className="text-[#006194]">208,25 Ha</strong>, hak pilih 1.245, 9 sentra bisnis UMKM terkemuka, fasilitas olahraga lengkap, dan rasio guru-murid).
-              </span>
-            ) : (
-              <span>
-                Register fisik papan monografi faktual Tahun 2024 (Total <strong className="text-[#006194]">1.484 Jiwa</strong>, 540 KK, luas wilayah 48,05 Ha, rincian 5 Jaga, sebaran agama, tenaga kerja, pendidikan, dan 12 buku administrasi kantor).
-              </span>
-            )}
+          <p className="text-sm 2xl:text-base text-[#3f4850] mt-2">
+            <strong className="text-[#131b2e]">{currentTotalJiwa.toLocaleString('id-ID')}</strong> jiwa
+            <span className="mx-2 text-[#bfc7d2]">•</span>
+            <strong className="text-[#131b2e]">{currentTotalKK.toLocaleString('id-ID')}</strong> KK
+            <span className="mx-2 text-[#bfc7d2]">•</span>
+            <strong className="text-[#131b2e]">{currentLuasHa.toLocaleString('id-ID')}</strong> Ha
+            <span className="mx-2 text-[#bfc7d2]">•</span>
+            5 Lingkungan
           </p>
         </div>
 
@@ -1340,7 +1326,7 @@ export default function IntegratedMonografiSection({
         </div>
 
         {/* ==================== HALAMAN 3 DARI 3 ==================== */}
-        <div className="page-break pt-4 pb-4">
+        <div className="pt-4 pb-4">
           <div className="text-center border-b border-black pb-1 mb-3">
             <h4 className="text-xs font-bold uppercase tracking-wider mb-0.5">
               LAMPIRAN III: SARANA, PRASARANA, &amp; LEMBAR PENGESAHAN RESMI ({activeYear})
