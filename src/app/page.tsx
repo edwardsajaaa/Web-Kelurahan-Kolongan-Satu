@@ -28,23 +28,12 @@ export default function LandingPage() {
   const currentOfficial = OFFICIALS[0];
   const activeMonografi = MONOGRAFI_ITEMS[0];
 
-  const handleAddLetter = async (newLetter: LetterRequest) => {
-    setLetters((prev) => [newLetter, ...prev]);
-    try {
-      const res = await fetch('/api/surat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newLetter),
-      });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.data?.id) {
-          setLetters((prev) => prev.map((l) => (l.noRegistrasi === newLetter.noRegistrasi ? json.data : l)));
-        }
-      }
-    } catch (e) {
-      console.warn('Gagal menyimpan surat via API:', e);
-    }
+  const handleAddLetter = (newLetter: LetterRequest) => {
+    setLetters((prev) => {
+      const exists = prev.some((l) => l.noRegistrasi === newLetter.noRegistrasi || l.id === newLetter.id);
+      if (exists) return prev.map((l) => (l.noRegistrasi === newLetter.noRegistrasi ? newLetter : l));
+      return [newLetter, ...prev];
+    });
   };
 
   const handleUpdateLetterStatus = async (id: string, newStatus: LetterRequest['statusSurat'], note?: string) => {

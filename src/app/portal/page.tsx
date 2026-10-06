@@ -223,48 +223,22 @@ export default function PortalPage() {
     showToast(`Status permohonan surat berhasil diperbarui ke: ${newStatus.replace('_', ' ').toUpperCase()}`);
   };
 
-  const handleAddLetter = async (newLetter: LetterRequest) => {
-    setLetters((prev) => [newLetter, ...prev]);
-
-    try {
-      const res = await fetch('/api/surat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newLetter),
-      });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.data?.id) {
-          setLetters((prev) => prev.map((l) => (l.noRegistrasi === newLetter.noRegistrasi ? json.data : l)));
-        }
-      }
-    } catch (e) {
-      console.warn('Gagal menyimpan surat ke database API:', e);
-    }
-
-    showToast(`Permohonan surat baru berhasil diajukan dengan nomor ${newLetter.noRegistrasi}`);
+  const handleAddLetter = (newLetter: LetterRequest) => {
+    setLetters((prev) => {
+      const exists = prev.some((l) => l.noRegistrasi === newLetter.noRegistrasi || l.id === newLetter.id);
+      if (exists) return prev.map((l) => (l.noRegistrasi === newLetter.noRegistrasi ? newLetter : l));
+      return [newLetter, ...prev];
+    });
+    showToast(`Permohonan surat berhasil diajukan dengan nomor ${newLetter.noRegistrasi}`);
   };
 
-  const handleAddReport = async (newReport: CitizenReport) => {
-    setReports((prev) => [newReport, ...prev]);
-
-    try {
-      const res = await fetch('/api/lapor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newReport),
-      });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.data?.id) {
-          setReports((prev) => prev.map((r) => (r.ticketNo === newReport.ticketNo ? json.data : r)));
-        }
-      }
-    } catch (e) {
-      console.warn('Gagal menyimpan laporan ke database API:', e);
-    }
-
-    showToast(`Laporan insiden berhasil dikirim dengan tiket ${newReport.ticketNo}`);
+  const handleAddReport = (newReport: CitizenReport) => {
+    setReports((prev) => {
+      const exists = prev.some((r) => r.ticketNo === newReport.ticketNo || r.id === newReport.id);
+      if (exists) return prev.map((r) => (r.ticketNo === newReport.ticketNo ? newReport : r));
+      return [newReport, ...prev];
+    });
+    showToast(`Laporan aduan #${newReport.ticketNo} berhasil dicatat.`);
   };
 
   const handleUpdateReportStatus = async (id: string, newStatus: CitizenReport['status'], tanggapan?: string) => {
