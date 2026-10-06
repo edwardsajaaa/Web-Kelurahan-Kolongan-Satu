@@ -54,8 +54,12 @@ export default function MonografiPage() {
     };
 
     return () => {
-      delete (window as any).filterSection;
-      delete (window as any).handleSearch;
+      try {
+        (window as any).filterSection = undefined;
+        (window as any).handleSearch = undefined;
+      } catch {
+        // safe fallback
+      }
     };
   }, []);
 
