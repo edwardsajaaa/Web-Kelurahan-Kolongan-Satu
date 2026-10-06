@@ -17,24 +17,35 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    if (!body.namaWarga || !body.kontakWarga || !body.isiLaporan) {
+    const nama = body.nama_warga || body.namaWarga;
+    const kontak = body.kontak_warga || body.kontakWarga;
+    const isi = body.isi_laporan || body.isiLaporan;
+    const lingkungan = Number(body.lingkungan_id || body.lingkunganId) || 1;
+    const klasifikasi = body.klasifikasi || 'Air Bersih';
+
+    if (!nama || !kontak || !isi) {
       return NextResponse.json(
-        { success: false, error: 'Nama Warga, Kontak, dan Isi Laporan wajib diisi.' },
+        { success: false, error: 'Nama Warga, Kontak HP/WA, dan Isi Laporan wajib diisi.' },
         { status: 400 }
       );
     }
 
+    const ticketNo =
+      body.ticket_no ||
+      body.ticketNo ||
+      `LAPOR-KKT-${Math.floor(1000 + Math.random() * 9000)}`;
+
     const newReport = await submitReport({
-      ticketNo: body.ticketNo || `LAPOR-KKT-${Math.floor(1000 + Math.random() * 9000)}`,
-      namaWarga: body.namaWarga,
-      kontakWarga: body.kontakWarga,
-      lingkunganId: Number(body.lingkunganId) || 1,
-      lingkunganName: body.lingkunganName || `Lingkungan ${body.lingkunganId || 1}`,
-      klasifikasi: body.klasifikasi || 'Air Bersih',
-      isiLaporan: body.isiLaporan,
-      fotoBuktiUrl: body.fotoBuktiUrl,
+      ticketNo,
+      namaWarga: nama,
+      kontakWarga: kontak,
+      lingkunganId: lingkungan,
+      lingkunganName: `Lingkungan ${lingkungan} (Jaga ${lingkungan})`,
+      klasifikasi,
+      isiLaporan: isi,
+      fotoBuktiUrl: body.foto_bukti_url || body.fotoBuktiUrl,
       status: 'menunggu_tanggapan',
-      statusLabel: 'Menunggu Tanggapan',
+      statusLabel: 'Menunggu Disposisi',
       dilaporkanPada: new Date().toLocaleDateString('id-ID', {
         day: '2-digit',
         month: 'short',
@@ -42,7 +53,14 @@ export async function POST(req: NextRequest) {
       }),
     });
 
-    return NextResponse.json({ success: true, data: newReport }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: newReport,
+        ticket_no: newReport.ticketNo,
+      },
+      { status: 201 }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || 'Gagal mengirim laporan warga' },
