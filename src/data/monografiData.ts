@@ -658,5 +658,324 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
         ['Warga Lansia Berpulang', '-1 Jiwa', '08 Feb 2026', 'Seklur Ferromel'],
       ]
     }
+  },
+  {
+    id: 'kependudukan-2025',
+    year: 2025,
+    title: 'Rekapitulasi Kependudukan & Teritorial (2025)',
+    category: 'Kependudukan',
+    categoryKey: 'kependudukan',
+    statsLabel: 'Agregat Penduduk 2025',
+    statsValue: '1.512 Jiwa • 1.512 KK',
+    badgeLabel: 'Data Mutakhir 2025',
+    image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=900&auto=format&fit=crop&q=80',
+    kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
+    description: 'Data resmi Monografi Kelurahan Kolongan Satu Tahun 2025. Total penduduk mencapai 1.512 jiwa dengan hak pilih 1.245 jiwa dan luas wilayah administratif mencapai 208,25 Hektar.',
+    detailedNotes: [
+      'Batas Wilayah 2025: Utara (Kelurahan Kolongan), Timur (Kelurahan Walian / Matani Tiga), Selatan (Kelurahan Lansot), Barat (Kelurahan Lansot).',
+      'Luas Wilayah Total: 208,25 Ha (Tanah Kering 185,75 Ha, Pemukiman 34,50 Ha, Pertanian/Perkebunan 9,50 Ha, Fasilitas Umum 7,50 Ha, Sawah 5,00 Ha, Pekarangan 4,00 Ha, Rawa 0,50 Ha, Lahan Tidur 0,05 Ha).',
+      'Kelompok Usia: Balita (0-6 thn) 121 jiwa, Usia Sekolah (7-18 thn) 247 jiwa, Produktif (18-56 thn) 864 jiwa, Lansia (>56 thn) 280 jiwa.',
+      'Karakteristik Geografis: Ketinggian 700 - 900 mdpl, suhu rata-rata 23°C, curah hujan 600 - 800 mm, dataran tinggi bergelombang subur.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '10 Januari 2025 - 08:30 WITA',
+    metrics: {
+      totalWarga: 1512,
+      kepalaKeluarga: 1512,
+      pria: 730,
+      wanita: 782,
+      customMetrics: [
+        { label: 'Hak Pilih Pemilu', value: '1.245 Jiwa', color: 'indigo' },
+        { label: 'Luas Total Wilayah', value: '208,25 Ha', color: 'emerald' },
+        { label: 'Suhu Rata-rata', value: '23°C', color: 'sky' },
+        { label: 'Topografi Wilayah', value: '700-900 mdpl', color: 'purple' },
+      ]
+    },
+    chartData: {
+      type: 'bar',
+      title: 'Distribusi Kelompok Usia Penduduk 2025',
+      items: [
+        { label: 'Balita (0-6 thn)', value: 121, color: '#38bdf8' },
+        { label: 'Sekolah (7-18 thn)', value: 247, color: '#0284c7' },
+        { label: 'Produktif (18-56 thn)', value: 864, color: '#0369a1' },
+        { label: 'Lansia (>56 thn)', value: 280, color: '#0c4a6e' },
+      ]
+    },
+    tableData: {
+      headers: ['Parameter Wilayah & Demografi', 'Nilai / Kuantitas', 'Satuan', 'Keterangan'],
+      rows: [
+        ['Total Penduduk 2025', '1.512', 'Jiwa', '730 Laki-laki, 782 Perempuan'],
+        ['Kepala Keluarga (KK)', '1.512', 'KK', 'Tercatat register dukcapil'],
+        ['Hak Pilih Pemilu', '1.245', 'Jiwa', 'Warga usia 17 tahun ke atas / menikah'],
+        ['Luas Wilayah Total', '208,25', 'Hektar', 'Kecamatan Tomohon Tengah'],
+        ['Tanah Kering', '185,75', 'Hektar', 'Potensi pengembangan dan kebun'],
+        ['Pemukiman Warga', '34,50', 'Hektar', 'Kawasan hunian 5 Jaga'],
+      ]
+    }
+  },
+  {
+    id: 'lingk-1-2025',
+    year: 2025,
+    title: 'Lingkungan I (Jaga 1) - 2025',
+    category: 'Wilayah Jaga',
+    categoryKey: 'wilayah',
+    statsLabel: 'Populasi 2025',
+    statsValue: '315 Jiwa • 315 KK',
+    badgeLabel: 'Gerbang Timur',
+    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=900&auto=format&fit=crop&q=80',
+    palaName: 'Jilly Turambi',
+    kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
+    description: 'Wilayah Jaga I tahun 2025 dengan 315 jiwa warga tercatat. Menghubungkan pusat kelurahan dengan sentra bisnis dan gerbang timur kota.',
+    detailedNotes: [
+      'Pala Jaga I: Jilly Turambi memimpin koordinasi kemasyarakatan dan pelayanan administrasi warga.',
+      'Siskamling aktif dengan dukungan Linmas Kelurahan.',
+      'Akses jalan hotmix dan penerangan jalan umum 100% berfungsi baik.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '12 Januari 2025 - 09:00 WITA',
+    metrics: {
+      totalWarga: 315,
+      kepalaKeluarga: 315,
+      pria: 153,
+      wanita: 162,
+    }
+  },
+  {
+    id: 'lingk-2-2025',
+    year: 2025,
+    title: 'Lingkungan II (Jaga 2) - 2025',
+    category: 'Wilayah Jaga',
+    categoryKey: 'wilayah',
+    statsLabel: 'Populasi 2025',
+    statsValue: '292 Jiwa • 292 KK',
+    badgeLabel: 'Pusat Hunian Asri',
+    image: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=900&auto=format&fit=crop&q=80',
+    palaName: 'Robert Goni',
+    kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
+    description: 'Wilayah Jaga II tahun 2025 dengan 292 jiwa warga tercatat.',
+    detailedNotes: [
+      'Pala Jaga II: Robert Goni mengoordinasikan kegiatan Mapalus dan pos ronda lingkungan.',
+      'Sanitasi lingkungan 100% sehat dengan saluran drainase beton tertutup.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '12 Januari 2025 - 09:15 WITA',
+    metrics: {
+      totalWarga: 292,
+      kepalaKeluarga: 292,
+      pria: 141,
+      wanita: 151,
+    }
+  },
+  {
+    id: 'lingk-3-2025',
+    year: 2025,
+    title: 'Lingkungan III (Jaga 3) - 2025',
+    category: 'Wilayah Jaga',
+    categoryKey: 'wilayah',
+    statsLabel: 'Populasi 2025',
+    statsValue: '301 Jiwa • 301 KK',
+    badgeLabel: 'Pusat Pemerintahan',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900&auto=format&fit=crop&q=80',
+    palaName: 'Meidy Supit',
+    kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
+    description: 'Pusat wilayah pemerintahan kelurahan tahun 2025 yang menaungi Kantor Kelurahan Kolongan Satu.',
+    detailedNotes: [
+      'Pala Jaga III: Meidy Supit aktif mendampingi kegiatan posyandu dan urusan persuratan warga.',
+      'Dekat dengan pusat layanan publik, Pustu, dan sarana ibadah.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '12 Januari 2025 - 09:30 WITA',
+    metrics: {
+      totalWarga: 301,
+      kepalaKeluarga: 301,
+      pria: 145,
+      wanita: 156,
+    }
+  },
+  {
+    id: 'lingk-4-2025',
+    year: 2025,
+    title: 'Lingkungan IV (Jaga 4) - 2025',
+    category: 'Wilayah Jaga',
+    categoryKey: 'wilayah',
+    statsLabel: 'Populasi 2025',
+    statsValue: '308 Jiwa • 308 KK',
+    badgeLabel: 'Sentra Hortikultura',
+    image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=900&auto=format&fit=crop&q=80',
+    palaName: 'Frits Pangalila',
+    kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
+    description: 'Wilayah Jaga IV tahun 2025 dengan 308 jiwa warga tercatat.',
+    detailedNotes: [
+      'Pala Jaga IV: Frits Pangalila.',
+      'Sentra kebun sayur hortikultura kaki gunung dan peternakan higienis warga.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '12 Januari 2025 - 09:45 WITA',
+    metrics: {
+      totalWarga: 308,
+      kepalaKeluarga: 308,
+      pria: 149,
+      wanita: 159,
+    }
+  },
+  {
+    id: 'lingk-5-2025',
+    year: 2025,
+    title: 'Lingkungan V (Jaga 5) - 2025',
+    category: 'Wilayah Jaga',
+    categoryKey: 'wilayah',
+    statsLabel: 'Populasi 2025',
+    statsValue: '296 Jiwa • 296 KK',
+    badgeLabel: 'Lereng Asri Barat',
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&auto=format&fit=crop&q=80',
+    palaName: 'Steven Wowor',
+    kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
+    description: 'Wilayah lereng perbukitan asri Jaga V tahun 2025 dengan 296 jiwa warga tercatat.',
+    detailedNotes: [
+      'Pala Jaga V: Steven Wowor.',
+      'Batas Barat berbatasan dengan Kelurahan Lansot.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '12 Januari 2025 - 10:00 WITA',
+    metrics: {
+      totalWarga: 296,
+      kepalaKeluarga: 296,
+      pria: 142,
+      wanita: 154,
+    }
+  },
+  {
+    id: 'pendidikan-2025',
+    year: 2025,
+    title: 'Pendidikan & Rasio Guru-Murid (2025)',
+    category: 'Pendidikan & Sosial',
+    categoryKey: 'pendidikan',
+    statsLabel: 'Lulusan & Pelajar 2025',
+    statsValue: '175 Sarjana • 421 SMA • 24 Magister/Doktor',
+    badgeLabel: 'SDM Berkualitas',
+    image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=900&auto=format&fit=crop&q=80',
+    kasieName: 'Karlin S. Poter (Pelaksana Adm & Pendidikan)',
+    description: 'Data statistik pendidikan formal tahun 2025. Terdata 175 lulusan Sarjana S1, 421 lulusan SMA/SMK, 24 lulusan Pascasarjana (22 S2, 2 S3), serta 1 lulusan SLB.',
+    detailedNotes: [
+      'Rasio Guru dan Murid 2025: TK (1 Guru, 17 Murid), SD (11 Guru, 138 Murid), SMP (4 Guru, 60 Murid), SMA (8 Guru, 49 Murid).',
+      'Sedang Menempuh Sekolah Usia 7-18: 221 Jiwa (112 Laki-laki, 109 Perempuan).',
+      'Tingkat Kelulusan: Tamat SD 70 (35 L, 35 P), Tamat SMP 179 (96 L, 83 P), Tamat SMA 421 (190 L, 231 P), Tamat D2 13, Tamat D3 36, Tamat S1 175 (76 L, 99 P), Tamat S2 22, Tamat S3 2, Tamat SLB 1.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '14 Januari 2025 - 11:00 WITA',
+    metrics: {
+      customMetrics: [
+        { label: 'Tamat SMA / SMK', value: '421 Jiwa', color: 'blue' },
+        { label: 'Tamat Sarjana S-1', value: '175 Jiwa', color: 'emerald' },
+        { label: 'Tamat Pascasarjana', value: '24 Jiwa (22 S2, 2 S3)', color: 'indigo' },
+        { label: 'Tamat SMP / MTs', value: '179 Jiwa', color: 'sky' },
+      ]
+    },
+    tableData: {
+      headers: ['Jenjang Pendidikan', 'Jumlah Guru', 'Jumlah Murid', 'Rasio Guru:Murid'],
+      rows: [
+        ['Taman Kanak-kanak (TK)', 1, 17, '1 : 17'],
+        ['Sekolah Dasar (SD)', 11, 138, '1 : 12.5'],
+        ['Sekolah Menengah Pertama (SMP)', 4, 60, '1 : 15'],
+        ['Sekolah Menengah Atas (SMA)', 8, 49, '1 : 6.1'],
+      ]
+    }
+  },
+  {
+    id: 'ekonomi-umkm-2025',
+    year: 2025,
+    title: 'Perekonomian & Pusat Bisnis UMKM (2025)',
+    category: 'Potensi Ekonomi',
+    categoryKey: 'ekonomi',
+    statsLabel: 'Sentra Bisnis 2025',
+    statsValue: '9 Sentra Bisnis • Karyawan Swasta Dominan',
+    badgeLabel: 'Ekonomi Mandiri',
+    image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=900&auto=format&fit=crop&q=80',
+    kasieName: 'Mathilda Mantow, SE (Kasie Pembangunan)',
+    description: 'Perekonomian Kelurahan Kolongan Satu Tahun 2025 bertumbuh pesat dengan keberadaan 9 sentra bisnis dan gerai UMKM terkemuka.',
+    detailedNotes: [
+      'Tempat Usaha Terkemuka 2025: Fides Sport Club, Monstera Cafe, Apotik Wins Dental, Etsuko Kitchen, Taman Asri Edelweis, Dealer Dilan Kaven, Cataleya Florist, AlfaMart, Eugne Dessert and Pastry.',
+      'Sektor Profesi Dominan: Karyawan Swasta (184 orang), Wiraswasta (123 orang), PNS (85 orang), Tenaga Medis/Perawat (34 orang), Petani (32 orang).'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '15 Januari 2025 - 14:00 WITA',
+    metrics: {
+      customMetrics: [
+        { label: 'Karyawan Swasta', value: '184 Orang', color: 'blue' },
+        { label: 'Wiraswasta / Bisnis', value: '123 Orang', color: 'emerald' },
+        { label: 'Aparatur Sipil Negara (PNS)', value: '85 Orang', color: 'indigo' },
+        { label: 'Tenaga Medis / Perawat', value: '34 Orang', color: 'teal' },
+      ]
+    },
+    tableData: {
+      headers: ['Nama Tempat Usaha', 'Kategori Bisnis', 'Status Operasional', 'Dampak Ekonomi'],
+      rows: [
+        ['Fides Sport Club', 'Fasilitas Olahraga & Kebugaran', 'Aktif Harian', 'Pusat kegiatan warga'],
+        ['Monstera Cafe', 'Kuliner & Kafe Modern', 'Aktif', 'Daya tarik anak muda'],
+        ['Apotik Wins Dental', 'Kesehatan & Farmasi Gigi', 'Aktif', 'Pelayanan medis terdekat'],
+        ['Etsuko Kitchen', 'Kuliner Makanan & Resto', 'Aktif', 'Penyerap tenaga kerja'],
+        ['Taman Asri Edelweis', 'Hortikultura & Wisata Bunga', 'Aktif', 'Ikon kota bunga Tomohon'],
+        ['Dealer Dilan Kaven', 'Otomotif & Transportasi', 'Aktif', 'Perdagangan jasa'],
+        ['Cataleya Florist', 'Florist & Bunga Segar', 'Aktif', 'Ekspor lokal bunga'],
+        ['AlfaMart', 'Retail Modern Sembako', 'Aktif 24 Jam', 'Kebutuhan pokok'],
+        ['Eugne Dessert and Pastry', 'Toko Kue & Bakery', 'Aktif', 'Produksi pangan lokal'],
+      ]
+    }
+  },
+  {
+    id: 'keagamaan-2025',
+    year: 2025,
+    title: 'Keagamaan & Sarana Tempat Ibadah (2025)',
+    category: 'Pendidikan & Sosial',
+    categoryKey: 'pendidikan',
+    statsLabel: 'Kerukunan Beragama 2025',
+    statsValue: 'Katolik 921 • Protestan 506 • Islam 57',
+    badgeLabel: 'Harmoni Keberagaman',
+    image: 'https://images.unsplash.com/photo-1548625361-196142171542?w=900&auto=format&fit=crop&q=80',
+    kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
+    description: 'Data keagamaan tahun 2025 mencatat komposisi: Umat Katolik 921 jiwa, Umat Kristen Protestan 506 jiwa, dan Umat Islam 57 jiwa dengan 4 gedung gereja resmi.',
+    detailedNotes: [
+      'Gedung Gereja Resmi: Gedung Gereja GMIM Elohim, Gedung Gereja GSJK, Gedung Gereja Kristus A, Gedung Gereja Kristianus.',
+      'Toleransi antar-umat beragama berlangsung harmonis melalui badan musyawarah gereja dan forum keagamaan kelurahan.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '16 Januari 2025 - 10:00 WITA',
+    metrics: {
+      customMetrics: [
+        { label: 'Umat Katolik', value: '921 Jiwa (60,9%)', color: 'blue' },
+        { label: 'Umat Protestan', value: '506 Jiwa (33,5%)', color: 'sky' },
+        { label: 'Umat Islam', value: '57 Jiwa (3,8%)', color: 'emerald' },
+        { label: 'Bangunan Gereja', value: '4 Gedung Resmi', color: 'indigo' },
+      ]
+    }
+  },
+  {
+    id: 'sarana-publik-2025',
+    year: 2025,
+    title: 'Sarana Olahraga, Kesehatan & Fasilitas Publik (2025)',
+    category: 'Lingkungan Hidup',
+    categoryKey: 'lingkungan',
+    statsLabel: 'Fasilitas Publik 2025',
+    statsValue: '6 Lap. Olahraga • 1 Pustu • Posyandu',
+    badgeLabel: 'Fasilitas Memadai',
+    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900&auto=format&fit=crop&q=80',
+    kasieName: 'Mathilda Mantow, SE (Kasie Pembangunan)',
+    description: 'Fasilitas sarana umum tahun 2025 meliputi 2 Lapangan Badminton, 2 Lapangan Bola Volly, 2 Lapangan Basket, 1 Puskesmas Pembantu, Gedung Posyandu, Praktek Dokter, Praktek Gigi, dan armada pengangkut sampah rutin Pemkot Tomohon.',
+    detailedNotes: [
+      'Olahraga: 2 Lapangan Badminton, 2 Lapangan Bola Volly, 2 Lapangan Basket terawat.',
+      'Kesehatan: 1 Puskesmas Pembantu, Gedung Posyandu, Praktek Dokter umum, Praktek Dokter Gigi.',
+      'Kebersihan Lingkungan: Petugas Kebersihan Rutin DLH Pemkot Tomohon melayani setiap Jaga.'
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '18 Januari 2025 - 13:00 WITA',
+    metrics: {
+      customMetrics: [
+        { label: 'Sarana Olahraga', value: '6 Lapangan Terawat', color: 'emerald' },
+        { label: 'Puskesmas Pembantu', value: '1 Unit', color: 'teal' },
+        { label: 'Posyandu & Praktek', value: 'Layanan Lengkap', color: 'blue' },
+        { label: 'Petugas Kebersihan', value: 'Rutin Pemkot', color: 'purple' },
+      ]
+    }
   }
 ];
+
