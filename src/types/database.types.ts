@@ -36,6 +36,7 @@ export interface Database {
           wakil_lingkungan?: string;
           kontak_pala?: string | null;
         };
+        Relationships: [];
       };
       roles: {
         Row: {
@@ -56,6 +57,7 @@ export interface Database {
           nama_peran?: string;
           deskripsi?: string | null;
         };
+        Relationships: [];
       };
       user_profiles: {
         Row: {
@@ -88,6 +90,7 @@ export interface Database {
           is_active?: boolean;
           created_at?: string;
         };
+        Relationships: [];
       };
       periode_tahun: {
         Row: {
@@ -105,6 +108,7 @@ export interface Database {
           status_terkunci?: boolean;
           dikunci_pada?: string | null;
         };
+        Relationships: [];
       };
       monografi_rekap: {
         Row: {
@@ -143,6 +147,7 @@ export interface Database {
           approver_lurah_id?: string | null;
           updated_at?: string;
         };
+        Relationships: [];
       };
       layanan_surat: {
         Row: {
@@ -155,8 +160,11 @@ export interface Database {
           isi_permohonan: Json;
           berkas_lampiran_url: string | null;
           status_surat: 'diajukan' | 'diverifikasi_staf' | 'diparaf_seklur' | 'selesai_disahkan' | 'ditolak';
-          diparaf_oleh: string | null;
+          catatan_petugas?: string | null;
+          diparaf_oleh?: string | null;
+          disahkan_oleh?: string | null;
           created_at: string;
+          updated_at?: string;
         };
         Insert: {
           id?: string;
@@ -168,8 +176,11 @@ export interface Database {
           isi_permohonan: Json;
           berkas_lampiran_url?: string | null;
           status_surat?: 'diajukan' | 'diverifikasi_staf' | 'diparaf_seklur' | 'selesai_disahkan' | 'ditolak';
+          catatan_petugas?: string | null;
           diparaf_oleh?: string | null;
+          disahkan_oleh?: string | null;
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
@@ -181,13 +192,18 @@ export interface Database {
           isi_permohonan?: Json;
           berkas_lampiran_url?: string | null;
           status_surat?: 'diajukan' | 'diverifikasi_staf' | 'diparaf_seklur' | 'selesai_disahkan' | 'ditolak';
+          catatan_petugas?: string | null;
           diparaf_oleh?: string | null;
+          disahkan_oleh?: string | null;
           created_at?: string;
+          updated_at?: string;
         };
+        Relationships: [];
       };
       laporan_warga: {
         Row: {
           id: string;
+          ticket_no?: string | null;
           lingkungan_id: number;
           nama_warga: string;
           kontak_warga: string;
@@ -195,10 +211,13 @@ export interface Database {
           isi_laporan: string;
           foto_bukti_url: string | null;
           status: 'menunggu_tanggapan' | 'dalam_tindakan' | 'selesai';
+          tanggapan_petugas?: string | null;
           dilaporkan_pada: string;
+          diselesaikan_pada?: string | null;
         };
         Insert: {
           id?: string;
+          ticket_no?: string | null;
           lingkungan_id: number;
           nama_warga: string;
           kontak_warga: string;
@@ -206,10 +225,13 @@ export interface Database {
           isi_laporan: string;
           foto_bukti_url?: string | null;
           status?: 'menunggu_tanggapan' | 'dalam_tindakan' | 'selesai';
+          tanggapan_petugas?: string | null;
           dilaporkan_pada?: string;
+          diselesaikan_pada?: string | null;
         };
         Update: {
           id?: string;
+          ticket_no?: string | null;
           lingkungan_id?: number;
           nama_warga?: string;
           kontak_warga?: string;
@@ -217,8 +239,11 @@ export interface Database {
           isi_laporan?: string;
           foto_bukti_url?: string | null;
           status?: 'menunggu_tanggapan' | 'dalam_tindakan' | 'selesai';
+          tanggapan_petugas?: string | null;
           dilaporkan_pada?: string;
+          diselesaikan_pada?: string | null;
         };
+        Relationships: [];
       };
       audit_logs: {
         Row: {
@@ -245,6 +270,7 @@ export interface Database {
           rekaman_perubahan?: Json | null;
           waktu_eksekusi?: string;
         };
+        Relationships: [];
       };
     };
   };
