@@ -8,7 +8,6 @@ import {
   FileText,
   AlertTriangle,
   Send,
-  Database,
   BarChart3,
   Droplets,
   PawPrint,
@@ -25,7 +24,6 @@ interface SidebarProps {
   pendingLettersCount: number;
   activeReportsCount: number;
   onOpenWhatsAppSimulator: () => void;
-  onOpenSqlModal: () => void;
 }
 
 export default function Sidebar({
@@ -36,7 +34,6 @@ export default function Sidebar({
   pendingLettersCount,
   activeReportsCount,
   onOpenWhatsAppSimulator,
-  onOpenSqlModal,
 }: SidebarProps) {
   const navItems = [
     {
@@ -170,19 +167,6 @@ export default function Sidebar({
             <span className="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full font-bold">
               Kirim
             </span>
-          </button>
-
-          {/* Quick Action Button: SQL Schema */}
-          <button
-            onClick={onOpenSqlModal}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-xs text-[#535f70] bg-white hover:bg-[#f2f3ff] border border-[#e2e7ff] hover:border-[#dae2fd] transition group"
-            title="Lihat skema database DDL PostgreSQL"
-          >
-            <div className="flex items-center space-x-2.5">
-              <Database className="w-4 h-4 text-[#707881] group-hover:text-primary transition" />
-              <span className="text-left group-hover:text-[#131b2e]">Skema Database</span>
-            </div>
-            <span className="text-[10px] text-[#707881] font-mono">SQL</span>
           </button>
         </div>
       </div>

@@ -15,7 +15,6 @@ import ModalCitizenReport from '@/components/ModalCitizenReport';
 import ModalWhatsAppSimulator from '@/components/ModalWhatsAppSimulator';
 import ModalOfficialLetterPreview from '@/components/ModalOfficialLetterPreview';
 import ModalMonografiPrint from '@/components/ModalMonografiPrint';
-import ModalSqlSchema from '@/components/ModalSqlSchema';
 import ModalEditMonografi from '@/components/ModalEditMonografi';
 
 import { Menu, X, Send, CheckCircle2, ArrowLeft } from 'lucide-react';
@@ -23,6 +22,7 @@ import { Menu, X, Send, CheckCircle2, ArrowLeft } from 'lucide-react';
 export default function PortalPage() {
   // Master data states
   const [monografiList, setMonografiList] = useState<MonografiItem[]>(MONOGRAFI_ITEMS);
+  const [availableYears, setAvailableYears] = useState<number[]>([2024, 2025]);
   const [selectedId, setSelectedId] = useState<string>('kependudukan-2025');
   const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -42,7 +42,6 @@ export default function PortalPage() {
   const [isLetterModalOpen, setIsLetterModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false);
-  const [isSqlModalOpen, setIsSqlModalOpen] = useState(false);
   const [isPrintLetterOpen, setIsPrintLetterOpen] = useState(false);
   const [isPrintMonografiOpen, setIsPrintMonografiOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -71,9 +70,10 @@ export default function PortalPage() {
   React.useEffect(() => {
     async function loadBackendData() {
       try {
-        const [resLetters, resReports] = await Promise.all([
+        const [resLetters, resReports, resMonografi] = await Promise.all([
           fetch('/api/surat'),
           fetch('/api/lapor'),
+          fetch('/api/monografi'),
         ]);
 
         if (resLetters.ok) {
@@ -87,6 +87,16 @@ export default function PortalPage() {
           const dataReports = await resReports.json();
           if (dataReports.success && dataReports.data) {
             setReports(dataReports.data);
+          }
+        }
+
+        if (resMonografi.ok) {
+          const dataMonografi = await resMonografi.json();
+          if (dataMonografi.success && dataMonografi.data) {
+            setMonografiList(dataMonografi.data);
+          }
+          if (dataMonografi.availableYears && Array.isArray(dataMonografi.availableYears)) {
+            setAvailableYears(dataMonografi.availableYears);
           }
         }
       } catch (err) {
@@ -213,6 +223,39 @@ export default function PortalPage() {
       console.warn('Gagal simpan edit monografi ke API:', err);
       setMonografiList(prevList);
       showToast(`Peringatan: Gagal sinkronisasi ke server (${err.message}). Status dikembalikan.`);
+    }
+  };
+
+  const handleCreateNewYear = async (newYear: number) => {
+    try {
+      showToast(`Membuka periode draf monografi tahun ${newYear}...`);
+      const res = await fetch('/api/monografi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_year', newYear }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (data.availableYears) {
+          setAvailableYears(data.availableYears);
+        } else {
+          setAvailableYears((prev) => (prev.includes(newYear) ? prev : [...prev, newYear].sort()));
+        }
+        if (data.items) {
+          setMonografiList(data.items);
+        }
+        setSelectedYear(newYear);
+        const firstInNewYear = data.items?.find((m: MonografiItem) => m.year === newYear);
+        if (firstInNewYear) {
+          setSelectedId(firstInNewYear.id);
+        }
+        showToast(`Periode draf monografi ${newYear} berhasil disiapkan! Silakan input data.`);
+      } else {
+        throw new Error(data.error || 'Gagal membuat tahun baru');
+      }
+    } catch (err: any) {
+      console.warn('Gagal membuat tahun baru:', err);
+      showToast(`Gagal membuat tahun baru: ${err.message || 'Koneksi bermasalah'}`);
     }
   };
 
@@ -421,7 +464,6 @@ export default function PortalPage() {
           pendingLettersCount={letters.filter((l) => l.statusSurat !== 'selesai_disahkan').length}
           activeReportsCount={reports.filter((r) => r.status !== 'selesai').length}
           onOpenWhatsAppSimulator={() => setIsWhatsAppOpen(true)}
-          onOpenSqlModal={() => setIsSqlModalOpen(true)}
         />
       </div>
 
@@ -448,6 +490,8 @@ export default function PortalPage() {
         onChangeCategory={(cat) => setSelectedCategory(cat)}
         searchQuery={searchQuery}
         onChangeSearch={(q) => setSearchQuery(q)}
+        availableYears={availableYears}
+        onCreateYear={handleCreateNewYear}
       />
 
       {/* 3. KOLOM KANAN: DETAIL DATA & GRAFIK (MASTER-DETAIL VIEW) */}
@@ -507,13 +551,7 @@ export default function PortalPage() {
         item={activeDetail}
       />
 
-      {/* MODAL 6: SKEMA SQL DATABASE SUPABASE */}
-      <ModalSqlSchema
-        isOpen={isSqlModalOpen}
-        onClose={() => setIsSqlModalOpen(false)}
-      />
-
-      {/* MODAL 7: EDIT DATA MONOGRAFI APARATUR */}
+      {/* MODAL 6: EDIT DATA MONOGRAFI APARATUR */}
       <ModalEditMonografi
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}

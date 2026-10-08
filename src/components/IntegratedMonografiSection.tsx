@@ -6,21 +6,27 @@ import { DATA_MONOGRAFI_2025 } from '@/data/monografi2025';
 import { AvailableYear, CURRENT_ACTIVE_YEAR } from '@/data';
 
 interface IntegratedMonografiSectionProps {
-  selectedYear?: AvailableYear;
-  onYearChange?: (year: AvailableYear) => void;
+  selectedYear?: AvailableYear | number;
+  onYearChange?: (year: AvailableYear | number) => void;
+  liveSummary?: any;
+  availableYears?: number[];
 }
 
 export default function IntegratedMonografiSection({
   selectedYear: externalYear,
   onYearChange: externalOnYearChange,
+  liveSummary,
+  availableYears,
 }: IntegratedMonografiSectionProps) {
-  const [internalYear, setInternalYear] = useState<AvailableYear>(CURRENT_ACTIVE_YEAR);
-  const activeYear = externalYear ?? internalYear;
+  const [internalYear, setInternalYear] = useState<number>(CURRENT_ACTIVE_YEAR);
+  const activeYear = (externalYear ?? internalYear) as number;
 
-  const handleYearToggle = (year: AvailableYear) => {
+  const availableYearsList = availableYears && availableYears.length > 0 ? availableYears : [2024, 2025];
+
+  const handleYearToggle = (year: number) => {
     setInternalYear(year);
     if (externalOnYearChange) {
-      externalOnYearChange(year);
+      externalOnYearChange(year as any);
     }
   };
 
@@ -64,13 +70,13 @@ export default function IntegratedMonografiSection({
   const showFasilitas = (activeCategory === 'semua' || activeCategory === 'fasilitas') && matchesSearch('fasilitas ibadah gmim katolik elohim gsjk kristus kristianus kesehatan pustu posyandu dokter apotek sekolah sd tk perpustakaan jalan jembatan ojek bendi sampah sanitasi odf olahraga badminton basket volly');
   const showKelembagaan = (activeCategory === 'semua' || activeCategory === 'kelembagaan') && matchesSearch('kelembagaan linmas babinsa bhabinkamtibmas pkk lpm karang taruna parpol golkar pdip demokrat gerindra kantor inventaris lemari komputer buku');
 
-  // Dynamic values depending on active year (2025 vs 2024)
+  // Dynamic values depending on active year (2025 vs 2024 vs liveSummary)
   const is2025 = activeYear === 2025;
-  const currentTotalJiwa = is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_jiwa : DATA_MONOGRAFI_2024.demografi.totalPenduduk;
-  const currentTotalKK = is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_kk : DATA_MONOGRAFI_2024.demografi.kepalaKeluarga;
-  const currentPria = is2025 ? DATA_MONOGRAFI_2025.kependudukan.laki_laki : DATA_MONOGRAFI_2024.demografi.lakiLaki;
-  const currentWanita = is2025 ? DATA_MONOGRAFI_2025.kependudukan.perempuan : DATA_MONOGRAFI_2024.demografi.perempuan;
-  const currentLuasHa = is2025 ? DATA_MONOGRAFI_2025.wilayah.luas_total_ha : DATA_MONOGRAFI_2024.geografis.luasTotalHa;
+  const currentTotalJiwa = liveSummary?.totalPenduduk ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_jiwa : DATA_MONOGRAFI_2024.demografi.totalPenduduk);
+  const currentTotalKK = liveSummary?.kepalaKeluarga ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_kk : DATA_MONOGRAFI_2024.demografi.kepalaKeluarga);
+  const currentPria = liveSummary?.lakiLaki ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.laki_laki : DATA_MONOGRAFI_2024.demografi.lakiLaki);
+  const currentWanita = liveSummary?.perempuan ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.perempuan : DATA_MONOGRAFI_2024.demografi.perempuan);
+  const currentLuasHa = liveSummary?.luasTotalHa ?? (is2025 ? DATA_MONOGRAFI_2025.wilayah.luas_total_ha : DATA_MONOGRAFI_2024.geografis.luasTotalHa);
 
   const currentKatolik = is2025 ? DATA_MONOGRAFI_2025.keagamaan.katolik : 931;
   const currentProtestan = is2025 ? DATA_MONOGRAFI_2025.keagamaan.protestan : 504;
@@ -106,9 +112,9 @@ export default function IntegratedMonografiSection({
               Monografi Kelurahan {activeYear}
             </h2>
 
-            {/* Year Selector (2024 vs 2025) */}
+            {/* Year Selector */}
             <div className="inline-flex items-center bg-[#f2f3ff] p-1 rounded-full border border-[#dae2fd]">
-              {([2024, 2025] as AvailableYear[]).map((yr) => (
+              {availableYearsList.map((yr) => (
                 <button
                   key={yr}
                   onClick={() => handleYearToggle(yr)}
@@ -118,7 +124,7 @@ export default function IntegratedMonografiSection({
                       : 'text-[#535f70] hover:text-[#131b2e]'
                   }`}
                 >
-                  {yr}
+                  {yr} {yr === Math.max(...availableYearsList) ? '(Terbaru)' : ''}
                 </button>
               ))}
             </div>

@@ -343,11 +343,182 @@ export async function updateReportStatus(
 }
 
 // ==========================================
-// 3. MONOGRAFI REKAP & PENGESAHAN
+// 3. MONOGRAFI REKAP & PENGESAHAN (DYNAMIC STORE & ANNUAL SUMMARIES)
 // ==========================================
+
+export interface AnnualMonografiSummary {
+  tahun: number;
+  totalJiwa: number;
+  totalKK: number;
+  lakiLaki: number;
+  perempuan: number;
+  luasTotalHa: number;
+  hakPilih?: number;
+  keagamaan: {
+    katolik: number;
+    protestan: number;
+    islam: number;
+  };
+  kelompokUsia: {
+    balita: number;
+    usiaSekolah: number;
+    produktif: number;
+    lansia: number;
+  };
+  tataGunaLahan: {
+    pemukimanHa: number;
+    pertanianHa: number;
+    tanahKeringHa?: number;
+    pekaranganHa?: number;
+    fasumHa?: number;
+    totalHa: number;
+  };
+  jagaList: {
+    id: string;
+    nama: string;
+    kk: number;
+    lakiLaki: number;
+    perempuan: number;
+    populasi: number;
+    pala: string;
+  }[];
+  statusTahapan: 'disahkan_lurah' | 'diverifikasi_seklur' | 'draft';
+  lastUpdated: string;
+}
+
+let inMemorySummaries: Record<number, AnnualMonografiSummary> = {
+  2024: {
+    tahun: 2024,
+    totalJiwa: 1484,
+    totalKK: 540,
+    lakiLaki: 725,
+    perempuan: 759,
+    luasTotalHa: 48.05,
+    keagamaan: {
+      katolik: 931,
+      protestan: 504,
+      islam: 49,
+    },
+    kelompokUsia: {
+      balita: 109,
+      usiaSekolah: 222,
+      produktif: 876,
+      lansia: 277,
+    },
+    tataGunaLahan: {
+      pemukimanHa: 34.50,
+      pertanianHa: 9.50,
+      pekaranganHa: 4.05,
+      totalHa: 48.05,
+    },
+    jagaList: [
+      { id: 'jaga-1', nama: 'Lingkungan I (Jaga 1)', kk: 105, lakiLaki: 150, perempuan: 160, populasi: 310, pala: 'Jilly Turambi' },
+      { id: 'jaga-2', nama: 'Lingkungan II (Jaga 2)', kk: 108, lakiLaki: 140, perempuan: 145, populasi: 285, pala: 'Robert Goni' },
+      { id: 'jaga-3', nama: 'Lingkungan III (Jaga 3)', kk: 112, lakiLaki: 145, perempuan: 150, populasi: 295, pala: 'Meidy Supit' },
+      { id: 'jaga-4', nama: 'Lingkungan IV (Jaga 4)', kk: 107, lakiLaki: 148, perempuan: 156, populasi: 304, pala: 'Frits Pangalila' },
+      { id: 'jaga-5', nama: 'Lingkungan V (Jaga 5)', kk: 108, lakiLaki: 142, perempuan: 148, populasi: 290, pala: 'Steven Wowor' },
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '15 Maret 2024 - Pengesahan Buku Induk Faktual',
+  },
+  2025: {
+    tahun: 2025,
+    totalJiwa: 1512,
+    totalKK: 1512,
+    lakiLaki: 730,
+    perempuan: 782,
+    luasTotalHa: 208.25,
+    hakPilih: 1245,
+    keagamaan: {
+      katolik: 948,
+      protestan: 512,
+      islam: 52,
+    },
+    kelompokUsia: {
+      balita: 121,
+      usiaSekolah: 247,
+      produktif: 864,
+      lansia: 280,
+    },
+    tataGunaLahan: {
+      pemukimanHa: 34.50,
+      pertanianHa: 9.50,
+      tanahKeringHa: 185.75,
+      pekaranganHa: 4.00,
+      fasumHa: 12.50,
+      totalHa: 208.25,
+    },
+    jagaList: [
+      { id: 'jaga-1', nama: 'Lingkungan I (Jaga 1)', kk: 315, lakiLaki: 153, perempuan: 162, populasi: 315, pala: 'Jilly Turambi' },
+      { id: 'jaga-2', nama: 'Lingkungan II (Jaga 2)', kk: 292, lakiLaki: 141, perempuan: 151, populasi: 292, pala: 'Robert Goni' },
+      { id: 'jaga-3', nama: 'Lingkungan III (Jaga 3)', kk: 301, lakiLaki: 145, perempuan: 156, populasi: 301, pala: 'Meidy Supit' },
+      { id: 'jaga-4', nama: 'Lingkungan IV (Jaga 4)', kk: 308, lakiLaki: 149, perempuan: 159, populasi: 308, pala: 'Frits Pangalila' },
+      { id: 'jaga-5', nama: 'Lingkungan V (Jaga 5)', kk: 296, lakiLaki: 142, perempuan: 154, populasi: 296, pala: 'Steven Wowor' },
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '10 Februari 2025 - Pemutakhiran Semester Faktual',
+  },
+};
 
 export async function fetchMonografiItems(): Promise<MonografiItem[]> {
   return inMemoryMonografi;
+}
+
+export async function fetchAnnualSummaries(): Promise<Record<number, AnnualMonografiSummary>> {
+  return inMemorySummaries;
+}
+
+export async function fetchAvailableYears(): Promise<number[]> {
+  const years = Object.keys(inMemorySummaries).map(Number).sort((a, b) => a - b);
+  return years;
+}
+
+function syncSummaryFromItems(year: number) {
+  const summary = inMemorySummaries[year];
+  if (!summary) return;
+
+  const yearItems = inMemoryMonografi.filter((m) => m.year === year);
+  
+  // Update Jaga List if individual jaga items exist
+  const jagaItems = yearItems.filter((m) => m.categoryKey === 'wilayah' && m.id.includes('lingk-'));
+  if (jagaItems.length > 0) {
+    summary.jagaList = summary.jagaList.map((j) => {
+      const match = jagaItems.find((ji) => ji.title.toLowerCase().includes(j.nama.toLowerCase().replace('lingkungan ', '').slice(0, 4)) || ji.id.endsWith(j.id.replace('jaga-', '')));
+      if (match) {
+        return {
+          ...j,
+          kk: match.metrics.kepalaKeluarga || j.kk,
+          lakiLaki: match.metrics.pria || j.lakiLaki,
+          perempuan: match.metrics.wanita || j.perempuan,
+          populasi: match.metrics.totalWarga || j.populasi,
+          pala: match.palaName || j.pala,
+        };
+      }
+      return j;
+    });
+
+    // Recalculate totals from jaga
+    const totalJiwaFromJaga = summary.jagaList.reduce((acc, curr) => acc + curr.populasi, 0);
+    const totalPriaFromJaga = summary.jagaList.reduce((acc, curr) => acc + curr.lakiLaki, 0);
+    const totalWanitaFromJaga = summary.jagaList.reduce((acc, curr) => acc + curr.perempuan, 0);
+    const totalKKFromJaga = summary.jagaList.reduce((acc, curr) => acc + curr.kk, 0);
+
+    if (totalJiwaFromJaga > 0) {
+      summary.totalJiwa = totalJiwaFromJaga;
+      summary.lakiLaki = totalPriaFromJaga;
+      summary.perempuan = totalWanitaFromJaga;
+      summary.totalKK = totalKKFromJaga;
+    }
+  }
+
+  // Check general kependudukan item
+  const generalKependudukan = yearItems.find((m) => m.id.startsWith('kependudukan-'));
+  if (generalKependudukan && generalKependudukan.metrics.totalWarga) {
+    summary.totalJiwa = generalKependudukan.metrics.totalWarga;
+    if (generalKependudukan.metrics.kepalaKeluarga) summary.totalKK = generalKependudukan.metrics.kepalaKeluarga;
+    if (generalKependudukan.metrics.pria) summary.lakiLaki = generalKependudukan.metrics.pria;
+    if (generalKependudukan.metrics.wanita) summary.perempuan = generalKependudukan.metrics.wanita;
+  }
 }
 
 export async function updateMonografiTahapan(
@@ -367,13 +538,21 @@ export async function updateMonografiTahapan(
             ? 'Disahkan Lurah (Publikasi Sah)'
             : newTahapan === 'diverifikasi_seklur'
             ? 'Diverifikasi Seklur'
-            : 'Draf Masukan',
+            : 'Draf Masukan (Menunggu Verifikasi)',
         lastUpdated: `${new Date().toLocaleDateString('id-ID')} - ${officialName}`,
       };
       return updatedItem;
     }
     return m;
   });
+
+  if (updatedItem) {
+    const yr = (updatedItem as MonografiItem).year;
+    if (inMemorySummaries[yr]) {
+      inMemorySummaries[yr].statusTahapan = newTahapan;
+      inMemorySummaries[yr].lastUpdated = `${new Date().toLocaleDateString('id-ID')} - Disahkan ${officialName}`;
+    }
+  }
 
   return updatedItem;
 }
@@ -397,13 +576,77 @@ export async function updateMonografiContent(
             : updatedData.statusTahapan === 'diverifikasi_seklur'
             ? 'Diverifikasi Seklur'
             : 'Draf Masukan (Menunggu Verifikasi)',
-        lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Pembaruan Data Lapangan`,
+        lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Pembaruan Operator`,
       };
       return updatedItem;
     }
     return m;
   });
 
+  if (updatedItem) {
+    syncSummaryFromItems((updatedItem as MonografiItem).year);
+  }
+
   return updatedItem;
+}
+
+export async function updateAnnualSummary(
+  year: number,
+  patch: Partial<AnnualMonografiSummary>
+): Promise<AnnualMonografiSummary | null> {
+  if (!inMemorySummaries[year]) {
+    return null;
+  }
+
+  inMemorySummaries[year] = {
+    ...inMemorySummaries[year],
+    ...patch,
+    tahun: year,
+    lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Pembaruan CMS`,
+  };
+
+  return inMemorySummaries[year];
+}
+
+export async function createNewYearMonografi(
+  newYear: number,
+  sourceYear = 2025
+): Promise<{ newYear: number; items: MonografiItem[]; summary: AnnualMonografiSummary }> {
+  // Check if year already exists
+  if (!inMemorySummaries[newYear]) {
+    const baseSummary = inMemorySummaries[sourceYear] || inMemorySummaries[2025];
+    inMemorySummaries[newYear] = {
+      ...JSON.parse(JSON.stringify(baseSummary)),
+      tahun: newYear,
+      statusTahapan: 'draft',
+      lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Inisialisasi Periode Baru`,
+    };
+  }
+
+  // Clone items from source year with new IDs
+  const sourceItems = inMemoryMonografi.filter((m) => m.year === sourceYear);
+  const clonedItems: MonografiItem[] = sourceItems.map((item) => ({
+    ...JSON.parse(JSON.stringify(item)),
+    id: `${item.id.replace(new RegExp(`-${sourceYear}$`), '')}-${newYear}`,
+    year: newYear,
+    title: item.title.includes(String(sourceYear))
+      ? item.title.replace(String(sourceYear), String(newYear))
+      : `${item.title} (${newYear})`,
+    statusTahapan: 'draft',
+    badgeLabel: 'Draf Masukan (Menunggu Verifikasi)',
+    lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Salinan Draf Awal`,
+  }));
+
+  // Append cloned items
+  inMemoryMonografi = [
+    ...inMemoryMonografi.filter((m) => m.year !== newYear),
+    ...clonedItems,
+  ];
+
+  return {
+    newYear,
+    items: clonedItems,
+    summary: inMemorySummaries[newYear],
+  };
 }
 

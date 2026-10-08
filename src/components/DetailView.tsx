@@ -88,6 +88,15 @@ export default function DetailView({
                 <CheckCircle2 className="w-4 h-4 text-[#006c49]" />
                 <span>Sah: Lurah Kolongan Satu</span>
               </span>
+            ) : isLurah && onApproveItem ? (
+              <button
+                onClick={() => onApproveItem(item.id)}
+                className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 bg-[#006c49] hover:bg-[#005237] text-white rounded-full text-xs font-bold shadow-xs transition cursor-pointer"
+                title="Verifikasi final & terbitkan data ke publik"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>[Sah: Lurah Kolongan Satu]</span>
+              </button>
             ) : item.statusTahapan === 'diverifikasi_seklur' ? (
               <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold shadow-xs">
                 <Clock className="w-4 h-4 text-amber-700" />
@@ -131,17 +140,17 @@ export default function DetailView({
               {isLurah && onApproveItem && (
                 <button
                   onClick={() => onApproveItem(item.id)}
-                  className="px-4 py-1.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-[#004d77] transition flex items-center space-x-1.5 shadow-xs"
+                  className="px-4 py-1.5 rounded-xl bg-[#006c49] text-white text-xs font-bold hover:bg-[#005237] transition flex items-center space-x-1.5 shadow-xs"
                 >
                   <Check className="w-3.5 h-3.5" />
-                  <span>Sahkan & Terbitkan Data</span>
+                  <span>[Sah: Lurah Kolongan Satu]</span>
                 </button>
               )}
             </div>
           </div>
         )}
 
-        {item.statusTahapan === 'draft' && isSeklur && onVerifySeklur && (
+        {item.statusTahapan === 'draft' && (
           <div className="p-4 rounded-2xl bg-white border border-[#dae2fd] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center space-x-3">
               <div className="w-9 h-9 rounded-xl bg-[#e2e7ff] text-primary flex items-center justify-center font-bold flex-shrink-0">
@@ -149,21 +158,37 @@ export default function DetailView({
               </div>
               <div>
                 <p className="text-xs font-bold text-[#131b2e]">
-                  Draf Menunggu Verifikasi
+                  Draf Masukan Aparatur
                 </p>
                 <p className="text-[11px] text-[#535f70]">
-                  Verifikasi data lapangan untuk diteruskan ke Lurah
+                  {isLurah
+                    ? 'Anda dapat mengesahkan data ini langsung sebagai Lurah atau menunggu paraf Seklur'
+                    : 'Periksa data lapangan sebelum diajukan ke Lurah'}
                 </p>
               </div>
             </div>
 
-            <button
-              onClick={() => onVerifySeklur(item.id)}
-              className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-[#004d77] transition flex items-center space-x-1.5 shadow-xs whitespace-nowrap"
-            >
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Paraf / Verifikasi Draf</span>
-            </button>
+            <div className="flex items-center space-x-2">
+              {isSeklur && onVerifySeklur && (
+                <button
+                  onClick={() => onVerifySeklur(item.id)}
+                  className="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-[#004d77] transition flex items-center space-x-1.5 shadow-xs whitespace-nowrap"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Paraf / Verifikasi Seklur</span>
+                </button>
+              )}
+
+              {isLurah && onApproveItem && (
+                <button
+                  onClick={() => onApproveItem(item.id)}
+                  className="px-4 py-2 rounded-xl bg-[#006c49] text-white text-xs font-bold hover:bg-[#005237] transition flex items-center space-x-1.5 shadow-xs whitespace-nowrap"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>[Sah: Lurah Kolongan Satu]</span>
+                </button>
+              )}
+            </div>
           </div>
         )}
 

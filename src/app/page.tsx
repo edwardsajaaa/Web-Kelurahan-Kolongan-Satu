@@ -23,16 +23,39 @@ export default function LandingPage() {
   const [isPrintLetterOpen, setIsPrintLetterOpen] = useState(false);
   const [printLetterTarget, setPrintLetterTarget] = useState<LetterRequest | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedYear, setSelectedYear] = useState<AvailableYear>(CURRENT_ACTIVE_YEAR);
+  const [selectedYear, setSelectedYear] = useState<AvailableYear | number>(CURRENT_ACTIVE_YEAR);
   const [activeHistoryTab, setActiveHistoryTab] = useState<'cagarBudaya' | 'garisWaktu' | 'tokoh'>('cagarBudaya');
   const [isReferencesOpen, setIsReferencesOpen] = useState(false);
+  const [liveSummaries, setLiveSummaries] = useState<Record<number, any>>({});
+  const [availableYears, setAvailableYears] = useState<number[]>([2024, 2025]);
+
+  React.useEffect(() => {
+    async function fetchMonografiSummary() {
+      try {
+        const res = await fetch('/api/monografi', { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.summaries) {
+            setLiveSummaries(json.summaries);
+          }
+          if (json.availableYears && Array.isArray(json.availableYears)) {
+            setAvailableYears(json.availableYears);
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal sinkronisasi data monografi dinamis:', err);
+      }
+    }
+    fetchMonografiSummary();
+  }, []);
 
   const is2025 = selectedYear === 2025;
-  const currentTotalPenduduk = is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_jiwa : DATA_MONOGRAFI_2024.demografi.totalPenduduk;
-  const currentLakiLaki = is2025 ? DATA_MONOGRAFI_2025.kependudukan.laki_laki : DATA_MONOGRAFI_2024.demografi.lakiLaki;
-  const currentPerempuan = is2025 ? DATA_MONOGRAFI_2025.kependudukan.perempuan : DATA_MONOGRAFI_2024.demografi.perempuan;
-  const currentTotalKK = is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_kk : DATA_MONOGRAFI_2024.demografi.kepalaKeluarga;
-  const currentLuasHa = is2025 ? DATA_MONOGRAFI_2025.wilayah.luas_total_ha : DATA_MONOGRAFI_2024.geografis.luasTotalHa;
+  const activeSummary = liveSummaries[selectedYear];
+  const currentTotalPenduduk = activeSummary?.totalPenduduk ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_jiwa : DATA_MONOGRAFI_2024.demografi.totalPenduduk);
+  const currentLakiLaki = activeSummary?.lakiLaki ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.laki_laki : DATA_MONOGRAFI_2024.demografi.lakiLaki);
+  const currentPerempuan = activeSummary?.perempuan ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.perempuan : DATA_MONOGRAFI_2024.demografi.perempuan);
+  const currentTotalKK = activeSummary?.kepalaKeluarga ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_kk : DATA_MONOGRAFI_2024.demografi.kepalaKeluarga);
+  const currentLuasHa = activeSummary?.luasTotalHa ?? (is2025 ? DATA_MONOGRAFI_2025.wilayah.luas_total_ha : DATA_MONOGRAFI_2024.geografis.luasTotalHa);
 
   // Data
   const [letters, setLetters] = useState<LetterRequest[]>(INITIAL_LETTERS);
@@ -341,7 +364,12 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 3.5. INTEGRATED MONOGRAFI SECTION (Seluruh Variabel Lengkap) */}
           {/* ============================================================ */}
-          <IntegratedMonografiSection selectedYear={selectedYear} onYearChange={setSelectedYear} />
+          <IntegratedMonografiSection
+            selectedYear={selectedYear}
+            onYearChange={setSelectedYear}
+            liveSummary={activeSummary}
+            availableYears={availableYears}
+          />
 
           {/* ============================================================ */}
           {/* 4. VISI & MISI KELURAHAN (Dipimpin Lurah)                    */}

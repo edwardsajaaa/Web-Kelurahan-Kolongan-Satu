@@ -1,14 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import {
   fetchMonografiItems,
+  fetchAnnualSummaries,
+  fetchAvailableYears,
   updateMonografiTahapan,
   updateMonografiContent,
+  updateAnnualSummary,
+  createNewYearMonografi,
 } from '@/lib/supabase/service';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const items = await fetchMonografiItems();
-    return NextResponse.json({ success: true, data: items });
+    const summaries = await fetchAnnualSummaries();
+    const availableYears = await fetchAvailableYears();
+
+    return NextResponse.json({
+      success: true,
+      data: items,
+      summaries,
+      availableYears,
+    });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || 'Gagal memuat data monografi' },
@@ -20,7 +33,7 @@ export async function GET() {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, ...updatedFields } = body;
+    const { id, year, ...updatedFields } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -38,10 +51,71 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true, data: updated });
+    const summaries = await fetchAnnualSummaries();
+
+    // Revalidate public consumer routes and portal
+    try {
+      revalidatePath('/');
+      revalidatePath('/monografi');
+      revalidatePath('/portal');
+    } catch (e) {
+      // Ignore during development or dynamic execution
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: updated,
+      summaries,
+    });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || 'Gagal memperbarui rincian data monografi' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { action, newYear, sourceYear } = body;
+
+    if (action === 'create_year') {
+      const yearToCreate = Number(newYear);
+      if (!yearToCreate || yearToCreate < 2000 || yearToCreate > 2100) {
+        return NextResponse.json(
+          { success: false, error: 'Tahun baru tidak valid.' },
+          { status: 400 }
+        );
+      }
+
+      const created = await createNewYearMonografi(yearToCreate, sourceYear ? Number(sourceYear) : 2025);
+      const items = await fetchMonografiItems();
+      const summaries = await fetchAnnualSummaries();
+      const availableYears = await fetchAvailableYears();
+
+      try {
+        revalidatePath('/');
+        revalidatePath('/monografi');
+        revalidatePath('/portal');
+      } catch (e) {}
+
+      return NextResponse.json({
+        success: true,
+        data: items,
+        summaries,
+        availableYears,
+        created,
+      });
+    }
+
+    return NextResponse.json(
+      { success: false, error: 'Aksi tidak didukung.' },
+      { status: 400 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message || 'Gagal memproses permintaan' },
       { status: 500 }
     );
   }
@@ -68,7 +142,19 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true, data: updated });
+    const summaries = await fetchAnnualSummaries();
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/monografi');
+      revalidatePath('/portal');
+    } catch (e) {}
+
+    return NextResponse.json({
+      success: true,
+      data: updated,
+      summaries,
+    });
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || 'Gagal mengesahkan data monografi' },

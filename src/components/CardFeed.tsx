@@ -13,6 +13,8 @@ interface CardFeedProps {
   onChangeCategory: (cat: string) => void;
   searchQuery: string;
   onChangeSearch: (query: string) => void;
+  availableYears?: number[];
+  onCreateYear?: (newYear: number) => void;
 }
 
 export const CATEGORY_OPTIONS = [
@@ -36,6 +38,8 @@ export default function CardFeed({
   onChangeCategory,
   searchQuery,
   onChangeSearch,
+  availableYears = [2024, 2025],
+  onCreateYear,
 }: CardFeedProps) {
   // Filter logic
   const filteredItems = items.filter((item) => {
@@ -51,6 +55,27 @@ export default function CardFeed({
     return matchYear && matchCategory && matchSearch;
   });
 
+  const handleAddNewYearClick = () => {
+    const maxYear = Math.max(...availableYears, 2025);
+    const suggested = maxYear + 1;
+    const input = window.prompt(`Masukkan tahun periode baru untuk disalin dari ${maxYear}:`, String(suggested));
+    if (input) {
+      const parsed = parseInt(input.trim(), 10);
+      if (!isNaN(parsed) && parsed >= 2020 && parsed <= 2050) {
+        if (availableYears.includes(parsed)) {
+          alert(`Tahun ${parsed} sudah ada dalam daftar arsip.`);
+          onChangeYear(parsed);
+          return;
+        }
+        if (onCreateYear) {
+          onCreateYear(parsed);
+        }
+      } else {
+        alert('Tahun tidak valid. Harap masukkan angka tahun antara 2020 - 2050.');
+      }
+    }
+  };
+
   return (
     <section className="w-full md:w-88 lg:w-96 bg-[#faf8ff] border-r border-[#dae2fd] flex flex-col h-full overflow-hidden select-none">
       {/* Header Panel */}
@@ -60,28 +85,42 @@ export default function CardFeed({
             <h2 className="text-sm font-extrabold text-[#131b2e] leading-tight">Arsip Monografi</h2>
           </div>
 
-          {/* Year Switcher Pills */}
-          <div className="flex items-center bg-[#f2f3ff] p-0.5 rounded-xl border border-[#dae2fd]">
+          {/* Dynamic Year Switcher Pills & [+ Tahun Baru] */}
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            <div className="flex items-center bg-[#f2f3ff] p-0.5 rounded-xl border border-[#dae2fd]">
+              {availableYears.map((yr) => {
+                const isSelected = selectedYear === yr;
+                const isLatest = yr === Math.max(...availableYears);
+                const isArchive = yr < Math.max(...availableYears);
+                let label = `${yr}`;
+                if (isLatest) label = `${yr} (Terbaru)`;
+                else if (isArchive) label = `${yr} (Arsip)`;
+
+                return (
+                  <button
+                    key={yr}
+                    onClick={() => onChangeYear(yr)}
+                    className={`px-2 py-1 rounded-lg text-[11px] font-bold transition flex items-center space-x-1 ${
+                      isSelected
+                        ? 'bg-primary text-white shadow-xs'
+                        : 'text-[#535f70] hover:text-[#131b2e]'
+                    }`}
+                  >
+                    <span>{label}</span>
+                    {isLatest && <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-[#6cf8bb]' : 'bg-[#006c49]'}`}></span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* [+ Tahun Baru] Button */}
             <button
-              onClick={() => onChangeYear(2024)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${
-                selectedYear === 2024
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'text-[#535f70] hover:text-[#131b2e]'
-              }`}
+              onClick={handleAddNewYearClick}
+              type="button"
+              className="px-2 py-1 rounded-lg text-[11px] font-bold text-primary bg-[#e2e7ff] hover:bg-[#d4deff] border border-[#dae2fd] transition flex items-center gap-1 shadow-xs cursor-pointer"
+              title="Buka periode monografi tahun baru (salin draf dari tahun terakhir)"
             >
-              2024 (Arsip)
-            </button>
-            <button
-              onClick={() => onChangeYear(2025)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center space-x-1 ${
-                selectedYear === 2025
-                  ? 'bg-primary text-white shadow-xs'
-                  : 'text-[#535f70] hover:text-[#131b2e]'
-              }`}
-            >
-              <span>2025 (Terbaru)</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#006c49]"></span>
+              <span>+ Tahun Baru</span>
             </button>
           </div>
         </div>
