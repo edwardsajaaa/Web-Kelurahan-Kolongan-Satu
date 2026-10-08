@@ -8,7 +8,7 @@ import { INITIAL_LETTERS, LetterRequest } from '@/data/lettersData';
 import dynamic from 'next/dynamic';
 import ActivitySlider from '@/components/ActivitySlider';
 import IntegratedMonografiSection from '@/components/IntegratedMonografiSection';
-import { AvailableYear, CURRENT_ACTIVE_YEAR, DATA_MONOGRAFI_2024, DATA_MONOGRAFI_2025 } from '@/data';
+import { AvailableYear, CURRENT_ACTIVE_YEAR, DATA_MONOGRAFI_2024, DATA_MONOGRAFI_2025, DATA_SEJARAH_KOLONGAN_SATU } from '@/data';
 
 const ModalLetterRequest = dynamic(() => import('@/components/ModalLetterRequest'), { ssr: false });
 const ModalMonografiPrint = dynamic(() => import('@/components/ModalMonografiPrint'), { ssr: false });
@@ -24,6 +24,7 @@ export default function LandingPage() {
   const [printLetterTarget, setPrintLetterTarget] = useState<LetterRequest | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState<AvailableYear>(CURRENT_ACTIVE_YEAR);
+  const [activeHistoryTab, setActiveHistoryTab] = useState<'garisWaktu' | 'cagarBudaya' | 'tokoh' | 'referensi'>('garisWaktu');
 
   const is2025 = selectedYear === 2025;
   const currentTotalPenduduk = is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_jiwa : DATA_MONOGRAFI_2024.demografi.totalPenduduk;
@@ -435,65 +436,203 @@ export default function LandingPage() {
           </section>
 
           {/* ============================================================ */}
-          {/* 5. SEJARAH & ASAL-USUL                                       */}
+          {/* 5. SEJARAH & ASAL-USUL (NIMAWANUA & CAGAR BUDAYA)            */}
           {/* ============================================================ */}
           <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print" id="sejarah-wilayah">
-            <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#e2e7ff]">
-              <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-[#eaedff] gap-2">
+            <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#e2e7ff] space-y-8">
+              
+              {/* Header Sejarah */}
+              <div className="flex flex-col md:flex-row md:items-end justify-between pb-6 border-b border-[#eaedff] gap-4">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 bg-[#cce5ff]/50 px-3 2xl:px-4 py-1 2xl:py-1.5 rounded-full text-[#006194] text-xs 2xl:text-sm font-semibold mb-2 2xl:mb-3">
+                  <div className="inline-flex items-center gap-1.5 bg-[#cce5ff]/70 px-3 2xl:px-4 py-1 2xl:py-1.5 rounded-full text-[#006194] text-xs 2xl:text-sm font-bold mb-2 2xl:mb-3">
                     <span className="material-symbols-outlined text-[16px] 2xl:text-[18px]">history_edu</span>
-                    <span>Kilasan Historis</span>
+                    <span>Kilasan Historis • {DATA_SEJARAH_KOLONGAN_SATU.ringkasan.namaKuno}</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold tracking-tight">
-                    Sejarah &amp; Asal-Usul
+                    Sejarah &amp; Asal-Usul Wilayah
                   </h2>
                 </div>
-                <p className="text-sm 2xl:text-base text-[#3f4850] max-w-md 2xl:max-w-lg">
-                  Akar budaya wanua Minahasa berlandaskan semangat luhur Mapalus.
+                <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] max-w-md 2xl:max-w-lg leading-relaxed">
+                  Menelusuri jejak peradaban purba Tombulu di kaki Gunung Lokon dan lahirnya titik pasar pertama di Tomohon.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 2xl:gap-8">
-                {/* 1. Awal Mula */}
-                <div className="bg-[#f2f3ff] rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 border border-[#e2e7ff]/80 hover:border-[#006194]/40 transition-colors">
-                  <span className="inline-block text-[11px] 2xl:text-xs font-semibold text-[#006194] bg-[#cce5ff] px-2.5 2xl:px-3 py-0.5 rounded-full mb-3 2xl:mb-4">
-                    Awal Mula
-                  </span>
-                  <h4 className="text-lg 2xl:text-2xl text-[#131b2e] font-bold mb-2 2xl:mb-3">
-                    Wanua Kolongan
-                  </h4>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                    Permukiman agraris subur di kaki Gunung Lokon yang menjunjung tinggi kekeluargaan dan persaudaraan adat Toumbulu.
-                  </p>
-                </div>
-
-                {/* 2. Pemekaran */}
-                <div className="bg-[#f2f3ff] rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 border border-[#e2e7ff]/80 hover:border-[#006c49]/40 transition-colors">
-                  <span className="inline-block text-[11px] 2xl:text-xs font-semibold text-[#006c49] bg-[#6cf8bb]/50 px-2.5 2xl:px-3 py-0.5 rounded-full mb-3 2xl:mb-4">
-                    Pemekaran
-                  </span>
-                  <h4 className="text-lg 2xl:text-2xl text-[#131b2e] font-bold mb-2 2xl:mb-3">
-                    Kolongan Satu
-                  </h4>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                    Penataan wilayah untuk mendekatkan pelayanan warga dan efisiensi tata kelola pemerintahan permukiman.
-                  </p>
-                </div>
-
-                {/* 3. Nilai Luhur */}
-                <div className="bg-[#f2f3ff] rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 border border-[#e2e7ff]/80 hover:border-[#006194]/40 transition-colors">
-                  <span className="inline-block text-[11px] 2xl:text-xs font-semibold text-[#006194] bg-[#cce5ff] px-2.5 2xl:px-3 py-0.5 rounded-full mb-3 2xl:mb-4">
-                    Nilai Luhur
-                  </span>
-                  <h4 className="text-lg 2xl:text-2xl text-[#131b2e] font-bold mb-2 2xl:mb-3">
-                    Si Tou Timou Tumou Tou
-                  </h4>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                    Falsafah memanusiakan sesama menjadi pegangan teguh pelayanan dan kerukunan warga di 5 Lingkungan Jaga.
-                  </p>
+              {/* Ringkasan Toponimi Card */}
+              <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-r from-[#f2f3ff] via-[#f8f9ff] to-[#eaedff] border border-[#dae2fd] shadow-xs">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 2xl:gap-6">
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#006194]">Nama Kuno</span>
+                    <h4 className="text-base sm:text-lg font-bold text-[#131b2e]">{DATA_SEJARAH_KOLONGAN_SATU.ringkasan.namaKuno}</h4>
+                  </div>
+                  <div className="space-y-1 md:col-span-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#006c49]">Akar &amp; Karakteristik Wilayah</span>
+                    <p className="text-xs sm:text-sm text-[#3f4850] leading-relaxed">
+                      {DATA_SEJARAH_KOLONGAN_SATU.ringkasan.toponimi} {DATA_SEJARAH_KOLONGAN_SATU.ringkasan.karakteristik}
+                    </p>
+                  </div>
                 </div>
               </div>
+
+              {/* Navigation Tabs */}
+              <div className="flex flex-wrap items-center gap-2 border-b border-[#eaedff] pb-4">
+                <button
+                  onClick={() => setActiveHistoryTab('garisWaktu')}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                    activeHistoryTab === 'garisWaktu'
+                      ? 'bg-[#006194] text-white shadow-xs'
+                      : 'bg-[#f2f3ff] text-[#3f4850] hover:bg-[#e2e7ff]'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[18px]">timeline</span>
+                  <span>Garis Waktu Sejarah ({DATA_SEJARAH_KOLONGAN_SATU.garisWaktu.length})</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveHistoryTab('cagarBudaya')}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                    activeHistoryTab === 'cagarBudaya'
+                      ? 'bg-[#006194] text-white shadow-xs'
+                      : 'bg-[#f2f3ff] text-[#3f4850] hover:bg-[#e2e7ff]'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[18px]">account_balance</span>
+                  <span>Situs Cagar Budaya ({DATA_SEJARAH_KOLONGAN_SATU.situsCagarBudaya.length})</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveHistoryTab('tokoh')}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                    activeHistoryTab === 'tokoh'
+                      ? 'bg-[#006194] text-white shadow-xs'
+                      : 'bg-[#f2f3ff] text-[#3f4850] hover:bg-[#e2e7ff]'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[18px]">person</span>
+                  <span>Tokoh Leluhur Adat ({DATA_SEJARAH_KOLONGAN_SATU.tokohLeluhur.length})</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveHistoryTab('referensi')}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                    activeHistoryTab === 'referensi'
+                      ? 'bg-[#006194] text-white shadow-xs'
+                      : 'bg-[#f2f3ff] text-[#3f4850] hover:bg-[#e2e7ff]'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-[18px]">menu_book</span>
+                  <span>Arsip &amp; Rujukan Resmi ({DATA_SEJARAH_KOLONGAN_SATU.referensiValid.length})</span>
+                </button>
+              </div>
+
+              {/* Tab 1: Garis Waktu */}
+              {activeHistoryTab === 'garisWaktu' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 2xl:gap-6 animate-in fade-in duration-200">
+                  {DATA_SEJARAH_KOLONGAN_SATU.garisWaktu.map((gw, idx) => (
+                    <div
+                      key={idx}
+                      className="p-5 sm:p-6 rounded-2xl bg-[#faf8ff] border border-[#e2e7ff] hover:border-[#006194]/40 hover:shadow-xs transition-all space-y-2.5"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="inline-block text-xs font-bold text-[#006194] bg-[#cce5ff] px-3 py-1 rounded-full">
+                          {gw.tahun}
+                        </span>
+                        <span className="text-[11px] font-semibold text-[#707881]">Fase #{idx + 1}</span>
+                      </div>
+                      <h4 className="text-base font-bold text-[#131b2e] leading-snug">{gw.peristiwa}</h4>
+                      <p className="text-xs sm:text-sm text-[#3f4850] leading-relaxed">{gw.detail}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tab 2: Situs Cagar Budaya */}
+              {activeHistoryTab === 'cagarBudaya' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 2xl:gap-6 animate-in fade-in duration-200">
+                  {DATA_SEJARAH_KOLONGAN_SATU.situsCagarBudaya.map((situs) => (
+                    <div
+                      key={situs.id}
+                      className="p-6 rounded-2xl bg-[#f2f3ff]/80 border border-[#dae2fd] hover:border-[#006c49]/50 hover:shadow-sm transition-all flex flex-col justify-between space-y-4"
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#006c49] bg-[#6cf8bb]/40 px-2.5 py-0.5 rounded-full">
+                            {situs.tag}
+                          </span>
+                          <span className="text-[11px] text-[#707881] font-medium">{situs.periode}</span>
+                        </div>
+                        <h4 className="text-base font-bold text-[#131b2e] leading-tight">{situs.judul}</h4>
+                        <p className="text-xs font-semibold text-[#006194]">{situs.subjudul}</p>
+                        <p className="text-xs text-[#3f4850] leading-relaxed">{situs.deskripsi}</p>
+                      </div>
+                      <div className="pt-3 border-t border-[#dae2fd] flex items-center gap-1.5 text-xs text-[#535f70]">
+                        <span className="material-symbols-outlined text-[16px] text-[#006194] shrink-0">place</span>
+                        <span className="line-clamp-1">{situs.lokasi}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tab 3: Tokoh Leluhur Adat */}
+              {activeHistoryTab === 'tokoh' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 2xl:gap-6 animate-in fade-in duration-200">
+                  {DATA_SEJARAH_KOLONGAN_SATU.tokohLeluhur.map((tokoh, idx) => (
+                    <div
+                      key={idx}
+                      className="p-6 rounded-2xl bg-[#faf8ff] border border-[#e2e7ff] hover:border-[#006194]/40 hover:shadow-sm transition-all flex flex-col justify-between space-y-4"
+                    >
+                      <div className="space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-[#cce5ff] text-[#006194] flex items-center justify-center font-bold">
+                          <span className="material-symbols-outlined text-[20px]">person</span>
+                        </div>
+                        <h4 className="text-base font-bold text-[#131b2e]">{tokoh.nama}</h4>
+                        <p className="text-xs font-semibold text-[#006194]">{tokoh.gelarPeran}</p>
+                        <span className="inline-block text-[10px] font-semibold text-[#535f70] bg-[#e2e7ff] px-2 py-0.5 rounded">
+                          Era: {tokoh.era}
+                        </span>
+                        <p className="text-xs text-[#3f4850] leading-relaxed">{tokoh.keterangan}</p>
+                      </div>
+                      <div className="pt-3 border-t border-[#e2e7ff] text-[11px] text-[#535f70]">
+                        <strong className="text-[#131b2e]">Jejak Wilayah: </strong>
+                        <span>{tokoh.jejakWilayah}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tab 4: Referensi Valid & Arsip */}
+              {activeHistoryTab === 'referensi' && (
+                <div className="space-y-3 animate-in fade-in duration-200">
+                  <div className="p-4 rounded-xl bg-[#f2f3ff] border border-[#dae2fd] text-xs text-[#3f4850]">
+                    Pencatatan sejarah Kelurahan Kolongan Satu diselaraskan dengan karya inventarisasi resmi Pemerintah Kota Tomohon serta arsip riset sejarah Minahasa.
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {DATA_SEJARAH_KOLONGAN_SATU.referensiValid.map((ref, idx) => (
+                      <div
+                        key={idx}
+                        className="p-4 rounded-xl bg-white border border-[#e2e7ff] shadow-2xs hover:border-[#006194]/40 flex flex-col justify-between gap-3"
+                      >
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-bold text-[#006194] uppercase tracking-wider">{ref.tahun}</span>
+                          <h5 className="text-xs font-bold text-[#131b2e] leading-snug">{ref.judul}</h5>
+                          <p className="text-[11px] text-[#535f70]">Penulis / Lembaga: {ref.penulis}</p>
+                        </div>
+                        <a
+                          href={ref.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#006194] hover:underline"
+                        >
+                          <span>Buka Catatan Sumber</span>
+                          <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
             </div>
           </section>
 

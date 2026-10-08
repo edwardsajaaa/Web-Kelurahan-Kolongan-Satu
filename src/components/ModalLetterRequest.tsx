@@ -257,11 +257,10 @@ export default function ModalLetterRequest({
               setActiveTab('daftar');
               setSubmittedLetter(null);
             }}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${
-              activeTab === 'daftar'
-                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
+            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${activeTab === 'daftar'
+              ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+              }`}
           >
             <span>Daftar Berkas Permohonan</span>
             <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-sky-100 text-sky-800 font-bold">
@@ -271,11 +270,10 @@ export default function ModalLetterRequest({
 
           <button
             onClick={() => setActiveTab('ajukan')}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${
-              activeTab === 'ajukan'
-                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
+            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${activeTab === 'ajukan'
+              ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+              }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-sky-600" />
             <span>Ajukan Surat Mandiri</span>
@@ -286,11 +284,10 @@ export default function ModalLetterRequest({
               setActiveTab('lacak');
               setSubmittedLetter(null);
             }}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${
-              activeTab === 'lacak'
-                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
+            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${activeTab === 'lacak'
+              ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
+              }`}
           >
             <Search className="w-3.5 h-3.5 text-slate-500" />
             <span>Lacak Resi Permohonan</span>
@@ -815,13 +812,12 @@ export default function ModalLetterRequest({
                             return (
                               <div
                                 key={st.step}
-                                className={`p-3.5 rounded-2xl border transition ${
-                                  isCompleted
-                                    ? 'bg-emerald-50/70 border-emerald-300 text-emerald-900'
-                                    : isCurrent
+                                className={`p-3.5 rounded-2xl border transition ${isCompleted
+                                  ? 'bg-emerald-50/70 border-emerald-300 text-emerald-900'
+                                  : isCurrent
                                     ? 'bg-sky-50 border-sky-400 ring-2 ring-sky-200 text-sky-950 shadow-sm'
                                     : 'bg-slate-50 border-slate-200 text-slate-400'
-                                }`}
+                                  }`}
                               >
                                 <div className="flex items-center justify-between mb-1">
                                   <span className="text-[10px] font-bold tracking-wider uppercase">
@@ -867,11 +863,10 @@ export default function ModalLetterRequest({
                   <div className="pt-2 flex justify-end">
                     <button
                       onClick={() => onPrintLetter(currentTracked)}
-                      className={`px-4 py-2.5 text-xs font-bold rounded-xl transition flex items-center space-x-2 shadow-sm ${
-                        currentTracked.statusSurat === 'selesai_disahkan'
-                          ? 'bg-emerald-700 hover:bg-emerald-800 text-white'
-                          : 'bg-slate-900 hover:bg-slate-800 text-white'
-                      }`}
+                      className={`px-4 py-2.5 text-xs font-bold rounded-xl transition flex items-center space-x-2 shadow-sm ${currentTracked.statusSurat === 'selesai_disahkan'
+                        ? 'bg-emerald-700 hover:bg-emerald-800 text-white'
+                        : 'bg-slate-900 hover:bg-slate-800 text-white'
+                        }`}
                     >
                       <Printer className="w-4 h-4" />
                       <span>

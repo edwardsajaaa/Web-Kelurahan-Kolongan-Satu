@@ -11,3 +11,5 @@ export const CURRENT_ACTIVE_YEAR: AvailableYear = 2025;
 
 export { DATA_MONOGRAFI_2024 } from './monografi2024';
 export { DATA_MONOGRAFI_2025 } from './monografi2025';
+export { DATA_SEJARAH_KOLONGAN_SATU } from './sejarahKolonganSatu';
+export type { WarisanSejarah, TokohSejarah } from './sejarahKolonganSatu';
