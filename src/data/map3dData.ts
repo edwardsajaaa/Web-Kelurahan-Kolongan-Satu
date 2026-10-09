@@ -176,7 +176,7 @@ export const KOLONGAN_SATU_POIS: MapPoiPoint[] = [
     categoryLabel: 'Pusat Pemerintahan Kelurahan',
     categoryColor: '#006194',
     iconName: 'Building2',
-    coordinates: [124.8323, 1.3140],
+    coordinates: [124.83265, 1.31370],
     alamat: 'Jl. Zanosui, Kolongan Satu, Tomohon Tengah',
     jaga: 'Jaga 2 (Sentral Administrasi)',
     deskripsi: 'Pusat layanan administrasi kependudukan dan surat-menyurat dinas warga Kelurahan Kolongan Satu.',
