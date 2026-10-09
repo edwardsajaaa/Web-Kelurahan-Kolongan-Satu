@@ -883,35 +883,6 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* ============================================================ */}
-          {/* 7. CIVIC TRANSPARENCY & KKT COLLABORATION STRIP              */}
-          {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print">
-            <div className="bg-[#f2f3ff] rounded-2xl 2xl:rounded-3xl p-6 sm:p-8 2xl:p-10 flex flex-col lg:flex-row items-center justify-between gap-6 2xl:gap-10 border border-[#dae2fd]">
-              <div className="flex items-center gap-4 2xl:gap-6">
-                <div className="w-14 h-14 2xl:w-18 2xl:h-18 rounded-full bg-[#cce5ff] flex items-center justify-center text-[#006194] shrink-0 shadow-sm">
-                  <span className="material-symbols-outlined text-[32px] 2xl:text-[40px]">school</span>
-                </div>
-                <div>
-                  <h4 className="text-base sm:text-lg 2xl:text-2xl text-[#131b2e] font-bold">
-                    Kolaborasi Akademis KKT 149 UNSRAT
-                  </h4>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] mt-1 leading-relaxed">
-                    Penyusunan data profil monografi dan digitalisasi pelayanan terlaksana atas kerjasama mahasiswa Kuliah Kerja Terpadu (KKT) Ke-149 Universitas Sam Ratulangi dengan Kelurahan Kolongan Satu.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
-                <button
-                  onClick={() => setIsPrintMonografiOpen(true)}
-                  className="w-full sm:w-auto text-xs sm:text-sm 2xl:text-base font-semibold bg-white text-[#131b2e] hover:bg-[#faf8ff] px-5 2xl:px-8 py-3 2xl:py-4 rounded-full shadow-xs border border-[#dae2fd] hover:border-[#bfc7d2] transition-colors inline-flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span className="material-symbols-outlined text-[18px] 2xl:text-[22px] text-[#006194]">picture_as_pdf</span>
-                  <span>Unduh Laporan Monografi PDF</span>
-                </button>
-              </div>
-            </div>
-          </section>
 
           {/* ============================================================ */}
           {/* 8. GEOGRAPHIC 3D MAP & TERRITORY SHOWCASE                     */}
