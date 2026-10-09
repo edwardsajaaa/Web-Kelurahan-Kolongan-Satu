@@ -1,7 +1,7 @@
 export interface MapPoiPoint {
   id: string;
   name: string;
-  category: 'kantor' | 'ibadah' | 'pemerintahan' | 'fasilitas' | 'jalan' | 'niaga' | 'sejarah' | 'pos_jaga';
+  category: 'kantor' | 'ibadah' | 'pemerintahan' | 'fasilitas' | 'jalan' | 'niaga' | 'sejarah' | 'pos_jaga' | 'pendidikan' | 'sosial';
   categoryLabel: string;
   categoryColor: string;
   iconName: string;
@@ -259,6 +259,58 @@ export const KOLONGAN_SATU_POIS: MapPoiPoint[] = [
     jaga: 'Jaga 4 (Dekat Kantor Walikota)',
     deskripsi: 'Usaha kuliner roti dan bakery di persimpangan Jl. Sreko / Jl. Zanosui dekat gerbang Kantor Walikota.',
     gmapsUrl: 'https://www.google.com/maps/search/?api=1&query=Renao+Bakeshop+Tomohon',
+  },
+  {
+    id: 'christianos-edelweiss',
+    name: 'Christianos Tomohon (Edelweiss)',
+    category: 'ibadah',
+    categoryLabel: 'Sarana Ibadah & Komunitas',
+    categoryColor: '#0284c7',
+    iconName: 'Church',
+    coordinates: [124.83430548951661, 1.318251254526585],
+    alamat: 'Kawasan Edelweiss, Kolongan Satu, Tomohon Tengah',
+    jaga: 'Jaga 1',
+    deskripsi: 'Gedung gereja Christianos Tomohon di kawasan Edelweiss koridor timur laut Kolongan Satu.',
+    gmapsUrl: 'https://www.google.com/maps?q=1.318251254526585,124.83430548951661',
+  },
+  {
+    id: 'aula-st-petrus',
+    name: 'Aula St. Petrus Kolongan Satu',
+    category: 'fasilitas',
+    categoryLabel: 'Aula & Gedung Pertemuan',
+    categoryColor: '#4f46e5',
+    iconName: 'Building2',
+    coordinates: [124.8356077027369, 1.3178446908697126],
+    alamat: 'Jl. P.L. Kaunang, Kolongan Satu',
+    jaga: 'Jaga 1',
+    deskripsi: 'Gedung serbaguna Aula St. Petrus untuk pertemuan keagamaan dan pembinaan kemasyarakatan.',
+    gmapsUrl: 'https://www.google.com/maps?q=1.3178446908697126,124.8356077027369',
+  },
+  {
+    id: 'slb-kolongan',
+    name: 'SLB (Sekolah Luar Biasa)',
+    category: 'pendidikan',
+    categoryLabel: 'Pendidikan Luar Biasa',
+    categoryColor: '#0d9488',
+    iconName: 'GraduationCap',
+    coordinates: [124.83542167227685, 1.31817340191659],
+    alamat: 'Kawasan Pendidikan Khusus, Kolongan Satu',
+    jaga: 'Jaga 1',
+    deskripsi: 'Sekolah Luar Biasa (SLB) untuk pembinaan, pembelajaran, dan bimbingan siswa berkebutuhan khusus.',
+    gmapsUrl: 'https://www.google.com/maps?q=1.31817340191659,124.83542167227685',
+  },
+  {
+    id: 'panti-asuhan-tuna-grahita',
+    name: 'Panti Asuhan Tuna Grahita',
+    category: 'sosial',
+    categoryLabel: 'Panti Sosial & Asuhan',
+    categoryColor: '#e11d48',
+    iconName: 'HeartHandshake',
+    coordinates: [124.83538978661507, 1.318664254262629],
+    alamat: 'Kawasan Pelayanan Sosial, Kolongan Satu, Tomohon Tengah',
+    jaga: 'Jaga 1',
+    deskripsi: 'Panti Asuhan dan pusat layanan kesejahteraan sosial bagi penyandang tuna grahita di Kolongan Satu.',
+    gmapsUrl: 'https://www.google.com/maps?q=1.318664254262629,124.83538978661507',
   },
   {
     id: 'spbu-pertamina',

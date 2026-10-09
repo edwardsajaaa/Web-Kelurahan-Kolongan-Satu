@@ -284,6 +284,10 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
 
       const isKantor = poi.id === 'kantor-kelurahan';
       const isGmim = poi.id === 'gmim-elohim';
+      const isChristEdel = poi.id === 'christianos-edelweiss';
+      const isStPetrus = poi.id === 'aula-st-petrus';
+      const isSlb = poi.id === 'slb-kolongan';
+      const isPanti = poi.id === 'panti-asuhan-tuna-grahita';
       const isLpka = poi.id === 'lpka-tomohon';
       const isLapas = poi.id === 'lapas-perempuan';
       const isWalikota = poi.id === 'kantor-walikota';
@@ -293,12 +297,12 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       // Render 3D Badges
       el.innerHTML = `
         <div class="relative flex flex-col items-center">
-          ${isKantor || isGmim || isLpka || isLapas ? `<span class="absolute -top-1 w-9 h-9 rounded-full ${isKantor ? 'bg-amber-400/40' : isGmim ? 'bg-sky-400/40' : 'bg-cyan-400/35'} animate-ping"></span>` : ''}
+          ${isKantor || isGmim || isChristEdel || isLpka || isLapas ? `<span class="absolute -top-1 w-9 h-9 rounded-full ${isKantor ? 'bg-amber-400/40' : isGmim || isChristEdel ? 'bg-sky-400/40' : 'bg-cyan-400/35'} animate-ping"></span>` : ''}
           
           <div class="px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1 ${
             isKantor
               ? 'bg-[#006194] text-white ring-2 ring-amber-300 ring-offset-1'
-              : isGmim
+              : isGmim || isChristEdel
               ? 'bg-[#0284c7] text-white ring-2 ring-sky-300 ring-offset-1'
               : isLpka
               ? 'bg-[#0284c7] text-white ring-2 ring-cyan-200 ring-offset-1'
@@ -306,6 +310,12 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
               ? 'bg-[#0e7490] text-white ring-2 ring-cyan-200 ring-offset-1'
               : isWalikota
               ? 'bg-[#0369a1] text-white ring-2 ring-cyan-300'
+              : isStPetrus
+              ? 'bg-[#4338ca] text-white ring-1 ring-indigo-300'
+              : isSlb
+              ? 'bg-[#0f766e] text-white ring-1 ring-teal-300'
+              : isPanti
+              ? 'bg-[#be123c] text-white ring-1 ring-rose-300'
               : isSpbu
               ? 'bg-amber-600 text-white ring-1 ring-amber-300'
               : isGeothermal
@@ -314,13 +324,21 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
           }">
             <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${poi.categoryColor}"></span>
             <span class="text-[11px] font-extrabold whitespace-nowrap tracking-tight ${
-              isKantor ? 'text-amber-200' : isGmim || isLpka || isLapas || isWalikota || isSpbu || isGeothermal ? 'text-white' : 'text-[#131b2e]'
+              isKantor ? 'text-amber-200' : isGmim || isChristEdel || isLpka || isLapas || isWalikota || isSpbu || isGeothermal || isStPetrus || isSlb || isPanti ? 'text-white' : 'text-[#131b2e]'
             }">
               ${
                 isKantor
                   ? '⭐ Kantor Kelurahan'
                   : isGmim
                   ? '⛪ GMIM Elohim 1'
+                  : isChristEdel
+                  ? '⛪ Christianos (Edelweiss)'
+                  : isStPetrus
+                  ? '🏛️ Aula St. Petrus'
+                  : isSlb
+                  ? '🎓 SLB Kolongan'
+                  : isPanti
+                  ? '❤️ Panti Tuna Grahita'
                   : isLpka
                   ? '🏛️ LPKA Tomohon'
                   : isLapas
@@ -335,7 +353,7 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
           <div class="w-2.5 h-2.5 -mt-1 rotate-45 ${
             isKantor
               ? 'bg-[#006194]'
-              : isGmim
+              : isGmim || isChristEdel
               ? 'bg-[#0284c7]'
               : isLpka
               ? 'bg-[#0284c7]'
@@ -343,6 +361,12 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
               ? 'bg-[#0e7490]'
               : isWalikota
               ? 'bg-[#0369a1]'
+              : isStPetrus
+              ? 'bg-[#4338ca]'
+              : isSlb
+              ? 'bg-[#0f766e]'
+              : isPanti
+              ? 'bg-[#be123c]'
               : isSpbu
               ? 'bg-amber-600'
               : isGeothermal
@@ -498,11 +522,13 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       <div className="px-4 py-2 bg-white border-b border-[#dae2fd]/60 flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
         <span className="text-[11px] font-bold text-[#535f70] whitespace-nowrap">Filter Lokasi:</span>
         {[
-          { id: 'all', label: 'Semua Titik (15)' },
+          { id: 'all', label: `Semua Titik (${KOLONGAN_SATU_POIS.length})` },
           { id: 'kantor', label: '🏛️ Kantor Kelurahan' },
           { id: 'pemerintahan', label: '🏢 Pemkot, LPKA & Lapas' },
-          { id: 'ibadah', label: '⛪ GMIM Elohim' },
-          { id: 'fasilitas', label: '⛽ SPBU & Geothermal' },
+          { id: 'ibadah', label: '⛪ Gereja & Ibadah' },
+          { id: 'pendidikan', label: '🎓 SLB & Pendidikan' },
+          { id: 'sosial', label: '❤️ Panti Asuhan' },
+          { id: 'fasilitas', label: '⛽ Aula & Fasilitas' },
           { id: 'niaga', label: '☕ Kuliner & Niaga' },
           { id: 'pos_jaga', label: '🛡️ Pos Jaga I - V' },
         ].map((cat) => (
