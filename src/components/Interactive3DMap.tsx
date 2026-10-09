@@ -4,20 +4,18 @@ import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {
   KOLONGAN_SATU_BOUNDARY,
+  KOLONGAN_SATU_ROADS,
   KOLONGAN_SATU_POIS,
   MapPoiPoint,
 } from '@/data/map3dData';
 import {
   Layers,
   Compass,
-  Maximize2,
-  Navigation,
-  Building2,
+  RotateCcw,
+  Sparkles,
   ExternalLink,
   MapPin,
   Eye,
-  RotateCcw,
-  Sparkles,
   Info,
 } from 'lucide-react';
 
@@ -37,6 +35,10 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedPoi, setSelectedPoi] = useState<MapPoiPoint | null>(KOLONGAN_SATU_POIS[0]);
   const [isMapLoaded, setIsMapLoaded] = useState<boolean>(false);
+
+  // Pusat tampilan membingkai keseluruhan wilayah yang ada di peta citra satelit
+  const defaultCenter: [number, number] = [124.8318, 1.3130];
+  const defaultZoom = 15.3;
 
   // Initialize MapLibre
   useEffect(() => {
@@ -103,16 +105,13 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       ],
     };
 
-    // Center on Kantor Kelurahan Kolongan Satu (Jl. Zanosui)
-    const centerLngLat: [number, number] = [124.8329, 1.3136];
-
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: mapStyleType === 'satellite' ? satelliteStyle : streetsStyle,
-      center: centerLngLat,
-      zoom: 16.2,
-      pitch: is3DMode ? 55 : 0,
-      bearing: is3DMode ? -15 : 0,
+      center: defaultCenter,
+      zoom: defaultZoom,
+      pitch: is3DMode ? 52 : 0,
+      bearing: is3DMode ? -12 : 0,
       maxPitch: 75,
       attributionControl: false,
     });
@@ -122,6 +121,7 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
     map.on('load', () => {
       setIsMapLoaded(true);
       renderBoundary(map);
+      renderRoadOverlays(map);
       renderPoiMarkers(map, activeCategory);
     });
 
@@ -132,12 +132,13 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
     };
   }, [mapStyleType]);
 
-  // Render Boundary Polygon & Glow Outline
+  // Render Boundary Polygon persis seperti garis putus-putus merah-putih Google Maps
   const renderBoundary = (map: maplibregl.Map) => {
     if (map.getSource('kolongan-boundary')) {
       map.removeLayer('kolongan-boundary-fill');
-      map.removeLayer('kolongan-boundary-line');
       map.removeLayer('kolongan-boundary-glow');
+      map.removeLayer('kolongan-boundary-red-base');
+      map.removeLayer('kolongan-boundary-white-dash');
       map.removeSource('kolongan-boundary');
     }
 
@@ -153,7 +154,7 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       source: 'kolongan-boundary',
       paint: {
         'fill-color': '#006194',
-        'fill-opacity': 0.15,
+        'fill-opacity': 0.12,
       },
     });
 
@@ -163,78 +164,179 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       type: 'line',
       source: 'kolongan-boundary',
       paint: {
-        'line-color': '#00d4ff',
+        'line-color': '#ef4444',
         'line-width': 8,
         'line-opacity': 0.45,
         'line-blur': 4,
       },
     });
 
-    // 3. Crisp boundary stroke
+    // 3. Garis dasar merah solid (Red Base)
     map.addLayer({
-      id: 'kolongan-boundary-line',
+      id: 'kolongan-boundary-red-base',
+      type: 'line',
+      source: 'kolongan-boundary',
+      paint: {
+        'line-color': '#dc2626',
+        'line-width': 3.5,
+        'line-opacity': 0.95,
+      },
+    });
+
+    // 4. Garis putih putus-putus di atas merah (Red & White Dashed) persis seperti pada screenshot
+    map.addLayer({
+      id: 'kolongan-boundary-white-dash',
       type: 'line',
       source: 'kolongan-boundary',
       paint: {
         'line-color': '#ffffff',
-        'line-width': 2.5,
-        'line-dasharray': [2, 1.5],
+        'line-width': 2.8,
+        'line-dasharray': [3, 2.5],
+        'line-opacity': 1,
       },
     });
   };
 
-  // Render POI Pins with interactive elements
+  // Render Highlight Jalan-Jalan Utama yang ada di Gambar (Jl. Zanosui, Jl. Wariki, Jl. P.L. Kaunang, dll)
+  const renderRoadOverlays = (map: maplibregl.Map) => {
+    if (map.getSource('kolongan-roads')) {
+      map.removeLayer('kolongan-roads-line');
+      map.removeLayer('kolongan-roads-glow');
+      map.removeSource('kolongan-roads');
+    }
+
+    const roadsGeoJson = {
+      type: 'FeatureCollection' as const,
+      features: KOLONGAN_SATU_ROADS.map((r) => ({
+        type: 'Feature' as const,
+        properties: { name: r.name, id: r.id },
+        geometry: {
+          type: 'LineString' as const,
+          coordinates: r.coordinates,
+        },
+      })),
+    };
+
+    map.addSource('kolongan-roads', {
+      type: 'geojson',
+      data: roadsGeoJson,
+    });
+
+    // Soft cyan road casing
+    map.addLayer({
+      id: 'kolongan-roads-glow',
+      type: 'line',
+      source: 'kolongan-roads',
+      paint: {
+        'line-color': '#0ea5e9',
+        'line-width': 4.5,
+        'line-opacity': 0.35,
+        'line-blur': 2,
+      },
+    });
+
+    // Road track line
+    map.addLayer({
+      id: 'kolongan-roads-line',
+      type: 'line',
+      source: 'kolongan-roads',
+      paint: {
+        'line-color': '#38bdf8',
+        'line-width': 2,
+        'line-opacity': 0.85,
+        'line-dasharray': [2, 1],
+      },
+    });
+  };
+
+  // Render POI Pins dengan style khas persis lokasi gambar
   const renderPoiMarkers = (map: maplibregl.Map, categoryFilter: string) => {
-    // Clear existing markers
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
 
-    const filtered = categoryFilter === 'all'
-      ? KOLONGAN_SATU_POIS
-      : KOLONGAN_SATU_POIS.filter((p) => p.category === categoryFilter);
+    const filtered =
+      categoryFilter === 'all'
+        ? KOLONGAN_SATU_POIS
+        : KOLONGAN_SATU_POIS.filter((p) => p.category === categoryFilter);
 
     filtered.forEach((poi) => {
-      // Create custom 3D HTML Pin
       const el = document.createElement('div');
       el.className = 'group cursor-pointer relative';
 
+      const isBlueDot = poi.id === 'titik-biru-pusat';
       const isKantor = poi.id === 'kantor-kelurahan';
+      const isWalikota = poi.id === 'kantor-walikota';
+      const isSpbu = poi.id === 'spbu-pertamina';
+      const isGeothermal = poi.id === 'geothermal-lahendong';
 
-      el.innerHTML = `
-        <div class="relative flex flex-col items-center">
-          <!-- Pulse animation for important places -->
-          ${isKantor ? `<span class="absolute -top-1 w-9 h-9 rounded-full bg-amber-400/40 animate-ping"></span>` : ''}
-          
-          <!-- Pin Head Badge -->
-          <div class="px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1 ${
-            isKantor
-              ? 'bg-[#006194] text-white ring-2 ring-amber-300 ring-offset-1'
-              : 'bg-white/95 text-[#131b2e] ring-1 ring-slate-300/80 backdrop-blur-md'
-          }">
-            <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${poi.categoryColor}"></span>
-            <span class="text-[11px] font-extrabold whitespace-nowrap tracking-tight ${isKantor ? 'text-amber-200' : 'text-[#131b2e]'}">
-              ${isKantor ? '⭐ ' : ''}${poi.name.split(' ')[0]} ${poi.name.split(' ')[1] || ''}
-            </span>
+      if (isBlueDot) {
+        // Render Titik Biru GPS persis seperti di gambar user
+        el.innerHTML = `
+          <div class="relative flex items-center justify-center -translate-x-1/2 -translate-y-1/2">
+            <!-- Radar Ripple -->
+            <span class="absolute w-8 h-8 rounded-full bg-blue-500/40 animate-ping"></span>
+            <span class="absolute w-5 h-5 rounded-full bg-blue-400/50"></span>
+            <!-- Solid Blue Core with White Ring -->
+            <div class="w-4 h-4 rounded-full bg-blue-600 ring-2 ring-white shadow-lg relative z-10"></div>
+            <!-- Floating Label -->
+            <div class="absolute -top-7 whitespace-nowrap bg-blue-900/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-md border border-blue-400/60 transition group-hover:scale-110">
+              📍 Titik Acuan Pusat
+            </div>
           </div>
+        `;
+      } else {
+        // Render 3D Badges
+        el.innerHTML = `
+          <div class="relative flex flex-col items-center">
+            ${isKantor || isWalikota ? `<span class="absolute -top-1 w-9 h-9 rounded-full bg-amber-400/35 animate-ping"></span>` : ''}
+            
+            <div class="px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1 ${
+              isKantor
+                ? 'bg-[#006194] text-white ring-2 ring-amber-300 ring-offset-1'
+                : isWalikota
+                ? 'bg-[#0369a1] text-white ring-2 ring-cyan-300'
+                : isSpbu
+                ? 'bg-amber-600 text-white ring-1 ring-amber-300'
+                : isGeothermal
+                ? 'bg-emerald-700 text-white ring-1 ring-emerald-300'
+                : 'bg-white/95 text-[#131b2e] ring-1 ring-slate-300/80 backdrop-blur-md'
+            }">
+              <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${poi.categoryColor}"></span>
+              <span class="text-[11px] font-extrabold whitespace-nowrap tracking-tight ${
+                isKantor ? 'text-amber-200' : isWalikota || isSpbu || isGeothermal ? 'text-white' : 'text-[#131b2e]'
+              }">
+                ${isKantor ? '⭐ ' : ''}${poi.name.split(' ')[0]} ${poi.name.split(' ')[1] || ''}
+              </span>
+            </div>
 
-          <!-- Pin Tail Arrow -->
-          <div class="w-2.5 h-2.5 -mt-1 rotate-45 ${isKantor ? 'bg-[#006194]' : 'bg-white border-r border-b border-slate-300/80'}"></div>
-        </div>
-      `;
+            <div class="w-2.5 h-2.5 -mt-1 rotate-45 ${
+              isKantor
+                ? 'bg-[#006194]'
+                : isWalikota
+                ? 'bg-[#0369a1]'
+                : isSpbu
+                ? 'bg-amber-600'
+                : isGeothermal
+                ? 'bg-emerald-700'
+                : 'bg-white border-r border-b border-slate-300/80'
+            }"></div>
+          </div>
+        `;
+      }
 
       el.addEventListener('click', () => {
         setSelectedPoi(poi);
         if (onSelectPoi) onSelectPoi(poi);
         map.flyTo({
           center: poi.coordinates,
-          zoom: 16.8,
+          zoom: 16.5,
           pitch: is3DMode ? 60 : 0,
           speed: 1.2,
           curve: 1.4,
         });
       });
 
-      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+      const marker = new maplibregl.Marker({ element: el, anchor: isBlueDot ? 'center' : 'bottom' })
         .setLngLat(poi.coordinates)
         .addTo(map);
 
@@ -256,20 +358,20 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
     setIs3DMode(nextMode);
 
     mapInstanceRef.current.easeTo({
-      pitch: nextMode ? 55 : 0,
-      bearing: nextMode ? -15 : 0,
+      pitch: nextMode ? 52 : 0,
+      bearing: nextMode ? -12 : 0,
       duration: 1000,
     });
   };
 
-  // Reset to Center
+  // Reset to Full Boundaries View
   const handleResetCenter = () => {
     if (!mapInstanceRef.current) return;
     mapInstanceRef.current.flyTo({
-      center: [124.8329, 1.3136],
-      zoom: 16.2,
-      pitch: is3DMode ? 55 : 0,
-      bearing: is3DMode ? -15 : 0,
+      center: defaultCenter,
+      zoom: defaultZoom,
+      pitch: is3DMode ? 52 : 0,
+      bearing: is3DMode ? -12 : 0,
       duration: 1000,
     });
     setSelectedPoi(KOLONGAN_SATU_POIS[0]);
@@ -285,13 +387,13 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold text-[#006194] bg-[#e2e7ff] px-2 py-0.5 rounded-full uppercase tracking-wider">
-                Peta Geospasial 3D Resmi
+              <span className="text-[10px] font-bold text-[#dc2626] bg-red-100 px-2 py-0.5 rounded-full uppercase tracking-wider border border-red-200">
+                Batas Resmi Citra Satelit
               </span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             </div>
             <h4 className="text-xs sm:text-sm font-extrabold text-[#131b2e] leading-tight">
-              Batas Wilayah &amp; Titik Lokasi Kelurahan Kolongan Satu
+              Peta 3D Batas &amp; Koridor Jalan Kelurahan Kolongan Satu
             </h4>
           </div>
         </div>
@@ -307,10 +409,10 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
                 ? 'bg-[#006194] text-white'
                 : 'bg-white hover:bg-[#e2e7ff] text-[#006194] border border-[#dae2fd]'
             }`}
-            title="Beralih sudut pandang 3D / 2D datar"
+            title="Beralih sudut pandang 3D perspektif / 2D datar"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>{is3DMode ? 'Mode 3D Aktif (55°)' : 'Mode 2D Datar'}</span>
+            <span>{is3DMode ? 'Mode 3D Perspektif' : 'Mode 2D Datar'}</span>
           </button>
 
           {/* Layer Style Switcher */}
@@ -318,10 +420,10 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
             type="button"
             onClick={() => setMapStyleType(mapStyleType === 'satellite' ? 'streets' : 'satellite')}
             className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white hover:bg-[#e2e7ff] text-[#131b2e] border border-[#dae2fd] transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-            title="Beralih Satelit / Peta Jalan"
+            title="Beralih Citra Satelit / Peta Jalan"
           >
             <Layers className="w-3.5 h-3.5 text-[#006194]" />
-            <span>{mapStyleType === 'satellite' ? '🛰️ Satelit' : '🗺️ Peta Jalan'}</span>
+            <span>{mapStyleType === 'satellite' ? '🛰️ Satelit Asli' : '🗺️ Peta Jalan'}</span>
           </button>
 
           {/* Reset Center */}
@@ -329,7 +431,7 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
             type="button"
             onClick={handleResetCenter}
             className="p-1.5 rounded-full bg-white hover:bg-[#e2e7ff] text-[#535f70] hover:text-[#006194] border border-[#dae2fd] transition shadow-xs cursor-pointer"
-            title="Pusatkan kembali ke Kantor Kelurahan"
+            title="Pusatkan kembali ke batas penuh"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
@@ -338,16 +440,15 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
 
       {/* 2. Category Filter Pills */}
       <div className="px-4 py-2 bg-white border-b border-[#dae2fd]/60 flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
-        <span className="text-[11px] font-bold text-[#535f70] whitespace-nowrap">Filter Titik:</span>
+        <span className="text-[11px] font-bold text-[#535f70] whitespace-nowrap">Filter Lokasi:</span>
         {[
-          { id: 'all', label: 'Semua Titik (12)' },
+          { id: 'all', label: 'Semua Titik (13)' },
           { id: 'kantor', label: '🏛️ Kantor Kelurahan' },
-          { id: 'ibadah', label: '⛪ Sarana Ibadah' },
+          { id: 'pemerintahan', label: '🏢 Kantor Walikota' },
+          { id: 'ibadah', label: '⛪ GMIM Elohim' },
+          { id: 'fasilitas', label: '⛽ SPBU & Geothermal' },
+          { id: 'niaga', label: '☕ Curated Coffee' },
           { id: 'pos_jaga', label: '🛡️ Pos Jaga I - V' },
-          { id: 'pendidikan', label: '🎓 Pendidikan' },
-          { id: 'ekonomi', label: '🌸 Florikultura & Tani' },
-          { id: 'sejarah', label: '🗿 Cagar Budaya Waruga' },
-          { id: 'alam', label: '💧 Mata Air Swadaya' },
         ].map((cat) => (
           <button
             key={cat.id}
@@ -364,78 +465,83 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       </div>
 
       {/* 3. The 3D Map Viewport */}
-      <div className="relative w-full h-[380px] sm:h-[450px] lg:h-[480px] bg-slate-900 overflow-hidden">
+      <div className="relative w-full h-[400px] sm:h-[480px] lg:h-[520px] bg-slate-900 overflow-hidden">
         <div ref={mapContainerRef} className="w-full h-full" />
 
         {/* Legend Overlay at Bottom Left */}
-        <div className="absolute bottom-3 left-3 bg-white/92 backdrop-blur-md border border-[#dae2fd] rounded-2xl p-2.5 shadow-lg text-[11px] space-y-1.5 z-10 pointer-events-none sm:pointer-events-auto">
+        <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md border border-[#dae2fd] rounded-2xl p-3 shadow-lg text-[11px] space-y-1.5 z-10 max-w-[280px]">
           <div className="flex items-center gap-2 font-bold text-[#131b2e]">
-            <span className="w-3.5 h-1 border-t-2 border-dashed border-cyan-400 bg-cyan-200"></span>
-            <span>Batas Wilayah Kolongan Satu (48 Ha)</span>
+            <span className="w-4 h-1 border-t-2 border-dashed border-red-500 bg-red-600"></span>
+            <span>Batas Wilayah (Sesuai Citra Peta)</span>
           </div>
-          <div className="flex items-center gap-3 text-[#535f70] text-[10px]">
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#006194]"></span> Kantor
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#4f46e5]"></span> Pos Jaga
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#0284c7]"></span> Ibadah
-            </span>
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-[#854d0e]"></span> Sejarah
-            </span>
+          <div className="text-[10px] text-[#535f70] leading-snug">
+            Mencakup: Jl. Zanosui, Jl. Wariki, Jl. P.L. Kaunang, Jl. Mitos, Jl. Slanag, Jl. Sreko hingga Area Geothermal Lahendong.
+          </div>
+          <div className="flex items-center gap-2 pt-1 border-t border-slate-200/80 text-[10px] font-semibold text-[#006194]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#006194] ring-2 ring-amber-300"></span>
+            <span>⭐ Kantor Kelurahan = Tepi Jl. Zanosui (Depan Persimpangan)</span>
           </div>
         </div>
 
-        {/* Compass / 3D Attitude Badge */}
-        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md border border-[#dae2fd] px-2.5 py-1 rounded-full shadow-md text-[11px] font-bold text-[#006194] flex items-center gap-1.5 z-10">
-          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-          <span>{is3DMode ? 'Sudut 3D: 55° Miring' : 'Sudut 2D Datar'}</span>
+        {/* Street Name Guide Bar at Top Center */}
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur-md border border-slate-700/80 text-white rounded-full px-3.5 py-1 text-[11px] font-medium shadow-lg hidden md:flex items-center gap-2 z-10">
+          <span className="text-cyan-400 font-bold">🛣️ Jalan Utama Terdata:</span>
+          <span>Jl. Zanosui • Jl. Wariki • Jl. P.L. Kaunang • Jl. Mitos • Jl. Slanag • Jl. Sreko</span>
         </div>
       </div>
 
-      {/* 4. Active Location Detail Card */}
+      {/* 4. Selected POI Quick Info Box */}
       {selectedPoi && (
-        <div className="p-4 sm:p-5 bg-white border-t border-[#dae2fd] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="flex items-start space-x-3.5 min-w-0">
+        <div className="p-4 bg-[#f8f9ff] border-t border-[#dae2fd] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
             <div
-              className="w-10 h-10 rounded-2xl flex items-center justify-center text-white font-bold text-sm shadow-sm shrink-0"
+              className="w-10 h-10 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-xs"
               style={{ backgroundColor: selectedPoi.categoryColor }}
             >
               <MapPin className="w-5 h-5" />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#e2e7ff] text-[#006194]">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold text-[#006194] bg-[#e2e7ff] px-2 py-0.5 rounded-full">
                   {selectedPoi.categoryLabel}
                 </span>
-                <span className="text-xs font-semibold text-[#006c49] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                  {selectedPoi.jaga}
-                </span>
+                <span className="text-[11px] font-semibold text-[#535f70]">{selectedPoi.jaga}</span>
               </div>
-              <h5 className="text-sm sm:text-base font-bold text-[#131b2e] truncate">
+              <h5 className="text-sm sm:text-base font-bold text-[#131b2e] mt-0.5">
                 {selectedPoi.name}
               </h5>
-              <p className="text-xs text-[#535f70] leading-relaxed line-clamp-2 mt-0.5">
-                {selectedPoi.deskripsi}
-              </p>
-              <p className="text-[11px] text-[#707881] font-medium mt-1">
-                📍 {selectedPoi.alamat}
-              </p>
+              <p className="text-xs text-[#535f70] mt-0.5">{selectedPoi.alamat}</p>
+              <p className="text-xs text-[#3f4850] mt-1 italic">{selectedPoi.deskripsi}</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+            <button
+              type="button"
+              onClick={() => {
+                if (mapInstanceRef.current) {
+                  mapInstanceRef.current.flyTo({
+                    center: selectedPoi.coordinates,
+                    zoom: 17,
+                    pitch: is3DMode ? 65 : 0,
+                    bearing: is3DMode ? 20 : 0,
+                    duration: 1200,
+                  });
+                }
+              }}
+              className="px-3.5 py-2 rounded-full text-xs font-semibold bg-white hover:bg-[#e2e7ff] text-[#006194] border border-[#dae2fd] transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>Fokus 3D</span>
+            </button>
             <a
               href={selectedPoi.gmapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#006194] hover:bg-[#007bb9] text-white px-5 py-2.5 rounded-full text-xs font-bold shadow-xs hover:shadow-md transition-all cursor-pointer"
+              className="px-3.5 py-2 rounded-full text-xs font-semibold bg-[#006194] hover:bg-[#007bb9] text-white transition flex items-center gap-1.5 shadow-xs"
             >
-              <span>Petunjuk Arah Maps</span>
               <ExternalLink className="w-3.5 h-3.5" />
+              <span>Buka Google Maps</span>
             </a>
           </div>
         </div>
