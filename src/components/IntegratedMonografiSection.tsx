@@ -143,57 +143,11 @@ export default function IntegratedMonografiSection({
       </div>
 
       {/* ============================================================ */}
-      {/* 2. INTERACTIVE CONTROLS: DROPDOWN, TABS & PENCARIAN          */}
+      {/* 2. INTERACTIVE CONTROLS: CATEGORY TABS                        */}
       {/* ============================================================ */}
       <div className="mb-8 space-y-4 no-print">
-        {/* Top Filter Bar: Mobile Dropdown + Search Input + Year Switcher */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border border-[#e2e7ff] shadow-xs">
-          {/* Dropdown Selector for Fast Category Jumps */}
-          <div className="flex items-center gap-2 flex-1 max-w-md">
-            <label htmlFor="category-select" className="text-xs font-bold text-[#131b2e] whitespace-nowrap flex items-center gap-1">
-              <span className="material-symbols-outlined text-[#006194] text-[18px]">filter_list</span>
-              <span>Kategori:</span>
-            </label>
-            <select
-              id="category-select"
-              value={activeCategory}
-              onChange={(e) => setActiveCategory(e.target.value)}
-              className="w-full text-xs sm:text-sm bg-[#f2f3ff] hover:bg-[#eaedff] text-[#131b2e] font-semibold py-2 px-3 rounded-xl border border-[#dae2fd] focus:outline-none focus:ring-2 focus:ring-[#006194] transition-all cursor-pointer"
-            >
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Quick Search Field */}
-          <div className="relative flex-1 max-w-md">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#3f4850] text-[18px]">
-              search
-            </span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari variabel (misal: katolik, fides, guru, linmas, pustu, alfamart)..."
-              className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm bg-[#faf8ff] rounded-xl border border-[#e2e7ff] text-[#131b2e] placeholder-[#71787e] focus:outline-none focus:ring-2 focus:ring-[#006194] transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#3f4850] hover:text-[#131b2e] text-xs p-1"
-                title="Hapus pencarian"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Desktop Category Navigation Tabs (Pill Buttons) */}
-        <div className="hidden sm:flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        {/* Category Navigation Tabs (Pill Buttons) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide no-scrollbar">
           {categories.map((cat) => (
             <button
               key={cat.id}
