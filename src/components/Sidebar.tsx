@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
 import { Official } from '@/data/officialsData';
-import RoleSwitcherDropdown from './RoleSwitcherDropdown';
 import {
   Building2,
   Users,
@@ -13,6 +12,8 @@ import {
   PlusCircle,
   FilePlus,
   AlertCircle,
+  ShieldCheck,
+  LogOut,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -25,6 +26,7 @@ interface SidebarProps {
   onOpenInputMonografi: () => void;
   onOpenNewLetter: () => void;
   onOpenNewReport: () => void;
+  onLogout?: () => void;
 }
 
 export default function Sidebar({
@@ -37,6 +39,7 @@ export default function Sidebar({
   onOpenInputMonografi,
   onOpenNewLetter,
   onOpenNewReport,
+  onLogout,
 }: SidebarProps) {
   const navItems = [
     {
@@ -182,18 +185,48 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Bottom Profile Section with Role Switcher */}
-      <div className="p-3 border-t border-[#dae2fd] bg-[#faf8ff]">
-        <div className="mb-2 flex items-center justify-between px-1">
-          <span className="text-[10px] font-bold text-[#707881] uppercase tracking-wider">
-            Pengguna Aktif
+      {/* Bottom Profile Section: Dedicated Sekretaris Kelurahan (Admin Tunggal) */}
+      <div className="p-3 border-t border-[#dae2fd] bg-[#faf8ff] space-y-2">
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[10px] font-bold text-[#535f70] uppercase tracking-wider flex items-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Admin Tunggal</span>
           </span>
-          <span className="text-[10px] text-primary font-bold">SK 2024</span>
+          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
+            Sesi Aktif
+          </span>
         </div>
-        <RoleSwitcherDropdown
-          currentOfficial={currentOfficial}
-          onSelectOfficial={onSelectOfficial}
-        />
+
+        <div className="p-2.5 rounded-xl bg-white border border-[#dae2fd] shadow-xs">
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-[#006194] text-white flex items-center justify-center font-bold text-xs shadow-xs flex-shrink-0">
+              FP
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-[#131b2e] truncate">
+                Ferromel L. Pua, S.Kom
+              </p>
+              <p className="text-[10px] text-[#006194] font-semibold truncate">
+                Sekretaris Kelurahan
+              </p>
+              <p className="text-[9px] text-[#707881] font-mono truncate">
+                NIP: 19780203 200501 1 012
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {onLogout && (
+          <button
+            type="button"
+            onClick={onLogout}
+            className="w-full flex items-center justify-center space-x-1.5 py-1.5 px-3 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition cursor-pointer"
+            title="Keluar dari sesi portal"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Keluar Portal</span>
+          </button>
+        )}
       </div>
     </aside>
   );

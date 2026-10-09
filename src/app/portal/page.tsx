@@ -17,7 +17,7 @@ import ModalOfficialLetterPreview from '@/components/ModalOfficialLetterPreview'
 import ModalMonografiPrint from '@/components/ModalMonografiPrint';
 import ModalEditMonografi from '@/components/ModalEditMonografi';
 
-import { Menu, X, Send, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Menu, X, Send, CheckCircle2, ArrowLeft, LogOut, ShieldCheck } from 'lucide-react';
 
 export default function PortalPage() {
   // Master data states
@@ -28,8 +28,9 @@ export default function PortalPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   
-  // Role & User state (Default: Theresia J. Kaunang, SE - Lurah)
-  const [currentOfficial, setCurrentOfficial] = useState<Official>(OFFICIALS[0]);
+  // User Authentication & Role: Dedicated Sekretaris Kelurahan (Ferromel L. Pua, S.Kom)
+  const seklurOfficial = OFFICIALS.find((o) => o.roleCode === 'admin_seklur') || OFFICIALS[1];
+  const [currentOfficial, setCurrentOfficial] = useState<Official>(seklurOfficial);
 
   // Citizen letters and incident reports states
   const [letters, setLetters] = useState<LetterRequest[]>(INITIAL_LETTERS);
@@ -66,9 +67,24 @@ export default function PortalPage() {
   // Find currently active monografi item
   const activeDetail = monografiList.find((c) => c.id === selectedId) || monografiList[0];
 
-  // Initial fetch from backend APIs
+  // Auth Guard & Initial fetch from backend APIs
   React.useEffect(() => {
     async function loadBackendData() {
+      // 1. Double check authentication status
+      try {
+        const resSession = await fetch('/api/auth/session');
+        if (resSession.ok) {
+          const sessionData = await resSession.json();
+          if (!sessionData.authenticated) {
+            window.location.href = '/portal/login';
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal memverifikasi sesi login:', err);
+      }
+
+      // 2. Fetch data
       try {
         const [resLetters, resReports, resMonografi] = await Promise.all([
           fetch('/api/surat'),
@@ -106,6 +122,20 @@ export default function PortalPage() {
 
     loadBackendData();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.warn('Logout error:', e);
+    }
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('kkt_portal_auth');
+      localStorage.removeItem('kkt_user_name');
+      localStorage.removeItem('kkt_user_nip');
+      window.location.href = '/portal/login';
+    }
+  };
 
   // Actions
   const handleApproveByLurah = async (itemId: string) => {
@@ -437,6 +467,13 @@ export default function PortalPage() {
             <span>+ Input</span>
           </button>
           <button
+            onClick={handleLogout}
+            className="p-2 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-xl transition"
+            title="Keluar Sesi"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+          <button
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
             className="p-2 bg-[#f2f3ff] text-[#131b2e] rounded-xl"
           >
@@ -452,6 +489,14 @@ export default function PortalPage() {
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Kembali ke Beranda</span>
           </Link>
+          <button
+            onClick={handleLogout}
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 hover:text-rose-800 transition-colors"
+            title="Keluar dari portal"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Keluar</span>
+          </button>
         </div>
         <Sidebar
           currentOfficial={currentOfficial}
@@ -466,6 +511,7 @@ export default function PortalPage() {
           onOpenInputMonografi={() => handleOpenEditModal(activeDetail)}
           onOpenNewLetter={() => setIsLetterModalOpen(true)}
           onOpenNewReport={() => setIsReportModalOpen(true)}
+          onLogout={handleLogout}
         />
       </div>
 
