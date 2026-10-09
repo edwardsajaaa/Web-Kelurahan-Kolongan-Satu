@@ -265,6 +265,8 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
 
       const isKantor = poi.id === 'kantor-kelurahan';
       const isGmim = poi.id === 'gmim-elohim';
+      const isLpka = poi.id === 'lpka-tomohon';
+      const isLapas = poi.id === 'lapas-perempuan';
       const isWalikota = poi.id === 'kantor-walikota';
       const isSpbu = poi.id === 'spbu-pertamina';
       const isGeothermal = poi.id === 'geothermal-lahendong';
@@ -272,13 +274,17 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       // Render 3D Badges
       el.innerHTML = `
         <div class="relative flex flex-col items-center">
-          ${isKantor || isGmim ? `<span class="absolute -top-1 w-9 h-9 rounded-full ${isKantor ? 'bg-amber-400/40' : 'bg-sky-400/40'} animate-ping"></span>` : ''}
+          ${isKantor || isGmim || isLpka || isLapas ? `<span class="absolute -top-1 w-9 h-9 rounded-full ${isKantor ? 'bg-amber-400/40' : isGmim ? 'bg-sky-400/40' : 'bg-cyan-400/35'} animate-ping"></span>` : ''}
           
           <div class="px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1 ${
             isKantor
               ? 'bg-[#006194] text-white ring-2 ring-amber-300 ring-offset-1'
               : isGmim
               ? 'bg-[#0284c7] text-white ring-2 ring-sky-300 ring-offset-1'
+              : isLpka
+              ? 'bg-[#0284c7] text-white ring-2 ring-cyan-200 ring-offset-1'
+              : isLapas
+              ? 'bg-[#0e7490] text-white ring-2 ring-cyan-200 ring-offset-1'
               : isWalikota
               ? 'bg-[#0369a1] text-white ring-2 ring-cyan-300'
               : isSpbu
@@ -289,9 +295,21 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
           }">
             <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${poi.categoryColor}"></span>
             <span class="text-[11px] font-extrabold whitespace-nowrap tracking-tight ${
-              isKantor ? 'text-amber-200' : isGmim || isWalikota || isSpbu || isGeothermal ? 'text-white' : 'text-[#131b2e]'
+              isKantor ? 'text-amber-200' : isGmim || isLpka || isLapas || isWalikota || isSpbu || isGeothermal ? 'text-white' : 'text-[#131b2e]'
             }">
-              ${isKantor ? '⭐ Kantor Kelurahan' : isGmim ? '⛪ GMIM Elohim 1' : `${poi.name.split(' ')[0]} ${poi.name.split(' ')[1] || ''}`}
+              ${
+                isKantor
+                  ? '⭐ Kantor Kelurahan'
+                  : isGmim
+                  ? '⛪ GMIM Elohim 1'
+                  : isLpka
+                  ? '🏛️ LPKA Tomohon'
+                  : isLapas
+                  ? '🏛️ Lapas Perempuan'
+                  : isWalikota
+                  ? '🏢 Kantor Walikota'
+                  : `${poi.name.split(' ')[0]} ${poi.name.split(' ')[1] || ''}`
+              }
             </span>
           </div>
 
@@ -300,6 +318,10 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
               ? 'bg-[#006194]'
               : isGmim
               ? 'bg-[#0284c7]'
+              : isLpka
+              ? 'bg-[#0284c7]'
+              : isLapas
+              ? 'bg-[#0e7490]'
               : isWalikota
               ? 'bg-[#0369a1]'
               : isSpbu
@@ -429,12 +451,12 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       <div className="px-4 py-2 bg-white border-b border-[#dae2fd]/60 flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
         <span className="text-[11px] font-bold text-[#535f70] whitespace-nowrap">Filter Lokasi:</span>
         {[
-          { id: 'all', label: 'Semua Titik (13)' },
+          { id: 'all', label: 'Semua Titik (15)' },
           { id: 'kantor', label: '🏛️ Kantor Kelurahan' },
-          { id: 'pemerintahan', label: '🏢 Kantor Walikota' },
+          { id: 'pemerintahan', label: '🏢 Pemkot, LPKA & Lapas' },
           { id: 'ibadah', label: '⛪ GMIM Elohim' },
           { id: 'fasilitas', label: '⛽ SPBU & Geothermal' },
-          { id: 'niaga', label: '☕ Curated Coffee' },
+          { id: 'niaga', label: '☕ Kuliner & Niaga' },
           { id: 'pos_jaga', label: '🛡️ Pos Jaga I - V' },
         ].map((cat) => (
           <button
