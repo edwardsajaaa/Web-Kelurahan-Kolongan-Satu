@@ -44,6 +44,15 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
+    // Set local web worker URL to enable GeoJSON polygon & vector layer rendering
+    try {
+      if (typeof window !== 'undefined' && typeof (maplibregl as any).setWorkerUrl === 'function') {
+        (maplibregl as any).setWorkerUrl('/maplibre-gl-worker.mjs');
+      }
+    } catch (e) {
+      console.warn('Worker configuration note:', e);
+    }
+
     // Define tile sources
     const satelliteStyle: maplibregl.StyleSpecification = {
       version: 8,
@@ -118,11 +127,17 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
 
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
 
-    map.on('load', () => {
+    const handleLoadLayers = () => {
       setIsMapLoaded(true);
       renderBoundary(map);
       renderRoadOverlays(map);
       renderPoiMarkers(map, activeCategory);
+    };
+
+    map.on('load', handleLoadLayers);
+    map.on('style.load', () => {
+      renderBoundary(map);
+      renderRoadOverlays(map);
     });
 
     mapInstanceRef.current = map;
@@ -134,67 +149,71 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
 
   // Render Boundary Polygon persis seperti garis putus-putus merah-putih Google Maps
   const renderBoundary = (map: maplibregl.Map) => {
-    if (map.getSource('kolongan-boundary')) {
-      map.removeLayer('kolongan-boundary-fill');
-      map.removeLayer('kolongan-boundary-glow');
-      map.removeLayer('kolongan-boundary-red-base');
-      map.removeLayer('kolongan-boundary-white-dash');
-      map.removeSource('kolongan-boundary');
+    try {
+      if (map.getSource('kolongan-boundary')) {
+        if (map.getLayer('kolongan-boundary-fill')) map.removeLayer('kolongan-boundary-fill');
+        if (map.getLayer('kolongan-boundary-glow')) map.removeLayer('kolongan-boundary-glow');
+        if (map.getLayer('kolongan-boundary-red-base')) map.removeLayer('kolongan-boundary-red-base');
+        if (map.getLayer('kolongan-boundary-white-dash')) map.removeLayer('kolongan-boundary-white-dash');
+        map.removeSource('kolongan-boundary');
+      }
+
+      map.addSource('kolongan-boundary', {
+        type: 'geojson',
+        data: KOLONGAN_SATU_BOUNDARY,
+      });
+
+      // 1. Semi-transparent civic area fill
+      map.addLayer({
+        id: 'kolongan-boundary-fill',
+        type: 'fill',
+        source: 'kolongan-boundary',
+        paint: {
+          'fill-color': '#006194',
+          'fill-opacity': 0.15,
+        },
+      });
+
+      // 2. Thick Outer Red Glow
+      map.addLayer({
+        id: 'kolongan-boundary-glow',
+        type: 'line',
+        source: 'kolongan-boundary',
+        paint: {
+          'line-color': '#ef4444',
+          'line-width': 12,
+          'line-opacity': 0.55,
+          'line-blur': 4,
+        },
+      });
+
+      // 3. Garis dasar merah tebal solid (Red Base)
+      map.addLayer({
+        id: 'kolongan-boundary-red-base',
+        type: 'line',
+        source: 'kolongan-boundary',
+        paint: {
+          'line-color': '#dc2626',
+          'line-width': 4.5,
+          'line-opacity': 1,
+        },
+      });
+
+      // 4. Garis putih putus-putus di atas merah (Red & White Dashed) persis seperti pada screenshot
+      map.addLayer({
+        id: 'kolongan-boundary-white-dash',
+        type: 'line',
+        source: 'kolongan-boundary',
+        paint: {
+          'line-color': '#ffffff',
+          'line-width': 3,
+          'line-dasharray': [3, 2],
+          'line-opacity': 1,
+        },
+      });
+    } catch (err) {
+      console.error('Error rendering boundary:', err);
     }
-
-    map.addSource('kolongan-boundary', {
-      type: 'geojson',
-      data: KOLONGAN_SATU_BOUNDARY,
-    });
-
-    // 1. Semi-transparent civic area fill
-    map.addLayer({
-      id: 'kolongan-boundary-fill',
-      type: 'fill',
-      source: 'kolongan-boundary',
-      paint: {
-        'fill-color': '#006194',
-        'fill-opacity': 0.12,
-      },
-    });
-
-    // 2. Soft outer glow
-    map.addLayer({
-      id: 'kolongan-boundary-glow',
-      type: 'line',
-      source: 'kolongan-boundary',
-      paint: {
-        'line-color': '#ef4444',
-        'line-width': 8,
-        'line-opacity': 0.45,
-        'line-blur': 4,
-      },
-    });
-
-    // 3. Garis dasar merah solid (Red Base)
-    map.addLayer({
-      id: 'kolongan-boundary-red-base',
-      type: 'line',
-      source: 'kolongan-boundary',
-      paint: {
-        'line-color': '#dc2626',
-        'line-width': 3.5,
-        'line-opacity': 0.95,
-      },
-    });
-
-    // 4. Garis putih putus-putus di atas merah (Red & White Dashed) persis seperti pada screenshot
-    map.addLayer({
-      id: 'kolongan-boundary-white-dash',
-      type: 'line',
-      source: 'kolongan-boundary',
-      paint: {
-        'line-color': '#ffffff',
-        'line-width': 2.8,
-        'line-dasharray': [3, 2.5],
-        'line-opacity': 1,
-      },
-    });
   };
 
   // Render Highlight Jalan-Jalan Utama yang ada di Gambar (Jl. Zanosui, Jl. Wariki, Jl. P.L. Kaunang, dll)
@@ -373,6 +392,23 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
     });
   };
 
+  // Fit to Full Boundaries View
+  const handleFitBoundary = () => {
+    if (!mapInstanceRef.current) return;
+    mapInstanceRef.current.fitBounds(
+      [
+        [124.8245, 1.3010],
+        [124.8380, 1.3215],
+      ],
+      {
+        padding: { top: 50, bottom: 50, left: 50, right: 50 },
+        pitch: is3DMode ? 48 : 0,
+        bearing: is3DMode ? -10 : 0,
+        duration: 1200,
+      }
+    );
+  };
+
   // Reset to Full Boundaries View
   const handleResetCenter = () => {
     if (!mapInstanceRef.current) return;
@@ -409,6 +445,17 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
+          {/* Fit Full Boundary Button */}
+          <button
+            type="button"
+            onClick={handleFitBoundary}
+            className="px-3 py-1.5 rounded-full text-xs font-bold bg-red-600 hover:bg-red-700 text-white transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+            title="Tampilkan seluruh garis batas wilayah poligon"
+          >
+            <MapPin className="w-3.5 h-3.5 text-white" />
+            <span>🎯 Batas Wilayah Penuh</span>
+          </button>
+
           {/* 3D View Toggle */}
           <button
             type="button"
