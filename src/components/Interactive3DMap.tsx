@@ -263,66 +263,53 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       const el = document.createElement('div');
       el.className = 'group cursor-pointer relative';
 
-      const isBlueDot = poi.id === 'titik-biru-pusat';
       const isKantor = poi.id === 'kantor-kelurahan';
+      const isGmim = poi.id === 'gmim-elohim';
       const isWalikota = poi.id === 'kantor-walikota';
       const isSpbu = poi.id === 'spbu-pertamina';
       const isGeothermal = poi.id === 'geothermal-lahendong';
 
-      if (isBlueDot) {
-        // Render Titik Biru GPS persis seperti di gambar user
-        el.innerHTML = `
-          <div class="relative flex items-center justify-center -translate-x-1/2 -translate-y-1/2">
-            <!-- Radar Ripple -->
-            <span class="absolute w-8 h-8 rounded-full bg-blue-500/40 animate-ping"></span>
-            <span class="absolute w-5 h-5 rounded-full bg-blue-400/50"></span>
-            <!-- Solid Blue Core with White Ring -->
-            <div class="w-4 h-4 rounded-full bg-blue-600 ring-2 ring-white shadow-lg relative z-10"></div>
-            <!-- Floating Label -->
-            <div class="absolute -top-7 whitespace-nowrap bg-blue-900/90 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-md border border-blue-400/60 transition group-hover:scale-110">
-              📍 Titik Acuan Pusat
-            </div>
-          </div>
-        `;
-      } else {
-        // Render 3D Badges
-        el.innerHTML = `
-          <div class="relative flex flex-col items-center">
-            ${isKantor || isWalikota ? `<span class="absolute -top-1 w-9 h-9 rounded-full bg-amber-400/35 animate-ping"></span>` : ''}
-            
-            <div class="px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1 ${
-              isKantor
-                ? 'bg-[#006194] text-white ring-2 ring-amber-300 ring-offset-1'
-                : isWalikota
-                ? 'bg-[#0369a1] text-white ring-2 ring-cyan-300'
-                : isSpbu
-                ? 'bg-amber-600 text-white ring-1 ring-amber-300'
-                : isGeothermal
-                ? 'bg-emerald-700 text-white ring-1 ring-emerald-300'
-                : 'bg-white/95 text-[#131b2e] ring-1 ring-slate-300/80 backdrop-blur-md'
+      // Render 3D Badges
+      el.innerHTML = `
+        <div class="relative flex flex-col items-center">
+          ${isKantor || isGmim ? `<span class="absolute -top-1 w-9 h-9 rounded-full ${isKantor ? 'bg-amber-400/40' : 'bg-sky-400/40'} animate-ping"></span>` : ''}
+          
+          <div class="px-2.5 py-1 rounded-full shadow-lg flex items-center gap-1.5 transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1 ${
+            isKantor
+              ? 'bg-[#006194] text-white ring-2 ring-amber-300 ring-offset-1'
+              : isGmim
+              ? 'bg-[#0284c7] text-white ring-2 ring-sky-300 ring-offset-1'
+              : isWalikota
+              ? 'bg-[#0369a1] text-white ring-2 ring-cyan-300'
+              : isSpbu
+              ? 'bg-amber-600 text-white ring-1 ring-amber-300'
+              : isGeothermal
+              ? 'bg-emerald-700 text-white ring-1 ring-emerald-300'
+              : 'bg-white/95 text-[#131b2e] ring-1 ring-slate-300/80 backdrop-blur-md'
+          }">
+            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${poi.categoryColor}"></span>
+            <span class="text-[11px] font-extrabold whitespace-nowrap tracking-tight ${
+              isKantor ? 'text-amber-200' : isGmim || isWalikota || isSpbu || isGeothermal ? 'text-white' : 'text-[#131b2e]'
             }">
-              <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${poi.categoryColor}"></span>
-              <span class="text-[11px] font-extrabold whitespace-nowrap tracking-tight ${
-                isKantor ? 'text-amber-200' : isWalikota || isSpbu || isGeothermal ? 'text-white' : 'text-[#131b2e]'
-              }">
-                ${isKantor ? '⭐ ' : ''}${poi.name.split(' ')[0]} ${poi.name.split(' ')[1] || ''}
-              </span>
-            </div>
-
-            <div class="w-2.5 h-2.5 -mt-1 rotate-45 ${
-              isKantor
-                ? 'bg-[#006194]'
-                : isWalikota
-                ? 'bg-[#0369a1]'
-                : isSpbu
-                ? 'bg-amber-600'
-                : isGeothermal
-                ? 'bg-emerald-700'
-                : 'bg-white border-r border-b border-slate-300/80'
-            }"></div>
+              ${isKantor ? '⭐ Kantor Kelurahan' : isGmim ? '⛪ GMIM Elohim 1' : `${poi.name.split(' ')[0]} ${poi.name.split(' ')[1] || ''}`}
+            </span>
           </div>
-        `;
-      }
+
+          <div class="w-2.5 h-2.5 -mt-1 rotate-45 ${
+            isKantor
+              ? 'bg-[#006194]'
+              : isGmim
+              ? 'bg-[#0284c7]'
+              : isWalikota
+              ? 'bg-[#0369a1]'
+              : isSpbu
+              ? 'bg-amber-600'
+              : isGeothermal
+              ? 'bg-emerald-700'
+              : 'bg-white border-r border-b border-slate-300/80'
+          }"></div>
+        </div>
+      `;
 
       el.addEventListener('click', () => {
         setSelectedPoi(poi);
@@ -336,7 +323,7 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
         });
       });
 
-      const marker = new maplibregl.Marker({ element: el, anchor: isBlueDot ? 'center' : 'bottom' })
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
         .setLngLat(poi.coordinates)
         .addTo(map);
 
