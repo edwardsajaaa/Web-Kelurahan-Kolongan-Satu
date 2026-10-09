@@ -15,6 +15,7 @@ const ModalLetterRequest = dynamic(() => import('@/components/ModalLetterRequest
 const ModalCitizenReport = dynamic(() => import('@/components/ModalCitizenReport'), { ssr: false });
 const ModalMonografiPrint = dynamic(() => import('@/components/ModalMonografiPrint'), { ssr: false });
 const ModalOfficialLetterPreview = dynamic(() => import('@/components/ModalOfficialLetterPreview'), { ssr: false });
+const ModalLegalPolicy = dynamic(() => import('@/components/ModalLegalPolicy'), { ssr: false });
 const Interactive3DMap = dynamic(() => import('@/components/Interactive3DMap'), {
   ssr: false,
   loading: () => (
@@ -30,6 +31,8 @@ export default function LandingPage() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isPrintMonografiOpen, setIsPrintMonografiOpen] = useState(false);
   const [isPrintLetterOpen, setIsPrintLetterOpen] = useState(false);
+  const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
+  const [legalModalTab, setLegalModalTab] = useState<'privacy' | 'terms'>('privacy');
   const [printLetterTarget, setPrintLetterTarget] = useState<LetterRequest | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState<AvailableYear | number>(CURRENT_ACTIVE_YEAR);
@@ -1104,13 +1107,27 @@ export default function LandingPage() {
           <div className="pt-4 2xl:pt-6 border-t border-[#dae2fd] flex flex-col md:flex-row items-center justify-between gap-3 text-xs 2xl:text-sm text-[#3f4850]">
             <p>© 2024 Pemerintah Kelurahan Kolongan Satu, Kota Tomohon. Hak Cipta Dilindungi.</p>
             <div className="flex items-center gap-4">
-              <a href="#" className="hover:text-[#006194] transition-colors">
+              <button
+                type="button"
+                onClick={() => {
+                  setLegalModalTab('privacy');
+                  setIsLegalModalOpen(true);
+                }}
+                className="hover:text-[#006194] transition-colors cursor-pointer text-left"
+              >
                 Kebijakan Privasi
-              </a>
+              </button>
               <span>•</span>
-              <a href="#" className="hover:text-[#006194] transition-colors">
+              <button
+                type="button"
+                onClick={() => {
+                  setLegalModalTab('terms');
+                  setIsLegalModalOpen(true);
+                }}
+                className="hover:text-[#006194] transition-colors cursor-pointer text-left"
+              >
                 Ketentuan Layanan
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -1148,6 +1165,12 @@ export default function LandingPage() {
         onAddReport={handleAddReport}
         onUpdateReportStatus={handleUpdateReportStatus}
         currentOfficial={currentOfficial}
+      />
+
+      <ModalLegalPolicy
+        isOpen={isLegalModalOpen}
+        onClose={() => setIsLegalModalOpen(false)}
+        initialTab={legalModalTab}
       />
     </div>
   );
