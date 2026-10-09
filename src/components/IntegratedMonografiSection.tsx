@@ -129,16 +129,6 @@ export default function IntegratedMonografiSection({
               ))}
             </div>
           </div>
-
-          <p className="text-sm 2xl:text-base text-[#3f4850] mt-2">
-            <strong className="text-[#131b2e]">{currentTotalJiwa.toLocaleString('id-ID')}</strong> jiwa
-            <span className="mx-2 text-[#bfc7d2]">•</span>
-            <strong className="text-[#131b2e]">{currentTotalKK.toLocaleString('id-ID')}</strong> KK
-            <span className="mx-2 text-[#bfc7d2]">•</span>
-            <strong className="text-[#131b2e]">{currentLuasHa.toLocaleString('id-ID')}</strong> Ha
-            <span className="mx-2 text-[#bfc7d2]">•</span>
-            5 Lingkungan
-          </p>
         </div>
 
         <div className="flex items-center gap-2.5 shrink-0">
