@@ -15,6 +15,14 @@ const ModalLetterRequest = dynamic(() => import('@/components/ModalLetterRequest
 const ModalCitizenReport = dynamic(() => import('@/components/ModalCitizenReport'), { ssr: false });
 const ModalMonografiPrint = dynamic(() => import('@/components/ModalMonografiPrint'), { ssr: false });
 const ModalOfficialLetterPreview = dynamic(() => import('@/components/ModalOfficialLetterPreview'), { ssr: false });
+const Interactive3DMap = dynamic(() => import('@/components/Interactive3DMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[400px] bg-[#f2f3ff] animate-pulse rounded-3xl flex items-center justify-center text-xs font-semibold text-[#006194]">
+      Memuat Peta Geospasial 3D Kolongan Satu...
+    </div>
+  ),
+});
 
 export default function LandingPage() {
   // Interactive modal states on the landing page
@@ -33,6 +41,9 @@ export default function LandingPage() {
   // Citizen letters and reports states
   const [letters, setLetters] = useState<LetterRequest[]>(INITIAL_LETTERS);
   const [reports, setReports] = useState<CitizenReport[]>(INITIAL_REPORTS);
+
+  // Map mode state: 3D interactive map vs classic Google Maps
+  const [mapMode, setMapMode] = useState<'3d' | 'gmaps'>('3d');
 
   React.useEffect(() => {
     async function fetchLandingData() {
@@ -903,74 +914,155 @@ export default function LandingPage() {
           </section>
 
           {/* ============================================================ */}
-          {/* 8. GEOGRAPHIC LOCATION & CONTACT SNIPPET                     */}
+          {/* 8. GEOGRAPHIC 3D MAP & TERRITORY SHOWCASE                     */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 2xl:gap-10 items-center bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-8 2xl:p-12 shadow-sm border border-[#e2e7ff]">
-              {/* Left: Office Location Details */}
-              <div className="lg:col-span-6 space-y-3 2xl:space-y-5 text-left">
-                <div className="inline-flex items-center gap-1.5 text-xs 2xl:text-sm text-[#006194] font-bold uppercase tracking-wider">
-                  <span className="material-symbols-outlined text-[18px] 2xl:text-[22px]">location_on</span>
-                  Pusat Pelayanan Kantor
-                </div>
-                <h3 className="text-xl sm:text-2xl 2xl:text-3xl 3xl:text-4xl text-[#131b2e] font-bold">
-                  Kantor Kelurahan Kolongan Satu
-                </h3>
-                <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                  Berada strategis di jantung Kecamatan Tomohon Tengah. Melayani administrasi persuratan, perizinan, dan koordinasi kewilayahan warga Lingkungan I sampai V secara terpadu.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 2xl:gap-5 pt-2">
-                  <div className="bg-[#f2f3ff] p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl border border-[#e2e7ff]/80">
-                    <div className="text-xs 2xl:text-sm text-[#3f4850] font-medium">Alamat Lengkap</div>
-                    <div className="text-xs sm:text-sm 2xl:text-base text-[#131b2e] font-semibold mt-0.5">
-                      Jl. Kolongan Raya, Tomohon Tengah, Kota Tomohon
-                    </div>
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print" id="peta-wilayah">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 2xl:p-12 shadow-sm border border-[#e2e7ff] space-y-6 2xl:space-y-8">
+              {/* Section Header with Mode Switcher */}
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#dae2fd]/60 pb-6">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 text-xs 2xl:text-sm text-[#006194] font-bold uppercase tracking-wider mb-1">
+                    <span className="material-symbols-outlined text-[18px] 2xl:text-[22px]">map</span>
+                    <span>Pusat Geospasial &amp; Pemetaan Wilayah</span>
                   </div>
-                  <div className="bg-[#f2f3ff] p-3.5 2xl:p-5 rounded-xl 2xl:rounded-2xl border border-[#e2e7ff]/80">
-                    <div className="text-xs 2xl:text-sm text-[#3f4850] font-medium">Layanan Daring</div>
-                    <div className="text-xs sm:text-sm 2xl:text-base text-[#131b2e] font-semibold mt-0.5">
-                      Aktif 24 Jam via WhatsApp Portal
-                    </div>
-                  </div>
+                  <h3 className="text-2xl sm:text-3xl 2xl:text-4xl text-[#131b2e] font-bold tracking-tight">
+                    Peta 3D Batas Wilayah &amp; Titik Lokasi Penting
+                  </h3>
+                  <p className="text-xs sm:text-sm 2xl:text-base text-[#535f70] max-w-2xl mt-1 leading-relaxed">
+                    Eksplorasi garis batas resmi teritorial Kelurahan Kolongan Satu (48 Hektar) serta titik lokasi kantor kelurahan, sarana ibadah, cagar budaya, dan pos jaga I–V dalam sudut pandang 3D interaktif.
+                  </p>
                 </div>
-                <div className="pt-1">
-                  <a
-                    href="https://www.google.com/maps/place/Kolongan+Satu,+Kec.+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#006194] hover:bg-[#007bb9] text-white px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all duration-300"
+
+                {/* Map Mode Selector Tabs */}
+                <div className="inline-flex p-1 bg-[#f2f3ff] rounded-full border border-[#dae2fd] shrink-0 self-start lg:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setMapMode('3d')}
+                    className={`px-4 2xl:px-5 py-2 rounded-full text-xs 2xl:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                      mapMode === '3d'
+                        ? 'bg-[#006194] text-white shadow-xs'
+                        : 'text-[#535f70] hover:text-[#006194]'
+                    }`}
                   >
-                    <span className="material-symbols-outlined text-[18px]">near_me</span>
-                    <span>Petunjuk Arah Google Maps</span>
-                    <span className="material-symbols-outlined text-[16px]">open_in_new</span>
-                  </a>
+                    <span>🛰️ Peta 3D Interaktif</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMapMode('gmaps')}
+                    className={`px-4 2xl:px-5 py-2 rounded-full text-xs 2xl:text-sm font-bold transition flex items-center gap-1.5 cursor-pointer ${
+                      mapMode === 'gmaps'
+                        ? 'bg-[#006194] text-white shadow-xs'
+                        : 'text-[#535f70] hover:text-[#006194]'
+                    }`}
+                  >
+                    <span>🗺️ Google Maps Standar</span>
+                  </button>
                 </div>
               </div>
 
-              {/* Right: Embedded Interactive Map Container */}
-              <div className="lg:col-span-6 w-full">
-                <div className="w-full h-72 sm:h-80 2xl:h-96 rounded-xl 2xl:rounded-2xl shadow-inner relative overflow-hidden border border-[#dae2fd] bg-[#f2f3ff] group">
-                  <iframe
-                    title="Peta Lokasi Kelurahan Kolongan Satu, Tomohon"
-                    src="https://maps.google.com/maps?q=Kolongan+Satu,+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                    className="w-full h-full border-0"
-                    loading="lazy"
-                    allowFullScreen
-                    referrerPolicy="no-referrer-when-downgrade"
-                  />
-                  <a
-                    href="https://www.google.com/maps/place/Kolongan+Satu,+Kec.+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="absolute bottom-3 right-3 bg-white/95 hover:bg-[#006194] text-[#131b2e] hover:text-white backdrop-blur-md px-3.5 2xl:px-4 py-1.5 2xl:py-2 rounded-full text-xs 2xl:text-sm font-semibold shadow-md flex items-center gap-1.5 border border-[#dae2fd] hover:border-[#006194] transition-all duration-300 group-hover:scale-105"
-                  >
-                    <span className="material-symbols-outlined text-[16px] 2xl:text-[18px] text-[#006194] group-hover:text-white transition-colors">
-                      open_in_new
-                    </span>
-                    <span>Buka di Google Maps</span>
-                  </a>
+              {/* Map View Body */}
+              {mapMode === '3d' ? (
+                <div className="w-full space-y-6">
+                  {/* Interactive 3D Map Component */}
+                  <Interactive3DMap />
+
+                  {/* Office Quick Facts Strip */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                    <div className="bg-[#faf8ff] p-4 2xl:p-5 rounded-2xl border border-[#dae2fd]">
+                      <div className="text-xs font-semibold text-[#006194]">Pusat Pemerintahan</div>
+                      <div className="text-sm font-bold text-[#131b2e] mt-0.5">Kantor Lurah Kolongan Satu</div>
+                      <div className="text-xs text-[#535f70] mt-1">Jl. Kolongan Raya (Jaga 2), Tomohon Tengah</div>
+                    </div>
+                    <div className="bg-[#faf8ff] p-4 2xl:p-5 rounded-2xl border border-[#dae2fd]">
+                      <div className="text-xs font-semibold text-[#006c49]">Luas &amp; Batas Teritorial</div>
+                      <div className="text-sm font-bold text-[#131b2e] mt-0.5">48 Hektar (5 Lingkungan / Jaga)</div>
+                      <div className="text-xs text-[#535f70] mt-1">Garis batas bercahaya terintegrasi otomatis pada peta 3D</div>
+                    </div>
+                    <div className="bg-[#faf8ff] p-4 2xl:p-5 rounded-2xl border border-[#dae2fd] flex items-center justify-between">
+                      <div>
+                        <div className="text-xs font-semibold text-[#854d0e]">Layanan Petunjuk Arah</div>
+                        <div className="text-sm font-bold text-[#131b2e] mt-0.5">Navigasi GPS Warga</div>
+                        <div className="text-xs text-[#535f70] mt-0.5">Rute akurat menuju lokasi kantor</div>
+                      </div>
+                      <a
+                        href="https://www.google.com/maps/place/Kolongan+Satu,+Kec.+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-[#006194] hover:bg-[#007bb9] text-white p-2.5 rounded-full shadow-xs hover:shadow-md transition"
+                        title="Buka rute di Google Maps"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">directions</span>
+                      </a>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Google Maps Iframe View */
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                  <div className="lg:col-span-5 space-y-4 text-left">
+                    <div className="inline-flex items-center gap-1.5 text-xs text-[#006194] font-bold uppercase tracking-wider">
+                      <span className="material-symbols-outlined text-[18px]">location_on</span>
+                      <span>Lokasi Kantor Kelurahan</span>
+                    </div>
+                    <h4 className="text-xl sm:text-2xl font-bold text-[#131b2e]">
+                      Kantor Kelurahan Kolongan Satu
+                    </h4>
+                    <p className="text-xs sm:text-sm text-[#3f4850] leading-relaxed">
+                      Berada strategis di jantung Kecamatan Tomohon Tengah. Melayani administrasi persuratan, perizinan, dan koordinasi kewilayahan warga Lingkungan I sampai V secara terpadu.
+                    </p>
+                    <div className="space-y-2.5">
+                      <div className="bg-[#f2f3ff] p-3.5 rounded-xl border border-[#e2e7ff]/80">
+                        <div className="text-xs text-[#535f70] font-medium">Alamat Lengkap</div>
+                        <div className="text-xs sm:text-sm text-[#131b2e] font-semibold mt-0.5">
+                          Jl. Kolongan Raya, Tomohon Tengah, Kota Tomohon
+                        </div>
+                      </div>
+                      <div className="bg-[#f2f3ff] p-3.5 rounded-xl border border-[#e2e7ff]/80">
+                        <div className="text-xs text-[#535f70] font-medium">Layanan Daring</div>
+                        <div className="text-xs sm:text-sm text-[#131b2e] font-semibold mt-0.5">
+                          Aktif 24 Jam via WhatsApp Portal
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <a
+                        href="https://www.google.com/maps/place/Kolongan+Satu,+Kec.+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-[#006194] hover:bg-[#007bb9] text-white px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all duration-300"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">near_me</span>
+                        <span>Petunjuk Arah Google Maps</span>
+                        <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-7 w-full">
+                    <div className="w-full h-80 sm:h-96 rounded-2xl shadow-inner relative overflow-hidden border border-[#dae2fd] bg-[#f2f3ff] group">
+                      <iframe
+                        title="Peta Lokasi Kelurahan Kolongan Satu, Tomohon"
+                        src="https://maps.google.com/maps?q=Kolongan+Satu,+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                        className="w-full h-full border-0"
+                        loading="lazy"
+                        allowFullScreen
+                        referrerPolicy="no-referrer-when-downgrade"
+                      />
+                      <a
+                        href="https://www.google.com/maps/place/Kolongan+Satu,+Kec.+Tomohon+Tengah,+Kota+Tomohon,+Sulawesi+Utara/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute bottom-3 right-3 bg-white/95 hover:bg-[#006194] text-[#131b2e] hover:text-white backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-semibold shadow-md flex items-center gap-1.5 border border-[#dae2fd] hover:border-[#006194] transition-all duration-300 group-hover:scale-105"
+                      >
+                        <span className="material-symbols-outlined text-[16px] text-[#006194] group-hover:text-white transition-colors">
+                          open_in_new
+                        </span>
+                        <span>Buka di Google Maps</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         </div>
