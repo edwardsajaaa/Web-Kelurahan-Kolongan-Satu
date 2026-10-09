@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CitizenReport } from '@/data/reportsData';
 import { Official } from '@/data/officialsData';
 import {
@@ -13,13 +13,29 @@ import {
   Trash2,
   Shield,
   MapPin,
-  Camera,
   MessageSquare,
   Sparkles,
   Loader2,
   AlertCircle,
-  Check
+  Check,
+  Phone,
+  ExternalLink,
+  Copy,
 } from 'lucide-react';
+
+export const PALA_WHATSAPP_CONTACTS: Record<number, { nama: string; phone: string; label: string }> = {
+  1: { nama: 'Meky Mario Turangan', phone: '0813-1122-3344', label: 'Kepala Lingkungan I (Jaga 1)' },
+  2: { nama: 'Devid P.N. Tasie', phone: '0813-2233-4455', label: 'Kepala Lingkungan II (Jaga 2)' },
+  3: { nama: 'Agustinus Sapanany', phone: '0813-3344-5566', label: 'Kepala Lingkungan III (Jaga 3)' },
+  4: { nama: 'Petronella Pusung', phone: '0813-4455-6677', label: 'Kepala Lingkungan IV (Jaga 4)' },
+  5: { nama: 'Vifi Timang', phone: '0813-5566-7799', label: 'Kepala Lingkungan V (Jaga 5)' },
+};
+
+export const KELURAHAN_WHATSAPP_CENTER = {
+  nama: 'Layanan Pengaduan Kelurahan Kolongan Satu',
+  phone: '0812-4455-8891',
+  label: 'Call Center & Posko Kelurahan',
+};
 
 interface ModalCitizenReportProps {
   isOpen: boolean;
@@ -27,7 +43,8 @@ interface ModalCitizenReportProps {
   reports: CitizenReport[];
   onAddReport: (newReport: CitizenReport) => void;
   onUpdateReportStatus: (id: string, newStatus: CitizenReport['status'], tanggapan?: string) => void;
-  currentOfficial: Official;
+  currentOfficial?: Official;
+  defaultTab?: 'daftar' | 'lapor';
 }
 
 export default function ModalCitizenReport({
@@ -37,99 +54,135 @@ export default function ModalCitizenReport({
   onAddReport,
   onUpdateReportStatus,
   currentOfficial,
+  defaultTab = 'lapor',
 }: ModalCitizenReportProps) {
-  const [activeTab, setActiveTab] = useState<'daftar' | 'lapor'>('daftar');
+  const [activeTab, setActiveTab] = useState<'daftar' | 'lapor'>(defaultTab);
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(defaultTab);
+    }
+  }, [isOpen, defaultTab]);
 
   // Form states
   const [nama, setNama] = useState('');
   const [kontak, setKontak] = useState('');
-  const [lingkunganId, setLingkunganId] = useState(3);
-  const [klasifikasi, setKlasifikasi] = useState<CitizenReport['klasifikasi']>('Air Bersih');
+  const [lingkunganId, setLingkunganId] = useState(1);
+  const [klasifikasi, setKlasifikasi] = useState<CitizenReport['klasifikasi']>('Lampu Jalan');
+  const [lokasiPatokan, setLokasiPatokan] = useState('');
   const [isiLaporan, setIsiLaporan] = useState('');
+  const [targetTujuan, setTargetTujuan] = useState<'kelurahan' | 'pala'>('kelurahan');
 
   // Status submission states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [toastSuccess, setToastSuccess] = useState<string | null>(null);
+  const [copiedPreview, setCopiedPreview] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const targetContact = targetTujuan === 'pala' ? PALA_WHATSAPP_CONTACTS[lingkunganId] : KELURAHAN_WHATSAPP_CENTER;
+
+  // Format WhatsApp Message
+  const composedWhatsAppMessage = `*PENGADUAN WARGA - KELURAHAN KOLONGAN SATU*
+━━━━━━━━━━━━━━━━━━━━━━━
+• *Nama Pelapor:* ${nama.trim() || '(Nama Warga)'}
+• *Kontak Pelapor:* ${kontak.trim() || '-'}
+• *Wilayah:* Lingkungan ${lingkunganId} (Jaga ${lingkunganId})
+• *Kategori Masalah:* ${klasifikasi}
+• *Lokasi / Patokan:* ${lokasiPatokan.trim() || '(Sesuai Jaga ' + lingkunganId + ')'}
+• *Uraian Masalah:*
+${isiLaporan.trim() || '(Belum diisi)'}
+━━━━━━━━━━━━━━━━━━━━━━━
+_Pesan pengaduan resmi via Website Kelurahan Kolongan Satu, Tomohon Tengah_`;
+
+  const handleSendToWhatsApp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nama || !kontak || !isiLaporan) {
-      setSubmitError('Mohon lengkapi Nama Pelapor, Kontak HP/WA, dan Rincian Masalah!');
+    if (!nama.trim() || !isiLaporan.trim()) {
+      setSubmitError('Mohon lengkapi Nama Pelapor dan Uraian Masalah sebelum mengirim!');
       return;
     }
 
-    setIsSubmitting(true);
     setSubmitError(null);
+    setIsSubmitting(true);
 
     try {
+      // 1. Prepare target phone number (strip non-digits, replace 0 with 62)
+      const rawPhone = targetContact.phone;
+      const cleanPhone = rawPhone.replace(/[^0-9]/g, '').replace(/^0/, '62');
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(composedWhatsAppMessage)}`;
+
+      // 2. Save ticket record to backend /api/lapor for kelurahan tracking
+      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      const ticketNo = `LAPOR-KKT-${randomSuffix}`;
+
       const payload = {
-        nama_warga: nama,
-        kontak_warga: kontak,
+        nama_warga: nama.trim(),
+        kontak_warga: kontak.trim() || cleanPhone,
         lingkungan_id: lingkunganId,
         klasifikasi: klasifikasi,
-        isi_laporan: isiLaporan,
+        isi_laporan: `[WhatsApp -> ${targetContact.nama} (${targetContact.phone})] ${isiLaporan.trim()} (Patokan: ${lokasiPatokan.trim() || '-'})`,
       };
 
-      const res = await fetch('/api/lapor', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      const resJson = await res.json();
-
-      if (!res.ok || !resJson.success) {
-        throw new Error(resJson.error || 'Gagal mengirim laporan ke server.');
+      try {
+        const res = await fetch('/api/lapor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          const resJson = await res.json();
+          if (resJson.data) {
+            onAddReport(resJson.data);
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal simpan arsip tiket ke server:', err);
+        // Fallback local report entry
+        const fallbackReport: CitizenReport = {
+          id: `rep-${Date.now()}`,
+          ticketNo,
+          namaWarga: nama.trim(),
+          kontakWarga: kontak.trim() || '-',
+          lingkunganId,
+          lingkunganName: `Lingkungan ${lingkunganId}`,
+          klasifikasi,
+          isiLaporan: isiLaporan.trim(),
+          status: 'menunggu_tanggapan',
+          statusLabel: 'Terkirim ke WhatsApp',
+          dilaporkanPada: new Date().toLocaleDateString('id-ID'),
+        };
+        onAddReport(fallbackReport);
       }
 
-      const newReport: CitizenReport = resJson.data;
-      onAddReport(newReport);
+      // 3. Open WhatsApp in new tab
+      if (typeof window !== 'undefined') {
+        window.open(waUrl, '_blank');
+      }
 
-      // Reset form fields
+      setToastSuccess(`Pengaduan berhasil disiapkan! WhatsApp dibuka menuju nomor ${targetContact.nama} (${targetContact.phone}).`);
+      
+      // Reset form
       setNama('');
       setKontak('');
+      setLokasiPatokan('');
       setIsiLaporan('');
-      setLingkunganId(1);
-      setKlasifikasi('Air Bersih');
-
-      // Switch to list and show success toast
-      setActiveTab('daftar');
-      setToastSuccess(`Tiket Aduan #${newReport.ticketNo} berhasil disimpan ke backend! Pala dan Kasie terkait telah menerima notifikasi.`);
-      setTimeout(() => setToastSuccess(null), 5000);
-    } catch (err: any) {
-      console.error('Error submitting citizen report:', err);
-      // Fallback local resilience
-      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-      const fallbackReport: CitizenReport = {
-        id: `rep-${Date.now()}`,
-        ticketNo: `LAPOR-KKT-${randomSuffix}`,
-        namaWarga: nama,
-        kontakWarga: kontak,
-        lingkunganId: lingkunganId,
-        lingkunganName: `Lingkungan ${lingkunganId}`,
-        klasifikasi: klasifikasi,
-        isiLaporan: isiLaporan,
-        status: 'menunggu_tanggapan',
-        statusLabel: 'Menunggu Disposisi',
-        dilaporkanPada: new Date().toLocaleDateString('id-ID'),
-      };
-      onAddReport(fallbackReport);
-
-      setNama('');
-      setKontak('');
-      setIsiLaporan('');
-      setActiveTab('daftar');
-      setToastSuccess(`Tiket Aduan #${fallbackReport.ticketNo} berhasil dicatat! Tim kelurahan akan segera menindaklanjuti.`);
-      setTimeout(() => setToastSuccess(null), 5000);
+    } catch (error: any) {
+      setSubmitError(`Terjadi kesalahan: ${error.message || 'Gagal merangkai WhatsApp'}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isStaff = currentOfficial.roleCode !== 'publik';
+  const handleCopyText = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(composedWhatsAppMessage);
+      setCopiedPreview(true);
+      setTimeout(() => setCopiedPreview(false), 2500);
+    }
+  };
+
+  const isStaff = currentOfficial && currentOfficial.roleCode !== 'publik';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200">
@@ -297,12 +350,21 @@ export default function ModalCitizenReport({
           )}
 
           {activeTab === 'lapor' && (
-            <form onSubmit={handleSubmit} className="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 space-y-4">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Form Laporan Insiden & Keluhan Warga</h3>
-                <p className="text-xs text-slate-500">
-                  Laporan akan langsung diteruskan ke database dan kepala lingkungan (Pala) terkait.
-                </p>
+            <form onSubmit={handleSendToWhatsApp} className="bg-white p-5 md:p-6 rounded-2xl border border-slate-200 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Formulir Pengaduan Warga (Direct WhatsApp)</span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Pesan pengaduan akan dirangkai otomatis dan dikirim langsung ke WhatsApp resmi kelurahan / Kepala Jaga.
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 shrink-0">
+                  <Phone className="w-3 h-3 text-emerald-600" />
+                  <span>WhatsApp Terintegrasi</span>
+                </div>
               </div>
 
               {submitError && (
@@ -315,29 +377,28 @@ export default function ModalCitizenReport({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Nama Pelapor *
+                    Nama Pelapor / Warga *
                   </label>
                   <input
                     type="text"
                     required
                     value={nama}
                     onChange={(e) => setNama(e.target.value)}
-                    placeholder="Nama Anda"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    placeholder="Contoh: Franky Runtuwene"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Nomor WhatsApp / HP Aktif *
+                    Nomor WhatsApp / HP Pelapor
                   </label>
                   <input
                     type="tel"
-                    required
                     value={kontak}
                     onChange={(e) => setKontak(e.target.value)}
                     placeholder="0812-XXXX-XXXX"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                   />
                 </div>
 
@@ -348,7 +409,7 @@ export default function ModalCitizenReport({
                   <select
                     value={lingkunganId}
                     onChange={(e) => setLingkunganId(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition cursor-pointer"
                   >
                     <option value={1}>Lingkungan I (Jaga 1)</option>
                     <option value={2}>Lingkungan II (Jaga 2)</option>
@@ -365,14 +426,27 @@ export default function ModalCitizenReport({
                   <select
                     value={klasifikasi}
                     onChange={(e) => setKlasifikasi(e.target.value as any)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition cursor-pointer"
                   >
+                    <option value="Lampu Jalan">Lampu Penerangan Jalan Umum (PJU Padam)</option>
                     <option value="Air Bersih">Air Bersih & Pipa Mata Air</option>
-                    <option value="Drainase">Saluran Drainase / Saluran Air</option>
-                    <option value="Lampu Jalan">Lampu Penerangan Jalan Umum</option>
+                    <option value="Drainase">Saluran Drainase / Saluran Air Tersumbat</option>
                     <option value="Sampah">Sampah Liar / Kebersihan Lingkungan</option>
                     <option value="Keamanan & Trantib">Keamanan, Poskamling & Trantib</option>
                   </select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Lokasi Spesifik / Patokan Tempat
+                  </label>
+                  <input
+                    type="text"
+                    value={lokasiPatokan}
+                    onChange={(e) => setLokasiPatokan(e.target.value)}
+                    placeholder="Contoh: Depan Gereja GMIM Elohim / samping gardu PLN / lorong masuk Jaga 3..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
+                  />
                 </div>
 
                 <div className="md:col-span-2">
@@ -381,38 +455,112 @@ export default function ModalCitizenReport({
                   </label>
                   <textarea
                     required
-                    rows={4}
+                    rows={3}
                     value={isiLaporan}
                     onChange={(e) => setIsiLaporan(e.target.value)}
-                    placeholder="Sebutkan lokasi pasti, patokan tempat, dan kondisi kerusakan secara rinci..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                    placeholder="Jelaskan kondisi permasalahan secara jelas (misal: lampu padam sudah 2 malam, pipa bocor membasahi jalan, dsb)..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition"
                   />
+                </div>
+
+                {/* Target WhatsApp Contact Selector */}
+                <div className="md:col-span-2 bg-[#f2fbf6] p-3.5 rounded-xl border border-emerald-200/80 space-y-2">
+                  <label className="block text-xs font-bold text-[#006c49]">
+                    Kirim Pengaduan Menuju Nomor WhatsApp:
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <label className={`flex items-start gap-2.5 p-2.5 rounded-xl border transition cursor-pointer ${
+                      targetTujuan === 'kelurahan'
+                        ? 'bg-white border-emerald-600 shadow-xs'
+                        : 'bg-white/60 border-slate-200 hover:bg-white'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="targetTujuan"
+                        checked={targetTujuan === 'kelurahan'}
+                        onChange={() => setTargetTujuan('kelurahan')}
+                        className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                      />
+                      <div className="min-w-0 text-xs">
+                        <p className="font-bold text-slate-900">{KELURAHAN_WHATSAPP_CENTER.label}</p>
+                        <p className="text-[11px] text-emerald-800 font-semibold">{KELURAHAN_WHATSAPP_CENTER.phone}</p>
+                        <p className="text-[10px] text-slate-500">Posko Kelurahan Kolongan Satu</p>
+                      </div>
+                    </label>
+
+                    <label className={`flex items-start gap-2.5 p-2.5 rounded-xl border transition cursor-pointer ${
+                      targetTujuan === 'pala'
+                        ? 'bg-white border-emerald-600 shadow-xs'
+                        : 'bg-white/60 border-slate-200 hover:bg-white'
+                    }`}>
+                      <input
+                        type="radio"
+                        name="targetTujuan"
+                        checked={targetTujuan === 'pala'}
+                        onChange={() => setTargetTujuan('pala')}
+                        className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                      />
+                      <div className="min-w-0 text-xs">
+                        <p className="font-bold text-slate-900">{PALA_WHATSAPP_CONTACTS[lingkunganId]?.label}</p>
+                        <p className="text-[11px] text-emerald-800 font-semibold">{PALA_WHATSAPP_CONTACTS[lingkunganId]?.phone}</p>
+                        <p className="text-[10px] text-slate-500 truncate">{PALA_WHATSAPP_CONTACTS[lingkunganId]?.nama}</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Live WhatsApp Message Preview */}
+                <div className="md:col-span-2 bg-[#efeae2] p-4 rounded-2xl border border-[#d1c7b7] space-y-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span className="flex items-center gap-1.5">
+                      <MessageSquare className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>Pratinjau Format Pesan WhatsApp:</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleCopyText}
+                      className="inline-flex items-center gap-1 text-[11px] text-emerald-800 hover:text-emerald-950 font-semibold bg-white/70 hover:bg-white px-2 py-0.5 rounded-lg border border-slate-300 transition"
+                      title="Salin teks pesan"
+                    >
+                      {copiedPreview ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                      <span>{copiedPreview ? 'Tersalin' : 'Salin Teks'}</span>
+                    </button>
+                  </div>
+
+                  <div className="bg-white p-3.5 rounded-xl shadow-xs border border-slate-200/80 text-xs text-slate-800 font-sans whitespace-pre-line leading-relaxed max-h-48 overflow-y-auto">
+                    {composedWhatsAppMessage}
+                  </div>
+                  <p className="text-[10px] text-slate-500 italic">
+                    * Pesan di atas akan langsung terbuka di aplikasi / web WhatsApp saat Anda mengklik tombol di bawah.
+                  </p>
                 </div>
               </div>
 
-              <div className="pt-2 flex items-center justify-end space-x-3 border-t border-slate-100">
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('daftar')}
-                  disabled={isSubmitting}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  onClick={onClose}
+                  className="w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 order-2 sm:order-1"
                 >
-                  Batal
+                  Tutup
                 </button>
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-rose-700 hover:bg-rose-800 text-white shadow-md shadow-rose-700/20 transition flex items-center space-x-2 disabled:opacity-60"
+                  className="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold bg-[#006c49] hover:bg-[#005237] text-white shadow-md shadow-emerald-900/20 transition flex items-center justify-center space-x-2 disabled:opacity-60 order-1 sm:order-2 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Mengirim Laporan...</span>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Menyiapkan WhatsApp...</span>
                     </>
                   ) : (
                     <>
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Kirim Laporan Pengaduan</span>
+                      <Send className="w-4 h-4 text-white" />
+                      <span>Kirim Pengaduan via WhatsApp</span>
+                      <ExternalLink className="w-3.5 h-3.5 text-emerald-200" />
                     </>
                   )}
                 </button>
