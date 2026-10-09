@@ -9,17 +9,18 @@ import dynamic from 'next/dynamic';
 import ActivitySlider from '@/components/ActivitySlider';
 import IntegratedMonografiSection from '@/components/IntegratedMonografiSection';
 import { AvailableYear, CURRENT_ACTIVE_YEAR, DATA_MONOGRAFI_2024, DATA_MONOGRAFI_2025, DATA_SEJARAH_KOLONGAN_SATU } from '@/data';
+import { INITIAL_REPORTS, CitizenReport } from '@/data/reportsData';
 
 const ModalLetterRequest = dynamic(() => import('@/components/ModalLetterRequest'), { ssr: false });
+const ModalCitizenReport = dynamic(() => import('@/components/ModalCitizenReport'), { ssr: false });
 const ModalMonografiPrint = dynamic(() => import('@/components/ModalMonografiPrint'), { ssr: false });
-const ModalWhatsAppSimulator = dynamic(() => import('@/components/ModalWhatsAppSimulator'), { ssr: false });
 const ModalOfficialLetterPreview = dynamic(() => import('@/components/ModalOfficialLetterPreview'), { ssr: false });
 
 export default function LandingPage() {
   // Interactive modal states on the landing page
   const [isLetterModalOpen, setIsLetterModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isPrintMonografiOpen, setIsPrintMonografiOpen] = useState(false);
-  const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false);
   const [isPrintLetterOpen, setIsPrintLetterOpen] = useState(false);
   const [printLetterTarget, setPrintLetterTarget] = useState<LetterRequest | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -29,12 +30,20 @@ export default function LandingPage() {
   const [liveSummaries, setLiveSummaries] = useState<Record<number, any>>({});
   const [availableYears, setAvailableYears] = useState<number[]>([2024, 2025]);
 
+  // Citizen letters and reports states
+  const [letters, setLetters] = useState<LetterRequest[]>(INITIAL_LETTERS);
+  const [reports, setReports] = useState<CitizenReport[]>(INITIAL_REPORTS);
+
   React.useEffect(() => {
-    async function fetchMonografiSummary() {
+    async function fetchLandingData() {
       try {
-        const res = await fetch('/api/monografi', { cache: 'no-store' });
-        if (res.ok) {
-          const json = await res.json();
+        const [resMonografi, resLetters, resReports] = await Promise.all([
+          fetch('/api/monografi', { cache: 'no-store' }),
+          fetch('/api/surat', { cache: 'no-store' }),
+          fetch('/api/lapor', { cache: 'no-store' }),
+        ]);
+        if (resMonografi.ok) {
+          const json = await resMonografi.json();
           if (json.summaries) {
             setLiveSummaries(json.summaries);
           }
@@ -42,11 +51,23 @@ export default function LandingPage() {
             setAvailableYears(json.availableYears);
           }
         }
+        if (resLetters.ok) {
+          const jsonL = await resLetters.json();
+          if (jsonL.success && jsonL.data) {
+            setLetters(jsonL.data);
+          }
+        }
+        if (resReports.ok) {
+          const jsonR = await resReports.json();
+          if (jsonR.success && jsonR.data) {
+            setReports(jsonR.data);
+          }
+        }
       } catch (err) {
-        console.warn('Gagal sinkronisasi data monografi dinamis:', err);
+        console.warn('Gagal sinkronisasi data landing page:', err);
       }
     }
-    fetchMonografiSummary();
+    fetchLandingData();
   }, []);
 
   const is2025 = selectedYear === 2025;
@@ -57,8 +78,7 @@ export default function LandingPage() {
   const currentTotalKK = activeSummary?.kepalaKeluarga ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_kk : DATA_MONOGRAFI_2024.demografi.kepalaKeluarga);
   const currentLuasHa = activeSummary?.luasTotalHa ?? (is2025 ? DATA_MONOGRAFI_2025.wilayah.luas_total_ha : DATA_MONOGRAFI_2024.geografis.luasTotalHa);
 
-  // Data
-  const [letters, setLetters] = useState<LetterRequest[]>(INITIAL_LETTERS);
+  // Officials and Monografi data
   const currentOfficial = OFFICIALS[0];
   const activeMonografi = MONOGRAFI_ITEMS[0];
 
@@ -93,6 +113,42 @@ export default function LandingPage() {
   const handlePrintLetter = (letter: LetterRequest) => {
     setPrintLetterTarget(letter);
     setIsPrintLetterOpen(true);
+  };
+
+  const handleAddReport = (newReport: CitizenReport) => {
+    setReports((prev) => {
+      const exists = prev.some((r) => r.ticketNo === newReport.ticketNo || r.id === newReport.id);
+      if (exists) return prev.map((r) => (r.ticketNo === newReport.ticketNo ? newReport : r));
+      return [newReport, ...prev];
+    });
+  };
+
+  const handleUpdateReportStatus = async (id: string, newStatus: CitizenReport['status'], tanggapan?: string) => {
+    setReports((prev) =>
+      prev.map((r) =>
+        r.id === id
+          ? {
+              ...r,
+              status: newStatus,
+              statusLabel: newStatus === 'dalam_tindakan' ? 'Sedang Dalam Tindakan' : 'Selesai',
+              tanggapanPetugas: tanggapan || r.tanggapanPetugas,
+            }
+          : r
+      )
+    );
+    try {
+      await fetch('/api/lapor', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          status: newStatus,
+          tanggapanPetugas: tanggapan,
+        }),
+      });
+    } catch (e) {
+      console.warn('Gagal update laporan via API:', e);
+    }
   };
 
   return (
@@ -254,6 +310,13 @@ export default function LandingPage() {
                   >
                     <span className="material-symbols-outlined text-[18px] 2xl:text-[20px] text-[#006194]">description</span>
                     <span>Layanan Persuratan</span>
+                  </button>
+                  <button
+                    onClick={() => setIsReportModalOpen(true)}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#ffeed9] hover:bg-[#ffe5c7] text-[#9c4300] border border-[#ffb978]/70 px-6 2xl:px-8 py-3 2xl:py-4 rounded-full text-sm 2xl:text-base font-bold transition-all duration-300 shadow-xs hover:shadow-md cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px] text-[#b84e00]">campaign</span>
+                    <span>Lapor Masalah Warga</span>
                   </button>
                 </div>
               </div>
@@ -705,7 +768,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 2xl:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 2xl:gap-8">
               {/* Card 1: Monografi Kependudukan */}
               <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#e2e7ff]">
                 <div className="space-y-4 2xl:space-y-6">
@@ -776,6 +839,32 @@ export default function LandingPage() {
                     className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all cursor-pointer"
                   >
                     <span>Buat Surat</span>
+                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Card 4: Lapor Masalah Warga */}
+              <div
+                className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#ffd8b8]/80 hover:border-[#ff9838]"
+              >
+                <div className="space-y-4 2xl:space-y-6">
+                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#ffeed9] flex items-center justify-center text-[#b84e00]">
+                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">campaign</span>
+                  </div>
+                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#b84e00] transition-colors font-bold">
+                    Lapor Masalah Warga
+                  </h3>
+                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
+                    Pengaduan cepat masalah lampu jalan padam, air bersih, sampah, saluran drainase, atau ketertiban.
+                  </p>
+                </div>
+                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#f0e4d8]">
+                  <button
+                    onClick={() => setIsReportModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#b84e00] hover:text-[#8f3c00] font-bold group-hover:translate-x-1 transition-all cursor-pointer"
+                  >
+                    <span>Lapor Masalah</span>
                     <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
                   </button>
                 </div>
@@ -989,11 +1078,12 @@ export default function LandingPage() {
         letter={printLetterTarget}
       />
 
-      <ModalWhatsAppSimulator
-        isOpen={isWhatsAppOpen}
-        onClose={() => setIsWhatsAppOpen(false)}
-        activeItem={activeMonografi}
-        onApproveViaMagicLink={() => {}}
+      <ModalCitizenReport
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        reports={reports}
+        onAddReport={handleAddReport}
+        onUpdateReportStatus={handleUpdateReportStatus}
         currentOfficial={currentOfficial}
       />
     </div>

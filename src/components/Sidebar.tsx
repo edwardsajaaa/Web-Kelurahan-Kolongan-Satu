@@ -7,13 +7,12 @@ import {
   Users,
   FileText,
   AlertTriangle,
-  Send,
-  BarChart3,
   Droplets,
   PawPrint,
-  GraduationCap,
-  Coins,
   MapPin,
+  PlusCircle,
+  FilePlus,
+  AlertCircle,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -23,7 +22,9 @@ interface SidebarProps {
   onSelectNav: (nav: string) => void;
   pendingLettersCount: number;
   activeReportsCount: number;
-  onOpenWhatsAppSimulator: () => void;
+  onOpenInputMonografi: () => void;
+  onOpenNewLetter: () => void;
+  onOpenNewReport: () => void;
 }
 
 export default function Sidebar({
@@ -33,12 +34,14 @@ export default function Sidebar({
   onSelectNav,
   pendingLettersCount,
   activeReportsCount,
-  onOpenWhatsAppSimulator,
+  onOpenInputMonografi,
+  onOpenNewLetter,
+  onOpenNewReport,
 }: SidebarProps) {
   const navItems = [
     {
       id: 'monografi',
-      label: 'Monografi Desa',
+      label: 'Semua Monografi',
       icon: Building2,
       badge: null,
     },
@@ -50,15 +53,9 @@ export default function Sidebar({
     },
     {
       id: 'kependudukan',
-      label: 'Kependudukan',
+      label: 'Kependudukan & KK',
       icon: Users,
       badge: '1.484 Jiwa',
-    },
-    {
-      id: 'pendidikan',
-      label: 'Pendidikan & Sosial',
-      icon: GraduationCap,
-      badge: null,
     },
     {
       id: 'peternakan',
@@ -68,15 +65,9 @@ export default function Sidebar({
     },
     {
       id: 'lingkungan',
-      label: 'Air & Sanitasi',
+      label: 'Sarana & Sanitasi',
       icon: Droplets,
       badge: null,
-    },
-    {
-      id: 'transparansi',
-      label: 'Transparansi APBD',
-      icon: Coins,
-      badge: '92.4%',
     },
     {
       id: 'surat',
@@ -87,9 +78,9 @@ export default function Sidebar({
     },
     {
       id: 'lapor',
-      label: 'Lapor Masalah Warga',
+      label: 'Kotak Aduan Warga',
       icon: AlertTriangle,
-      badge: activeReportsCount > 0 ? `${activeReportsCount}` : null,
+      badge: activeReportsCount > 0 ? `${activeReportsCount} Baru` : null,
       badgeColor: 'bg-rose-100 text-rose-900',
     },
   ];
@@ -113,10 +104,51 @@ export default function Sidebar({
           </div>
         </div>
 
+        {/* Form Input Data - Quick Action Buttons */}
+        <div className="p-3 border-b border-[#e2e7ff] bg-[#faf8ff] space-y-2">
+          <p className="px-1 text-[10px] font-black text-primary uppercase tracking-wider flex items-center gap-1.5">
+            <PlusCircle className="w-3.5 h-3.5 text-primary" />
+            <span>Form Input Data</span>
+          </p>
+
+          {/* 1. Main Action: Input / Edit Monografi */}
+          <button
+            onClick={onOpenInputMonografi}
+            className="w-full flex items-center justify-between px-3 py-2 bg-primary hover:bg-[#004d77] text-white rounded-xl text-xs font-bold shadow-xs transition cursor-pointer"
+            title="Buka form isian data monografi"
+          >
+            <div className="flex items-center space-x-2">
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>+ Input Data Monografi</span>
+            </div>
+            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">Form</span>
+          </button>
+
+          {/* 2 & 3. Secondary Actions: Buat Surat & Catat Laporan */}
+          <div className="grid grid-cols-2 gap-1.5">
+            <button
+              onClick={onOpenNewLetter}
+              className="flex items-center justify-center space-x-1 px-2 py-1.5 bg-white hover:bg-[#f2f3ff] text-[#131b2e] hover:text-primary border border-[#dae2fd] rounded-xl text-[11px] font-bold transition shadow-2xs cursor-pointer"
+              title="Formulir buat permohonan surat warga baru"
+            >
+              <FilePlus className="w-3.5 h-3.5 text-primary" />
+              <span className="truncate">+ Buat Surat</span>
+            </button>
+            <button
+              onClick={onOpenNewReport}
+              className="flex items-center justify-center space-x-1 px-2 py-1.5 bg-white hover:bg-rose-50 text-[#131b2e] hover:text-rose-700 border border-[#dae2fd] rounded-xl text-[11px] font-bold transition shadow-2xs cursor-pointer"
+              title="Formulir catat aduan/masalah warga baru"
+            >
+              <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
+              <span className="truncate">+ Catat Lapor</span>
+            </button>
+          </div>
+        </div>
+
         {/* Navigation Items */}
         <div className="p-3 space-y-1">
-          <p className="px-3 pt-2 pb-1 text-[10px] font-bold text-[#707881] uppercase tracking-wider">
-            Menu Utama
+          <p className="px-3 pt-1 pb-1 text-[10px] font-bold text-[#707881] uppercase tracking-wider">
+            Menu Modul
           </p>
           {navItems.map((item) => {
             const isActive = activeNav === item.id;
@@ -125,7 +157,7 @@ export default function Sidebar({
               <button
                 key={item.id}
                 onClick={() => onSelectNav(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-semibold text-xs transition group ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-semibold text-xs transition group cursor-pointer ${
                   isActive
                     ? 'bg-primary text-white shadow-xs'
                     : 'text-[#3f4850] hover:bg-[#f2f3ff] hover:text-primary'
@@ -147,27 +179,6 @@ export default function Sidebar({
               </button>
             );
           })}
-
-          <div className="pt-3 pb-1">
-            <p className="px-3 text-[10px] font-bold text-[#707881] uppercase tracking-wider">
-              Akses Cepat
-            </p>
-          </div>
-
-          {/* Quick Action Button: WhatsApp Gateway */}
-          <button
-            onClick={onOpenWhatsAppSimulator}
-            className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-semibold text-xs text-primary bg-[#f2f3ff] hover:bg-[#eaedff] border border-[#dae2fd] transition group"
-            title="Simulasi notifikasi WhatsApp pejabat"
-          >
-            <div className="flex items-center space-x-2.5">
-              <Send className="w-4 h-4 text-primary group-hover:translate-x-0.5 transition" />
-              <span className="text-left">WhatsApp Gateway</span>
-            </div>
-            <span className="text-[10px] bg-primary text-white px-1.5 py-0.5 rounded-full font-bold">
-              Kirim
-            </span>
-          </button>
         </div>
       </div>
 

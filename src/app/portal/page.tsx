@@ -430,11 +430,11 @@ export default function PortalPage() {
 
         <div className="flex items-center space-x-2">
           <button
-            onClick={() => setIsWhatsAppOpen(true)}
-            className="p-2 bg-[#f2f3ff] text-primary rounded-xl text-xs font-semibold"
-            title="Simulasi WhatsApp"
+            onClick={() => handleOpenEditModal(activeDetail)}
+            className="px-2.5 py-1.5 bg-primary text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-xs"
+            title="Input / Edit Data Monografi"
           >
-            <Send className="w-4 h-4" />
+            <span>+ Input</span>
           </button>
           <button
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
@@ -463,7 +463,9 @@ export default function PortalPage() {
           onSelectNav={handleNavSelect}
           pendingLettersCount={letters.filter((l) => l.statusSurat !== 'selesai_disahkan').length}
           activeReportsCount={reports.filter((r) => r.status !== 'selesai').length}
-          onOpenWhatsAppSimulator={() => setIsWhatsAppOpen(true)}
+          onOpenInputMonografi={() => handleOpenEditModal(activeDetail)}
+          onOpenNewLetter={() => setIsLetterModalOpen(true)}
+          onOpenNewReport={() => setIsReportModalOpen(true)}
         />
       </div>
 
