@@ -29,7 +29,7 @@ export const DATA_MONOGRAFI_2025 = {
     },
     batas: {
       utara: "Kelurahan Kolongan",
-      timur: "Kelurahan Walian / Matani Tiga",
+      timur: "Kelurahan Walian, Matani Tiga",
       selatan: "Kelurahan Lansot",
       barat: "Kelurahan Lansot"
     }

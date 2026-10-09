@@ -254,7 +254,7 @@ export default function IntegratedMonografiSection({
                     </div>
                     <div className="p-2.5 bg-white rounded-xl border border-[#eaedff]">
                       <span className="text-[#3f4850] font-semibold block text-[11px]">Sebelah Timur:</span>
-                      <strong className="text-[#131b2e]">{is2025 ? 'Kel. Walian / Matani Tiga' : 'Kel. Paslaten Satu'}</strong>
+                      <strong className="text-[#131b2e]">{is2025 ? 'Kel. Walian, Matani Tiga' : 'Kel. Paslaten Satu'}</strong>
                     </div>
                     <div className="p-2.5 bg-white rounded-xl border border-[#eaedff]">
                       <span className="text-[#3f4850] font-semibold block text-[11px]">Sebelah Selatan:</span>
@@ -1107,7 +1107,7 @@ export default function IntegratedMonografiSection({
                   </tr>
                   <tr>
                     <td className="border border-black px-2 py-1 font-bold">Sebelah Timur</td>
-                    <td className="border border-black px-2 py-1">{is2025 ? 'Kelurahan Walian / Matani Tiga' : 'Kelurahan Paslaten Satu'}</td>
+                    <td className="border border-black px-2 py-1">{is2025 ? 'Kelurahan Walian, Matani Tiga' : 'Kelurahan Paslaten Satu'}</td>
                   </tr>
                   <tr>
                     <td className="border border-black px-2 py-1 font-bold">Sebelah Selatan</td>
