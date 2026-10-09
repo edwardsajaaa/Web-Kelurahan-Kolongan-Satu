@@ -971,7 +971,7 @@ export default function LandingPage() {
                     <div className="bg-[#faf8ff] p-4 2xl:p-5 rounded-2xl border border-[#dae2fd]">
                       <div className="text-xs font-semibold text-[#006194]">Pusat Pemerintahan</div>
                       <div className="text-sm font-bold text-[#131b2e] mt-0.5">Kantor Lurah Kolongan Satu</div>
-                      <div className="text-xs text-[#535f70] mt-1">Jl. Kolongan Raya (Jaga 2), Tomohon Tengah</div>
+                      <div className="text-xs text-[#535f70] mt-1">Jl. Zanosui (Lingkungan II), Tomohon Tengah</div>
                     </div>
                     <div className="bg-[#faf8ff] p-4 2xl:p-5 rounded-2xl border border-[#dae2fd]">
                       <div className="text-xs font-semibold text-[#006c49]">Luas &amp; Batas Teritorial</div>
@@ -1014,7 +1014,7 @@ export default function LandingPage() {
                       <div className="bg-[#f2f3ff] p-3.5 rounded-xl border border-[#e2e7ff]/80">
                         <div className="text-xs text-[#535f70] font-medium">Alamat Lengkap</div>
                         <div className="text-xs sm:text-sm text-[#131b2e] font-semibold mt-0.5">
-                          Jl. Kolongan Raya, Tomohon Tengah, Kota Tomohon
+                          Jl. Zanosui, Lingkungan II, Kolongan Satu, Tomohon Tengah
                         </div>
                       </div>
                       <div className="bg-[#f2f3ff] p-3.5 rounded-xl border border-[#e2e7ff]/80">

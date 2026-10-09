@@ -103,14 +103,14 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       ],
     };
 
-    // Center on Kantor Kelurahan Kolongan Satu
-    const centerLngLat: [number, number] = [124.8385, 1.3235];
+    // Center on Kantor Kelurahan Kolongan Satu (Jl. Zanosui)
+    const centerLngLat: [number, number] = [124.8329, 1.3136];
 
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: mapStyleType === 'satellite' ? satelliteStyle : streetsStyle,
       center: centerLngLat,
-      zoom: 15.6,
+      zoom: 16.2,
       pitch: is3DMode ? 55 : 0,
       bearing: is3DMode ? -15 : 0,
       maxPitch: 75,
@@ -266,8 +266,8 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
   const handleResetCenter = () => {
     if (!mapInstanceRef.current) return;
     mapInstanceRef.current.flyTo({
-      center: [124.8385, 1.3235],
-      zoom: 15.6,
+      center: [124.8329, 1.3136],
+      zoom: 16.2,
       pitch: is3DMode ? 55 : 0,
       bearing: is3DMode ? -15 : 0,
       duration: 1000,
@@ -340,13 +340,14 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       <div className="px-4 py-2 bg-white border-b border-[#dae2fd]/60 flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
         <span className="text-[11px] font-bold text-[#535f70] whitespace-nowrap">Filter Titik:</span>
         {[
-          { id: 'all', label: 'Semua Titik (11)' },
-          { id: 'kantor', label: '🏛️ Kantor & Pemerintahan' },
-          { id: 'ibadah', label: '⛪ Tempat Ibadah' },
+          { id: 'all', label: 'Semua Titik (12)' },
+          { id: 'kantor', label: '🏛️ Kantor Kelurahan' },
+          { id: 'ibadah', label: '⛪ Sarana Ibadah' },
           { id: 'pos_jaga', label: '🛡️ Pos Jaga I - V' },
-          { id: 'olahraga', label: '🏟️ Sarana Olahraga' },
+          { id: 'pendidikan', label: '🎓 Pendidikan' },
+          { id: 'ekonomi', label: '🌸 Florikultura & Tani' },
           { id: 'sejarah', label: '🗿 Cagar Budaya Waruga' },
-          { id: 'alam', label: '💧 Sumber Mata Air' },
+          { id: 'alam', label: '💧 Mata Air Swadaya' },
         ].map((cat) => (
           <button
             key={cat.id}
