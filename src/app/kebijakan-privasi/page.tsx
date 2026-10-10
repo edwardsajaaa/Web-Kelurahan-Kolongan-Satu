@@ -673,13 +673,12 @@ function KebijakanPrivasiContent() {
                 Kebijakan Privasi
               </button>
               <span>•</span>
-              <button
-                type="button"
-                onClick={() => setActiveTab('terms')}
-                className={`transition-colors cursor-pointer ${activeTab === 'terms' ? 'text-[#006194] font-semibold' : 'hover:text-[#006194]'}`}
+              <Link
+                href="/ketentuan-layanan"
+                className="hover:text-[#006194] transition-colors"
               >
                 Ketentuan Layanan
-              </button>
+              </Link>
             </div>
           </div>
         </div>

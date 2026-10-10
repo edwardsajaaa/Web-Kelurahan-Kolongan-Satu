@@ -1143,7 +1143,7 @@ export default function LandingPage() {
               </Link>
               <span>•</span>
               <Link
-                href="/kebijakan-privasi?tab=terms"
+                href="/ketentuan-layanan"
                 className="hover:text-[#006194] transition-colors cursor-pointer text-left font-medium"
               >
                 Ketentuan Layanan
