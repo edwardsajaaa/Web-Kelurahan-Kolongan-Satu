@@ -130,16 +130,6 @@ export default function IntegratedMonografiSection({
             </div>
           </div>
         </div>
-
-        <div className="flex items-center gap-2.5 shrink-0">
-          <button
-            onClick={handlePrint}
-            className="inline-flex items-center gap-2 bg-[#006194] hover:bg-[#007bb9] text-white px-5 2xl:px-7 py-2.5 2xl:py-3.5 rounded-full text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer"
-          >
-            <span className="material-symbols-outlined text-[18px]">print</span>
-            <span>Cetak Laporan Resmi ({activeYear})</span>
-          </button>
-        </div>
       </div>
 
       {/* ============================================================ */}
