@@ -82,7 +82,8 @@ export default function CardFeed({
       <div className="p-4 border-b border-[#e2e7ff] bg-white">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="text-sm font-extrabold text-[#131b2e] leading-tight">Arsip Monografi</h2>
+            <h2 className="text-sm font-extrabold text-[#131b2e] leading-tight">Modul Input Monografi</h2>
+            <p className="text-[10px] text-[#535f70]">Pilih bab untuk input data langsung</p>
           </div>
 
           {/* Dynamic Year Switcher Pills & [+ Tahun Baru] */}

@@ -542,13 +542,13 @@ export default function PortalPage() {
         onCreateYear={handleCreateNewYear}
       />
 
-      {/* 3. KOLOM KANAN: DETAIL DATA & GRAFIK (MASTER-DETAIL VIEW) */}
+      {/* 3. KOLOM KANAN: FORMULIR INPUT DATA LANGSUNG (INLINE DATA EDITOR) */}
       <DetailView
         item={activeDetail}
         currentOfficial={currentOfficial}
+        onSaveItem={handleSaveMonografiEdit}
         onApproveItem={handleApproveByLurah}
         onVerifySeklur={handleVerifyBySeklur}
-        onOpenEditModal={handleOpenEditModal}
         onOpenLetterModal={() => setIsLetterModalOpen(true)}
         onOpenReportModal={() => setIsReportModalOpen(true)}
         onOpenPrintPreview={(item) => setIsPrintMonografiOpen(true)}
