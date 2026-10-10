@@ -86,11 +86,13 @@ export default function LandingPage() {
 
   const is2025 = selectedYear === 2025;
   const activeSummary = liveSummaries[selectedYear];
-  const currentTotalPenduduk = activeSummary?.totalPenduduk ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_jiwa : DATA_MONOGRAFI_2024.demografi.totalPenduduk);
+  const currentTotalPenduduk = activeSummary?.totalJiwa ?? (activeSummary as any)?.totalPenduduk ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_jiwa : DATA_MONOGRAFI_2024.demografi.totalPenduduk);
   const currentLakiLaki = activeSummary?.lakiLaki ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.laki_laki : DATA_MONOGRAFI_2024.demografi.lakiLaki);
   const currentPerempuan = activeSummary?.perempuan ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.perempuan : DATA_MONOGRAFI_2024.demografi.perempuan);
-  const currentTotalKK = activeSummary?.kepalaKeluarga ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_kk : DATA_MONOGRAFI_2024.demografi.kepalaKeluarga);
+  const currentTotalKK = activeSummary?.totalKK ?? (activeSummary as any)?.kepalaKeluarga ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.total_kk : DATA_MONOGRAFI_2024.demografi.kepalaKeluarga);
   const currentLuasHa = activeSummary?.luasTotalHa ?? (is2025 ? DATA_MONOGRAFI_2025.wilayah.luas_total_ha : DATA_MONOGRAFI_2024.geografis.luasTotalHa);
+  const currentProduktif = activeSummary?.kelompokUsia?.produktif ?? (is2025 ? DATA_MONOGRAFI_2025.kependudukan.kelompok_usia.produktif_18_56 : DATA_MONOGRAFI_2024.kelompokUsia.produktif.total);
+  const currentProduktifPct = currentTotalPenduduk > 0 ? ((currentProduktif / currentTotalPenduduk) * 100).toFixed(1) : '57.1';
 
   // Officials and Monografi data
   const currentOfficial = OFFICIALS[0];
@@ -414,25 +416,25 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Card 4: Digitalisasi Kelurahan */}
+              {/* Card 4: Usia Produktif */}
               <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between border border-[#e2e7ff]/80 group">
                 <div className="mb-3 2xl:mb-4">
                   <span className="text-xs 2xl:text-sm text-[#3f4850] font-semibold uppercase tracking-wider">
-                    Digitalisasi Kelurahan
+                    Usia Produktif
                   </span>
                 </div>
                 <div>
                   <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
-                    100%
+                    {currentProduktif.toLocaleString('id-ID')}
                   </div>
                   <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
-                    Layanan Publik Digital
+                    Jiwa (Usia 18–56 Tahun)
                   </div>
                 </div>
                 <div className="pt-3 2xl:pt-4 mt-4 2xl:mt-6 bg-[#f2f3ff]/70 -mx-6 2xl:-mx-8 -mb-6 2xl:-mb-8 px-6 2xl:px-8 pb-3 2xl:pb-4 rounded-b-2xl 2xl:rounded-b-3xl flex items-center justify-between text-[#3f4850] text-xs 2xl:text-sm font-medium border-t border-[#e2e7ff]/70">
-                  <span>Akses Terbuka &amp; Cepat</span>
+                  <span>{currentProduktifPct}% dari Penduduk</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-[#bfc7d2]" />
-                  <span>WhatsApp Terintegrasi</span>
+                  <span>Potensi Angkatan Kerja</span>
                 </div>
               </div>
             </div>
