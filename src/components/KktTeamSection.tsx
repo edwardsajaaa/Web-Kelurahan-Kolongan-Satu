@@ -91,11 +91,11 @@ export default function KktTeamSection() {
             </h3>
             <div className="h-0.5 flex-1 bg-[#eaedff]" />
             <span className="text-xs 2xl:text-sm text-[#535f70] font-medium hidden sm:inline">
-              4 Pelaksana Program
+              {bidangProgram.length} Anggota
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-4xl">
             {bidangProgram.map((m) => renderMemberCard(m, m.role.toLowerCase().includes('koordinator')))}
           </div>
         </div>
