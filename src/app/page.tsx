@@ -793,18 +793,13 @@ export default function LandingPage() {
           {/* 6. PUSAT LAYANAN WARGA (Fluid Grid)                          */}
           {/* ============================================================ */}
           <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print" id="layanan-cepat">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-2">
-              <div>
-                <span className="text-xs 2xl:text-sm text-[#006194] font-bold tracking-wider uppercase block mb-1">
-                  Layanan &amp; Informasi Terpadu
-                </span>
-                <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold">
-                  Pusat Layanan Warga
-                </h2>
-              </div>
-              <p className="text-sm 2xl:text-base text-[#3f4850] max-w-md 2xl:max-w-lg">
-                Akses cepat ke portal esensial kependudukan, wilayah, dan persuratan mandiri.
-              </p>
+            <div className="mb-8">
+              <span className="text-xs 2xl:text-sm text-[#006194] font-bold tracking-wider uppercase block mb-1">
+                Layanan &amp; Informasi Terpadu
+              </span>
+              <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold">
+                Pusat Layanan Warga
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 2xl:gap-8">
