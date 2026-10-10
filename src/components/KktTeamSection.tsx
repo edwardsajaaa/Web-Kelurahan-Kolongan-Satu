@@ -1,11 +1,13 @@
 'use client';
 
-import React from 'react';
-import { GraduationCap } from 'lucide-react';
+import React, { useState } from 'react';
+import { GraduationCap, Info } from 'lucide-react';
 import { KKT_TEAM_DATA, KktMember } from '@/data/kktTeamData';
+import ModalFilosofiLogo from '@/components/ModalFilosofiLogo';
 
 export default function KktTeamSection() {
   const { pengurusPosko, bidangProgram, bidangHumas, bidangPublikasi, bidangPelaporan, angkatan, university, poskoLocation } = KKT_TEAM_DATA;
+  const [isFilosofiOpen, setIsFilosofiOpen] = useState(false);
 
   const renderMemberCard = (member: KktMember, isLeader: boolean = false) => (
     <div key={member.id} className="group flex flex-col text-left">
@@ -42,8 +44,8 @@ export default function KktTeamSection() {
         {/* ============================================================ */}
         {/* 1. SECTION HEADER (Harmonized with Landing Page Aesthetic)   */}
         {/* ============================================================ */}
-        <div className="pb-8 border-b border-[#eaedff]">
-          <div className="space-y-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between pb-8 border-b border-[#eaedff] gap-6">
+          <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-1.5 bg-[#f2f3ff] text-[#006194] px-3.5 py-1 rounded-full text-xs 2xl:text-sm font-bold border border-[#dae2fd]">
               <GraduationCap className="w-4 h-4" />
               <span>{angkatan} &bull; {university}</span>
@@ -51,9 +53,43 @@ export default function KktTeamSection() {
             <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold tracking-tight">
               Tim KKT Kelurahan Kolongan Satu
             </h2>
-            <p className="text-xs sm:text-sm 2xl:text-base text-[#535f70] max-w-2xl leading-relaxed">
+            <p className="text-xs sm:text-sm 2xl:text-base text-[#535f70] leading-relaxed">
               Mahasiswa Pengabdian Masyarakat {poskoLocation}, Kecamatan Tomohon Tengah. Bersinergi bersama Pemerintah Kelurahan dan warga dalam mewujudkan keterbukaan data monografi dan inovasi pelayanan publik terpadu.
             </p>
+          </div>
+
+          {/* Logo KKT 149 & Filosofi Logo Access Card */}
+          <div
+            onClick={() => setIsFilosofiOpen(true)}
+            className="flex items-center gap-3.5 sm:gap-4 shrink-0 self-start md:self-center bg-[#faf8ff] hover:bg-[#eef3ff] p-3 sm:p-3.5 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl border border-[#dae2fd] transition-all shadow-xs hover:shadow-md cursor-pointer group"
+          >
+            <div className="relative w-14 h-14 sm:w-16 sm:h-16 2xl:w-20 2xl:h-20 shrink-0 rounded-2xl overflow-hidden bg-white p-1 shadow-xs border border-[#dae2fd] flex items-center justify-center group-hover:scale-105 transition-transform">
+              <img
+                src="/images/logo-kkt-149.png"
+                alt="Logo KKT 149 UNSRAT Kolongan Satu"
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="space-y-1 text-left">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] 2xl:text-xs font-bold uppercase tracking-wider text-[#006194] bg-[#e2e7ff] px-2 py-0.5 rounded-full">
+                  Lambang Resmi
+                </span>
+                <span className="text-[10px] 2xl:text-xs font-semibold text-[#535f70]">
+                  Posko 1
+                </span>
+              </div>
+              <h4 className="text-xs sm:text-sm 2xl:text-base font-bold text-[#131b2e] leading-tight group-hover:text-[#006194] transition-colors">
+                KKT 149 UNSRAT
+              </h4>
+              <button
+                type="button"
+                className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-[#006194] hover:text-[#004770] cursor-pointer transition pt-0.5"
+              >
+                <Info className="w-3.5 h-3.5 text-[#006194]" />
+                <span>Lihat Filosofi Logo</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -152,6 +188,12 @@ export default function KktTeamSection() {
           </div>
         </div>
       </div>
+
+      {/* Modal Filosofi & Makna Lambang KKT 149 */}
+      <ModalFilosofiLogo
+        isOpen={isFilosofiOpen}
+        onClose={() => setIsFilosofiOpen(false)}
+      />
     </section>
   );
 }
