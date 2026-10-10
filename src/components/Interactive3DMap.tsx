@@ -11,7 +11,6 @@ import {
 import {
   Compass,
   RotateCcw,
-  Sparkles,
   ExternalLink,
   MapPin,
   Eye,
@@ -463,14 +462,13 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
           <button
             type="button"
             onClick={handleToggle3D}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer ${
+            className={`px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center shadow-xs cursor-pointer ${
               is3DMode
                 ? 'bg-[#006194] text-white'
                 : 'bg-white hover:bg-[#e2e7ff] text-[#006194] border border-[#dae2fd]'
             }`}
             title="Beralih sudut pandang 3D perspektif / 2D datar"
           >
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>{is3DMode ? 'Mode 3D Perspektif' : 'Mode 2D Datar'}</span>
           </button>
 
