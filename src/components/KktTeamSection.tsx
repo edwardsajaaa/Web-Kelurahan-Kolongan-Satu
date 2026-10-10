@@ -168,6 +168,11 @@ export default function KktTeamSection() {
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
                     {supervisors.dosenPembimbing.name}
                   </h4>
+                  {supervisors.dosenPembimbing.nip && (
+                    <span className="inline-block text-[11px] 2xl:text-xs text-[#535f70] font-medium tracking-wide mt-0.5">
+                      {supervisors.dosenPembimbing.nip}
+                    </span>
+                  )}
                   <p className="text-xs 2xl:text-sm text-[#006194] font-semibold mt-1">
                     {supervisors.dosenPembimbing.role}
                   </p>
@@ -195,6 +200,11 @@ export default function KktTeamSection() {
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
                     {supervisors.dosenPengawas.name}
                   </h4>
+                  {supervisors.dosenPengawas.nip && (
+                    <span className="inline-block text-[11px] 2xl:text-xs text-[#535f70] font-medium tracking-wide mt-0.5">
+                      {supervisors.dosenPengawas.nip}
+                    </span>
+                  )}
                   <p className="text-xs 2xl:text-sm text-[#006c49] font-semibold mt-1">
                     {supervisors.dosenPengawas.role}
                   </p>

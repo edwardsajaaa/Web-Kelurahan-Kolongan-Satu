@@ -10,6 +10,7 @@ export interface SupervisorPerson {
   role: string;
   badge: string;
   name: string;
+  nip?: string;
   title: string;
   institution: string;
 }
@@ -58,14 +59,16 @@ export const KKT_TEAM_DATA: KktTeamConfig = {
     dosenPembimbing: {
       role: 'Dosen Pembimbing Lapangan (DPL)',
       badge: 'DPL Posko',
-      name: 'Dr. dr. Aaltje E. Manampiring, M.Kes',
-      title: 'Dosen Pembimbing Lapangan Posko Kolongan Satu',
+      name: 'Ir. Albert Royke Reo, MSc, MSi.',
+      nip: 'NIP 196707111995121002',
+      title: 'Dosen Pembimbing Lapangan Posko Kelurahan Kolongan Satu',
       institution: 'Universitas Sam Ratulangi (UNSRAT)',
     },
     dosenPengawas: {
       role: 'Dosen Pengawas Lapangan',
       badge: 'Pengawas Wilayah',
-      name: 'Dr. Ir. Stevanus P. Pangemanan, M.Si',
+      name: 'Prof. Dr. Roni Koneri, S.Pd. M.Si.',
+      nip: 'NIP 196903131998031001',
       title: 'Dosen Pengawas KKT Wilayah Kecamatan Tomohon Tengah',
       institution: 'Universitas Sam Ratulangi (UNSRAT)',
     },
