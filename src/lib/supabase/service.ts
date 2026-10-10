@@ -650,3 +650,13 @@ export async function createNewYearMonografi(
   };
 }
 
+export async function deleteYearMonografi(year: number): Promise<boolean> {
+  if (year === 2024 || year === 2025) {
+    throw new Error('Tahun arsip baku 2024 dan 2025 adalah data pokok yang dilindungi dan tidak dapat dihapus.');
+  }
+
+  delete inMemorySummaries[year];
+  inMemoryMonografi = inMemoryMonografi.filter((m) => m.year !== year);
+  return true;
+}
+

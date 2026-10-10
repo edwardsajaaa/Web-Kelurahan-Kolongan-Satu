@@ -289,6 +289,39 @@ export default function PortalPage() {
     }
   };
 
+  const handleDeleteYear = async (yearToDelete: number) => {
+    if (yearToDelete === 2024 || yearToDelete === 2025) {
+      alert('Tahun arsip baku 2024 dan 2025 adalah data pokok yang dilindungi dan tidak dapat dihapus.');
+      return;
+    }
+
+    const isConfirmed = window.confirm(
+      `Peringatan: Apakah Anda yakin ingin MENGHAPUS seluruh periode monografi tahun ${yearToDelete}?\nSeluruh draf data pada tahun ${yearToDelete} akan dibersihkan dari sistem.`
+    );
+    if (!isConfirmed) return;
+
+    try {
+      showToast(`Menghapus periode monografi tahun ${yearToDelete}...`);
+      const res = await fetch(`/api/monografi?year=${yearToDelete}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (data.availableYears) setAvailableYears(data.availableYears);
+        if (data.data) setMonografiList(data.data);
+        setSelectedYear(2025);
+        const first2025 = (data.data || monografiList).find((m: MonografiItem) => m.year === 2025);
+        if (first2025) setSelectedId(first2025.id);
+        showToast(`Periode tahun ${yearToDelete} berhasil dihapus dari sistem!`);
+      } else {
+        throw new Error(data.error || 'Gagal menghapus periode');
+      }
+    } catch (err: any) {
+      console.warn('Gagal menghapus tahun:', err);
+      showToast(`Gagal menghapus tahun: ${err.message || 'Koneksi bermasalah'}`);
+    }
+  };
+
   const handleUpdateLetterStatus = async (id: string, newStatus: LetterRequest['statusSurat'], note?: string) => {
     setLetters((prev) =>
       prev.map((l) =>
@@ -540,6 +573,7 @@ export default function PortalPage() {
         onChangeSearch={(q) => setSearchQuery(q)}
         availableYears={availableYears}
         onCreateYear={handleCreateNewYear}
+        onDeleteYear={handleDeleteYear}
       />
 
       {/* 3. KOLOM KANAN: FORMULIR INPUT DATA LANGSUNG (INLINE DATA EDITOR) */}

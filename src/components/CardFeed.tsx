@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { MonografiItem } from '@/data/monografiData';
-import { Search, Filter, CheckCircle2, Clock, FileEdit, ChevronRight, CalendarPlus, X, AlertCircle, Copy } from 'lucide-react';
+import { Search, Filter, CheckCircle2, Clock, FileEdit, ChevronRight, CalendarPlus, X, AlertCircle, Copy, Trash2 } from 'lucide-react';
 
 interface CardFeedProps {
   items: MonografiItem[];
@@ -15,6 +15,7 @@ interface CardFeedProps {
   onChangeSearch: (query: string) => void;
   availableYears?: number[];
   onCreateYear?: (newYear: number) => void;
+  onDeleteYear?: (year: number) => void;
 }
 
 export const CATEGORY_OPTIONS = [
@@ -40,6 +41,7 @@ export default function CardFeed({
   onChangeSearch,
   availableYears = [2024, 2025],
   onCreateYear,
+  onDeleteYear,
 }: CardFeedProps) {
   // Modal state untuk Tambah Periode Baru
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -132,6 +134,19 @@ export default function CardFeed({
               <CalendarPlus className="w-3.5 h-3.5" />
               <span>+ Tahun Baru</span>
             </button>
+
+            {/* [🗑️ Hapus Periode] Button jika tahun aktif > 2025 */}
+            {selectedYear > 2025 && onDeleteYear && (
+              <button
+                onClick={() => onDeleteYear(selectedYear)}
+                type="button"
+                className="px-2.5 py-1 rounded-xl text-[11px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition flex items-center gap-1 shadow-xs cursor-pointer"
+                title={`Hapus seluruh draf periode tahun ${selectedYear}`}
+              >
+                <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                <span>Hapus {selectedYear}</span>
+              </button>
+            )}
           </div>
         </div>
 

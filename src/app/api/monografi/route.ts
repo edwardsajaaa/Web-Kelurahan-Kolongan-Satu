@@ -8,6 +8,7 @@ import {
   updateMonografiContent,
   updateAnnualSummary,
   createNewYearMonografi,
+  deleteYearMonografi,
 } from '@/lib/supabase/service';
 
 export async function GET(req: NextRequest) {
@@ -159,6 +160,45 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json(
       { success: false, error: error.message || 'Gagal mengesahkan data monografi' },
       { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const yearParam = searchParams.get('year');
+    const year = Number(yearParam);
+
+    if (!year || isNaN(year)) {
+      return NextResponse.json(
+        { success: false, error: 'Parameter tahun tidak valid.' },
+        { status: 400 }
+      );
+    }
+
+    await deleteYearMonografi(year);
+    const items = await fetchMonografiItems();
+    const summaries = await fetchAnnualSummaries();
+    const availableYears = await fetchAvailableYears();
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/monografi');
+      revalidatePath('/portal');
+    } catch (e) {}
+
+    return NextResponse.json({
+      success: true,
+      message: `Periode monografi tahun ${year} berhasil dihapus dari sistem.`,
+      availableYears,
+      data: items,
+      summaries,
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message || 'Gagal menghapus periode monografi' },
+      { status: 400 }
     );
   }
 }
