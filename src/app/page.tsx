@@ -911,16 +911,9 @@ export default function LandingPage() {
               {/* Section Header with Mode Switcher */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#dae2fd]/60 pb-6">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 text-xs 2xl:text-sm text-[#006194] font-bold uppercase tracking-wider mb-1">
-                    <span className="material-symbols-outlined text-[18px] 2xl:text-[22px]">map</span>
-                    <span>Pusat Geospasial &amp; Pemetaan Wilayah</span>
-                  </div>
                   <h3 className="text-2xl sm:text-3xl 2xl:text-4xl text-[#131b2e] font-bold tracking-tight">
                     Peta 3D Batas Wilayah &amp; Titik Lokasi Penting
                   </h3>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#535f70] max-w-2xl mt-1 leading-relaxed">
-                    Eksplorasi garis batas resmi teritorial Kelurahan Kolongan Satu (48 Hektar) serta titik lokasi kantor kelurahan, sarana ibadah, cagar budaya, dan pos jaga I–V dalam sudut pandang 3D interaktif.
-                  </p>
                 </div>
 
                 {/* Map Mode Selector Tabs */}
