@@ -26,7 +26,7 @@ export const KKT_TEAM_DATA: KktTeamConfig = {
   kota: 'Kota Tomohon',
   pengurusPosko: [
     {
-      id: 'sultan',
+      id: '',
       name: 'Sultan',
       role: 'Koordinator Posko',
       badge: 'Koorposko',
