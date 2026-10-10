@@ -3,9 +3,19 @@
 import React, { useState } from 'react';
 import { KKT_TEAM_DATA, KktMember } from '@/data/kktTeamData';
 import ModalFilosofiLogo from '@/components/ModalFilosofiLogo';
+import { Users, Layers, GraduationCap, Award, ShieldCheck, UserCheck } from 'lucide-react';
 
 export default function KktTeamSection() {
-  const { pengurusPosko, bidangProgram, bidangHumas, bidangPublikasi, bidangPelaporan, poskoLocation } = KKT_TEAM_DATA;
+  const {
+    pengurusPosko,
+    bidangProgram,
+    bidangHumas,
+    bidangPublikasi,
+    bidangPelaporan,
+    poskoLocation,
+    stats,
+    supervisors,
+  } = KKT_TEAM_DATA;
   const [isFilosofiOpen, setIsFilosofiOpen] = useState(false);
 
   const renderMemberCard = (member: KktMember, isLeader: boolean = false) => (
@@ -69,9 +79,168 @@ export default function KktTeamSection() {
         </div>
 
         {/* ============================================================ */}
-        {/* 2. GROUP 1: PENGURUS POSKO                                   */}
+        {/* 2. STATISTIK POSKO KKT 149                                   */}
         {/* ============================================================ */}
-        <div className="space-y-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            {/* Stat 1: Total Orang */}
+            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
+              <div className="p-3 bg-[#cce5ff]/70 text-[#006194] rounded-2xl shrink-0">
+                <Users className="w-6 h-6 2xl:w-7 2xl:h-7" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-xs 2xl:text-sm font-semibold text-[#535f70] uppercase tracking-wider block">
+                  Total Anggota Posko
+                </span>
+                <div className="text-2xl sm:text-3xl 2xl:text-4xl font-extrabold text-[#131b2e] tracking-tight">
+                  {stats.totalAnggota} <span className="text-sm 2xl:text-base font-semibold text-[#535f70]">Orang</span>
+                </div>
+                <p className="text-xs 2xl:text-sm text-[#535f70] pt-1">
+                  {stats.detailAnggota}
+                </p>
+              </div>
+            </div>
+
+            {/* Stat 2: Bidang Kerja */}
+            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
+              <div className="p-3 bg-[#6cf8bb]/35 text-[#006c49] rounded-2xl shrink-0">
+                <Layers className="w-6 h-6 2xl:w-7 2xl:h-7" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-xs 2xl:text-sm font-semibold text-[#535f70] uppercase tracking-wider block">
+                  Bidang Kerja
+                </span>
+                <div className="text-2xl sm:text-3xl 2xl:text-4xl font-extrabold text-[#131b2e] tracking-tight">
+                  {stats.totalBidang} <span className="text-sm 2xl:text-base font-semibold text-[#535f70]">Bidang</span>
+                </div>
+                <p className="text-xs 2xl:text-sm text-[#535f70] pt-1">
+                  {stats.daftarBidang}
+                </p>
+              </div>
+            </div>
+
+            {/* Stat 3: Angkatan */}
+            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
+              <div className="p-3 bg-[#d3e4fe]/80 text-[#004b73] rounded-2xl shrink-0">
+                <GraduationCap className="w-6 h-6 2xl:w-7 2xl:h-7" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-xs 2xl:text-sm font-semibold text-[#535f70] uppercase tracking-wider block">
+                  Angkatan KKT
+                </span>
+                <div className="text-2xl sm:text-3xl 2xl:text-4xl font-extrabold text-[#131b2e] tracking-tight">
+                  Angkatan {stats.angkatanNumber}
+                </div>
+                <p className="text-xs 2xl:text-sm text-[#535f70] pt-1">
+                  Universitas Sam Ratulangi (UNSRAT)
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* 3. DOSEN PEMBIMBING, PENGAWAS & KOORDINATOR P3KKNT           */}
+        {/* ============================================================ */}
+        <div className="space-y-6 pt-2">
+          <div className="flex items-center gap-3">
+            <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-bold text-[#131b2e] tracking-tight">
+              Dosen Pembimbing, Pengawas &amp; P3KKNT
+            </h3>
+            <div className="h-0.5 flex-1 bg-[#eaedff]" />
+            <span className="text-xs 2xl:text-sm text-[#535f70] font-medium hidden sm:inline">
+              LPPM Universitas Sam Ratulangi
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+            {/* Dosen Pembimbing Lapangan */}
+            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
+                    <UserCheck className="w-3.5 h-3.5" />
+                    <span>{supervisors.dosenPembimbing.badge}</span>
+                  </span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                </div>
+                <div>
+                  <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
+                    {supervisors.dosenPembimbing.name}
+                  </h4>
+                  <p className="text-xs 2xl:text-sm text-[#006194] font-semibold mt-1">
+                    {supervisors.dosenPembimbing.role}
+                  </p>
+                  <p className="text-xs 2xl:text-sm text-[#535f70] mt-1 leading-relaxed">
+                    {supervisors.dosenPembimbing.title}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium">
+                {supervisors.dosenPembimbing.institution}
+              </div>
+            </div>
+
+            {/* Dosen Pengawas Lapangan */}
+            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#6cf8bb]/40 text-[#005236]">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>{supervisors.dosenPengawas.badge}</span>
+                  </span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                </div>
+                <div>
+                  <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
+                    {supervisors.dosenPengawas.name}
+                  </h4>
+                  <p className="text-xs 2xl:text-sm text-[#006c49] font-semibold mt-1">
+                    {supervisors.dosenPengawas.role}
+                  </p>
+                  <p className="text-xs 2xl:text-sm text-[#535f70] mt-1 leading-relaxed">
+                    {supervisors.dosenPengawas.title}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium">
+                {supervisors.dosenPengawas.institution}
+              </div>
+            </div>
+
+            {/* Koordinator P3KKNT */}
+            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#d3e4fe]/90 text-[#0b1c30]">
+                    <Award className="w-3.5 h-3.5" />
+                    <span>{supervisors.koordinatorP3KKNT.badge}</span>
+                  </span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                </div>
+                <div>
+                  <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
+                    {supervisors.koordinatorP3KKNT.name}
+                  </h4>
+                  <p className="text-xs 2xl:text-sm text-[#004b73] font-semibold mt-1">
+                    {supervisors.koordinatorP3KKNT.role}
+                  </p>
+                  <p className="text-xs 2xl:text-sm text-[#535f70] mt-1 leading-relaxed">
+                    {supervisors.koordinatorP3KKNT.title}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium">
+                {supervisors.koordinatorP3KKNT.institution}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* 4. GROUP 1: PENGURUS POSKO                                   */}
+        {/* ============================================================ */}
+        <div className="space-y-6 pt-2">
           <div className="flex items-center gap-3">
             <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-bold text-[#131b2e] tracking-tight">
               Pengurus Posko

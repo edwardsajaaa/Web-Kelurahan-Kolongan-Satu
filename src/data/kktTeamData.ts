@@ -6,6 +6,14 @@ export interface KktMember {
   photoUrl: string;
 }
 
+export interface SupervisorPerson {
+  role: string;
+  badge: string;
+  name: string;
+  title: string;
+  institution: string;
+}
+
 export interface KktTeamConfig {
   angkatan: string;
   university: string;
@@ -13,6 +21,18 @@ export interface KktTeamConfig {
   kelurahan: string;
   kecamatan: string;
   kota: string;
+  stats: {
+    totalAnggota: number;
+    totalBidang: number;
+    angkatanNumber: string;
+    detailAnggota: string;
+    daftarBidang: string;
+  };
+  supervisors: {
+    dosenPembimbing: SupervisorPerson;
+    dosenPengawas: SupervisorPerson;
+    koordinatorP3KKNT: SupervisorPerson;
+  };
   pengurusPosko: KktMember[];
   bidangProgram: KktMember[];
   bidangHumas: KktMember[];
@@ -27,6 +47,36 @@ export const KKT_TEAM_DATA: KktTeamConfig = {
   kelurahan: 'Kelurahan Kolongan Satu',
   kecamatan: 'Kecamatan Tomohon Tengah',
   kota: 'Kota Tomohon',
+  stats: {
+    totalAnggota: 14,
+    totalBidang: 4,
+    angkatanNumber: '149',
+    detailAnggota: '3 Pengurus Inti • 11 Anggota Bidang',
+    daftarBidang: 'Program, Humas, Publikasi & Pelaporan',
+  },
+  supervisors: {
+    dosenPembimbing: {
+      role: 'Dosen Pembimbing Lapangan (DPL)',
+      badge: 'DPL Posko',
+      name: 'Dr. dr. Aaltje E. Manampiring, M.Kes',
+      title: 'Dosen Pembimbing Lapangan Posko Kolongan Satu',
+      institution: 'Universitas Sam Ratulangi (UNSRAT)',
+    },
+    dosenPengawas: {
+      role: 'Dosen Pengawas Lapangan',
+      badge: 'Pengawas Wilayah',
+      name: 'Dr. Ir. Stevanus P. Pangemanan, M.Si',
+      title: 'Dosen Pengawas KKT Wilayah Kecamatan Tomohon Tengah',
+      institution: 'Universitas Sam Ratulangi (UNSRAT)',
+    },
+    koordinatorP3KKNT: {
+      role: 'Koordinator P3KKNT UNSRAT',
+      badge: 'Koordinator P3KKNT',
+      name: 'Dr. Ir. Rignolda Djamaluddin, M.Sc.',
+      title: 'Pusat Pengelolaan & Pengembangan KKN Terpadu (P3KKNT)',
+      institution: 'LPPM Universitas Sam Ratulangi',
+    },
+  },
   pengurusPosko: [
     {
       id: 'levandro-eldrico-lumi',
