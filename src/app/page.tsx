@@ -8,6 +8,7 @@ import { INITIAL_LETTERS, LetterRequest } from '@/data/lettersData';
 import dynamic from 'next/dynamic';
 import ActivitySlider from '@/components/ActivitySlider';
 import IntegratedMonografiSection from '@/components/IntegratedMonografiSection';
+import StrukturOrganisasiSection from '@/components/StrukturOrganisasiSection';
 import KktTeamSection from '@/components/KktTeamSection';
 import { AvailableYear, CURRENT_ACTIVE_YEAR, DATA_MONOGRAFI_2024, DATA_MONOGRAFI_2025, DATA_SEJARAH_KOLONGAN_SATU } from '@/data';
 import { INITIAL_REPORTS, CitizenReport } from '@/data/reportsData';
@@ -201,6 +202,12 @@ export default function LandingPage() {
               className="text-[14px] 2xl:text-[16px] text-[#006194] font-semibold transition-colors hover:text-[#007bb9]"
             >
               Beranda
+            </a>
+            <a
+              href="#struktur-organisasi"
+              className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
+            >
+              Struktur Pemerintahan
             </a>
             <a
               href="#sejarah"
@@ -569,6 +576,11 @@ export default function LandingPage() {
               </div>
             </div>
           </section>
+
+          {/* ============================================================ */}
+          {/* 4.5. STRUKTUR PEMERINTAHAN & TATA KELOLA                     */}
+          {/* ============================================================ */}
+          <StrukturOrganisasiSection />
 
           {/* ============================================================ */}
           {/* 5. SEJARAH & ASAL-USUL (NIMAWANUA & CAGAR BUDAYA)            */}
