@@ -1135,27 +1135,19 @@ export default function LandingPage() {
           <div className="pt-4 2xl:pt-6 border-t border-[#dae2fd] flex flex-col md:flex-row items-center justify-between gap-3 text-xs 2xl:text-sm text-[#3f4850]">
             <p>© 2024 Pemerintah Kelurahan Kolongan Satu, Kota Tomohon. Hak Cipta Dilindungi.</p>
             <div className="flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setLegalModalTab('privacy');
-                  setIsLegalModalOpen(true);
-                }}
-                className="hover:text-[#006194] transition-colors cursor-pointer text-left"
+              <Link
+                href="/kebijakan-privasi"
+                className="hover:text-[#006194] transition-colors cursor-pointer text-left font-medium"
               >
                 Kebijakan Privasi
-              </button>
+              </Link>
               <span>•</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setLegalModalTab('terms');
-                  setIsLegalModalOpen(true);
-                }}
-                className="hover:text-[#006194] transition-colors cursor-pointer text-left"
+              <Link
+                href="/kebijakan-privasi?tab=terms"
+                className="hover:text-[#006194] transition-colors cursor-pointer text-left font-medium"
               >
                 Ketentuan Layanan
-              </button>
+              </Link>
             </div>
           </div>
         </div>

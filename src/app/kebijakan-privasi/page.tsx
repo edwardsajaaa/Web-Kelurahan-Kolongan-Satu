@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   ShieldCheck,
   Lock,
@@ -27,8 +28,19 @@ import {
   LogIn
 } from 'lucide-react';
 
-export default function KebijakanPrivasiPage() {
-  const [activeTab, setActiveTab] = useState<'privacy' | 'terms'>('privacy');
+function KebijakanPrivasiContent() {
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'terms' ? 'terms' : 'privacy';
+  const [activeTab, setActiveTab] = useState<'privacy' | 'terms'>(initialTab);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'terms') {
+      setActiveTab('terms');
+    } else if (tab === 'privacy') {
+      setActiveTab('privacy');
+    }
+  }, [searchParams]);
 
   const handlePrint = () => {
     window.print();
@@ -673,5 +685,19 @@ export default function KebijakanPrivasiPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function KebijakanPrivasiPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#faf8ff] flex items-center justify-center text-xs font-semibold text-[#006194]">
+          Memuat Kebijakan Privasi...
+        </div>
+      }
+    >
+      <KebijakanPrivasiContent />
+    </Suspense>
   );
 }
