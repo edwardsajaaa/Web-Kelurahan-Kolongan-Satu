@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { GraduationCap } from 'lucide-react';
 import { KKT_TEAM_DATA, KktMember } from '@/data/kktTeamData';
 import ModalFilosofiLogo from '@/components/ModalFilosofiLogo';
 
 export default function KktTeamSection() {
-  const { pengurusPosko, bidangProgram, bidangHumas, bidangPublikasi, bidangPelaporan, angkatan, university, poskoLocation } = KKT_TEAM_DATA;
+  const { pengurusPosko, bidangProgram, bidangHumas, bidangPublikasi, bidangPelaporan, poskoLocation } = KKT_TEAM_DATA;
   const [isFilosofiOpen, setIsFilosofiOpen] = useState(false);
 
   const renderMemberCard = (member: KktMember, isLeader: boolean = false) => (
@@ -46,10 +45,6 @@ export default function KktTeamSection() {
         {/* ============================================================ */}
         <div className="flex flex-col md:flex-row md:items-center justify-between pb-8 border-b border-[#eaedff] gap-6">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 bg-[#f2f3ff] text-[#006194] px-3.5 py-1 rounded-full text-xs 2xl:text-sm font-bold border border-[#dae2fd]">
-              <GraduationCap className="w-4 h-4" />
-              <span>{angkatan} &bull; {university}</span>
-            </div>
             <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold tracking-tight">
               Tim KKT Kelurahan Kolongan Satu
             </h2>
