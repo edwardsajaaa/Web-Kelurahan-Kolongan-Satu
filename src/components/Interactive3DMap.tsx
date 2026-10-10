@@ -9,7 +9,6 @@ import {
   MapPoiPoint,
 } from '@/data/map3dData';
 import {
-  Layers,
   Compass,
   RotateCcw,
   Sparkles,
@@ -27,7 +26,6 @@ import {
   Shield,
   Star,
   Maximize2,
-  Navigation,
 } from 'lucide-react';
 
 interface Interactive3DMapProps {
@@ -42,7 +40,6 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
 
   // State controls
   const [is3DMode, setIs3DMode] = useState<boolean>(true);
-  const [mapStyleType, setMapStyleType] = useState<'satellite' | 'streets'>('satellite');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [selectedPoi, setSelectedPoi] = useState<MapPoiPoint | null>(KOLONGAN_SATU_POIS[0]);
   const [isMapLoaded, setIsMapLoaded] = useState<boolean>(false);
@@ -102,32 +99,9 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       ],
     };
 
-    const streetsStyle: maplibregl.StyleSpecification = {
-      version: 8,
-      sources: {
-        'carto-voyager': {
-          type: 'raster',
-          tiles: [
-            'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-          ],
-          tileSize: 256,
-          attribution: '© OpenStreetMap contributors, © CARTO',
-        },
-      },
-      layers: [
-        {
-          id: 'streets-base',
-          type: 'raster',
-          source: 'carto-voyager',
-          minzoom: 0,
-          maxzoom: 19,
-        },
-      ],
-    };
-
     const map = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: mapStyleType === 'satellite' ? satelliteStyle : streetsStyle,
+      style: satelliteStyle,
       center: defaultCenter,
       zoom: defaultZoom,
       pitch: is3DMode ? 52 : 0,
@@ -156,7 +130,7 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
     return () => {
       map.remove();
     };
-  }, [mapStyleType]);
+  }, []);
 
   // Render Boundary Polygon persis seperti garis putus-putus merah-putih Google Maps
   const renderBoundary = (map: maplibregl.Map) => {
@@ -466,12 +440,6 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
             <Compass className="w-4 h-4 animate-spin-slow" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold text-[#dc2626] bg-red-100 px-2 py-0.5 rounded-full uppercase tracking-wider border border-red-200">
-                Batas Resmi Citra Satelit
-              </span>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            </div>
             <h4 className="text-xs sm:text-sm font-extrabold text-[#131b2e] leading-tight">
               Peta 3D Batas &amp; Koridor Jalan Kelurahan Kolongan Satu
             </h4>
@@ -504,17 +472,6 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>{is3DMode ? 'Mode 3D Perspektif' : 'Mode 2D Datar'}</span>
-          </button>
-
-          {/* Layer Style Switcher */}
-          <button
-            type="button"
-            onClick={() => setMapStyleType(mapStyleType === 'satellite' ? 'streets' : 'satellite')}
-            className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white hover:bg-[#e2e7ff] text-[#131b2e] border border-[#dae2fd] transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-            title="Beralih Citra Satelit / Peta Jalan"
-          >
-            <Layers className="w-3.5 h-3.5 text-[#006194]" />
-            <span>{mapStyleType === 'satellite' ? 'Satelit Asli' : 'Peta Jalan'}</span>
           </button>
 
           {/* Reset Center */}
@@ -564,28 +521,6 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       {/* 3. The 3D Map Viewport */}
       <div className="relative w-full h-[400px] sm:h-[480px] lg:h-[520px] bg-slate-900 overflow-hidden">
         <div ref={mapContainerRef} className="w-full h-full" />
-
-        {/* Legend Overlay at Bottom Left */}
-        <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-md border border-[#dae2fd] rounded-2xl p-3 shadow-lg text-[11px] space-y-1.5 z-10 max-w-[280px]">
-          <div className="flex items-center gap-2 font-bold text-[#131b2e]">
-            <span className="w-4 h-1 border-t-2 border-dashed border-red-500 bg-red-600"></span>
-            <span>Batas Wilayah (Sesuai Citra Peta)</span>
-          </div>
-          <div className="text-[10px] text-[#535f70] leading-snug">
-            Mencakup: Jl. Zanosui, Jl. Wariki, Jl. P.L. Kaunang, Jl. Mitos, Jl. Slanag, Jl. Sreko hingga Area Geothermal Lahendong.
-          </div>
-          <div className="flex items-center gap-2 pt-1 border-t border-slate-200/80 text-[10px] font-semibold text-[#006194]">
-            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400 shrink-0" />
-            <span>Kantor Kelurahan = Tepi Jl. Zanosui (Depan Persimpangan)</span>
-          </div>
-        </div>
-
-        {/* Street Name Guide Bar at Top Center */}
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur-md border border-slate-700/80 text-white rounded-full px-3.5 py-1 text-[11px] font-medium shadow-lg hidden md:flex items-center gap-2 z-10">
-          <Navigation className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-          <span className="text-cyan-400 font-bold">Jalan Utama Terdata:</span>
-          <span>Jl. Zanosui • Jl. Wariki • Jl. P.L. Kaunang • Jl. Mitos • Jl. Slanag • Jl. Sreko</span>
-        </div>
       </div>
 
       {/* 4. Selected POI Quick Info Box */}
@@ -599,13 +534,7 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
               <MapPin className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-bold text-[#006194] bg-[#e2e7ff] px-2 py-0.5 rounded-full">
-                  {selectedPoi.categoryLabel}
-                </span>
-                <span className="text-[11px] font-semibold text-[#535f70]">{selectedPoi.jaga}</span>
-              </div>
-              <h5 className="text-sm sm:text-base font-bold text-[#131b2e] mt-0.5">
+              <h5 className="text-sm sm:text-base font-bold text-[#131b2e] leading-snug">
                 {selectedPoi.name}
               </h5>
               <p className="text-xs text-[#535f70] mt-0.5">{selectedPoi.alamat}</p>
