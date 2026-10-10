@@ -16,6 +16,7 @@ export interface KktTeamConfig {
   pengurusPosko: KktMember[];
   bidangProgram: KktMember[];
   bidangHumas: KktMember[];
+  bidangPublikasi: KktMember[];
 }
 
 export const KKT_TEAM_DATA: KktTeamConfig = {
@@ -92,6 +93,29 @@ export const KKT_TEAM_DATA: KktTeamConfig = {
       role: 'Anggota',
       badge: 'Anggota Bidang',
       photoUrl: '/images/team/morientes-pakasi.png',
+    },
+  ],
+  bidangPublikasi: [
+    {
+      id: 'edward-benedict',
+      name: 'Edward Benedict',
+      role: 'Koordinator',
+      badge: 'Koordinator Divisi',
+      photoUrl: '/images/team/edward-benedict.png',
+    },
+    {
+      id: 'angela-ferdiane-esra-malonda',
+      name: 'Angela Ferdiane Esra Malonda',
+      role: 'Anggota',
+      badge: 'Anggota Bidang',
+      photoUrl: '/images/team/angela-malonda.png',
+    },
+    {
+      id: 'felita-trizein-rapa',
+      name: 'Felita Trizein Rapa',
+      role: 'Anggota',
+      badge: 'Anggota Bidang',
+      photoUrl: '/images/team/felita-rapa.png',
     },
   ],
 };
