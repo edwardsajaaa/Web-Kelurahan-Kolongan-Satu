@@ -577,7 +577,7 @@ export default function LandingPage() {
             <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#e2e7ff] space-y-8">
               
               {/* Header Seksi */}
-              <div className="flex flex-col md:flex-row md:items-end justify-between pb-6 border-b border-[#eaedff] gap-4">
+              <div className="pb-6 border-b border-[#eaedff]">
                 <div>
                   <div className="inline-flex items-center gap-1.5 bg-[#cce5ff]/70 px-3 2xl:px-4 py-1 2xl:py-1.5 rounded-full text-[#006194] text-xs 2xl:text-sm font-bold mb-2 2xl:mb-3">
                     <span className="material-symbols-outlined text-[16px] 2xl:text-[18px]">history_edu</span>
@@ -587,9 +587,6 @@ export default function LandingPage() {
                     Jejak Sejarah &amp; Warisan Nimawanua
                   </h2>
                 </div>
-                <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] max-w-md 2xl:max-w-lg leading-relaxed">
-                  Menelusuri tanah tertua cikal bakal Tomohon, situs cagar budaya megalitikum, dan denyut pasar pertama tempo dulu.
-                </p>
               </div>
 
               {/* Ringkasan Karakteristik & Toponimi */}
