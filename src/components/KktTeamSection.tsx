@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { GraduationCap, Info } from 'lucide-react';
+import { GraduationCap } from 'lucide-react';
 import { KKT_TEAM_DATA, KktMember } from '@/data/kktTeamData';
 import ModalFilosofiLogo from '@/components/ModalFilosofiLogo';
 
@@ -58,39 +58,19 @@ export default function KktTeamSection() {
             </p>
           </div>
 
-          {/* Logo KKT 149 & Filosofi Logo Access Card */}
-          <div
+          {/* Logo KKT 149 (Hanya logo, klik untuk melihat filosofi) */}
+          <button
+            type="button"
             onClick={() => setIsFilosofiOpen(true)}
-            className="flex items-center gap-3.5 sm:gap-4 shrink-0 self-start md:self-center bg-[#faf8ff] hover:bg-[#eef3ff] p-3 sm:p-3.5 pr-4 sm:pr-5 rounded-2xl sm:rounded-3xl border border-[#dae2fd] transition-all shadow-xs hover:shadow-md cursor-pointer group"
+            className="shrink-0 self-start md:self-center group cursor-pointer focus:outline-none transition-transform hover:scale-105 active:scale-95"
+            title="Klik untuk melihat filosofi lambang KKT 149"
           >
-            <div className="relative w-14 h-14 sm:w-16 sm:h-16 2xl:w-20 2xl:h-20 shrink-0 rounded-2xl overflow-hidden bg-white p-1 shadow-xs border border-[#dae2fd] flex items-center justify-center group-hover:scale-105 transition-transform">
-              <img
-                src="/images/logo-kkt-149.png"
-                alt="Logo KKT 149 UNSRAT Kolongan Satu"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="space-y-1 text-left">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] 2xl:text-xs font-bold uppercase tracking-wider text-[#006194] bg-[#e2e7ff] px-2 py-0.5 rounded-full">
-                  Lambang Resmi
-                </span>
-                <span className="text-[10px] 2xl:text-xs font-semibold text-[#535f70]">
-                  Posko 1
-                </span>
-              </div>
-              <h4 className="text-xs sm:text-sm 2xl:text-base font-bold text-[#131b2e] leading-tight group-hover:text-[#006194] transition-colors">
-                KKT 149 UNSRAT
-              </h4>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-[#006194] hover:text-[#004770] cursor-pointer transition pt-0.5"
-              >
-                <Info className="w-3.5 h-3.5 text-[#006194]" />
-                <span>Lihat Filosofi Logo</span>
-              </button>
-            </div>
-          </div>
+            <img
+              src="/images/logo-kkt-149.png"
+              alt="Logo KKT 149 UNSRAT Kolongan Satu - Klik untuk melihat filosofi"
+              className="w-16 h-16 sm:w-20 sm:h-20 2xl:w-24 2xl:h-24 object-contain drop-shadow-sm group-hover:drop-shadow-md transition-all"
+            />
+          </button>
         </div>
 
         {/* ============================================================ */}
