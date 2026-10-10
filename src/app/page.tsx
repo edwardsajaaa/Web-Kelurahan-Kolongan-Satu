@@ -667,7 +667,6 @@ export default function LandingPage() {
                         <h4 className="text-base sm:text-lg font-bold text-[#131b2e] leading-snug group-hover:text-[#006194] transition-colors">
                           {situs.judul}
                         </h4>
-                        <p className="text-xs font-semibold text-[#006194]">{situs.subjudul}</p>
                         <p className="text-xs sm:text-sm text-[#3f4850] leading-relaxed">{situs.deskripsi}</p>
                       </div>
                       <div className="pt-3 border-t border-[#dae2fd] flex items-center gap-1.5 text-xs text-[#535f70]">

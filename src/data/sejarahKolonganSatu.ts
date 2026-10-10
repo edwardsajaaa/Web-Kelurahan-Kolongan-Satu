@@ -72,30 +72,30 @@ export const DATA_SEJARAH_KOLONGAN_SATU = {
   situsCagarBudaya: [
     {
       id: "waruga-nimawanua",
-      judul: "Situs 7 Waruga Nimawanua Kolongan",
-      subjudul: "Makam Megalitikum Pemimpin & Tonaas Minahasa",
-      periode: "Abad ke-19 (Tercatat 1840-an)",
-      deskripsi: "Tujuh buah peti batu kubur kuno berpahat relief ornamen khas Tombulu yang membuktikan status Kolongan Satu sebagai negeri beradab tertua.",
-      lokasi: "Kawasan SLB/A Fajar Harapan & Makam Susteran Kolongan Satu",
+      judul: "Situs 7 Waruga Nimawanua",
+      subjudul: "Makam Megalitikum Pemimpin Minahasa",
+      periode: "Abad ke-19 (Tercatat 1840)",
+      deskripsi: "Makam megalitikum berisi 7 peti batu relief khas Tombulu, bukti peradaban tertua para pemimpin dan tonaas Minahasa.",
+      lokasi: "Kawasan Fajar Harapan & Makam Susteran",
       tag: "Cagar Budaya Resmi"
     },
     {
       id: "pasar-damar",
-      judul: "Titik Pasar Pertama & Pohon Damar Raksasa",
-      subjudul: "Pusat Perekonomian & Barter Purba Tomohon",
-      periode: "Pra-Kemerdekaan s/d 1960-an",
-      deskripsi: "Titik pertemuan para petani dan pengrajin dari lereng Lokon dan Mahawu untuk bertukar hasil bumi di bawah naungan pohon damar bersejarah.",
+      judul: "Titik Pasar Pertama & Pohon Damar",
+      subjudul: "Pusat Niaga Purba Tomohon",
+      periode: "Pra-Kemerdekaan s/d 1960",
+      deskripsi: "Pusat niaga dan barter purba pertama Tomohon, tempat bertemunya petani lereng Lokon dan Mahawu di bawah pohon damar bersejarah.",
       lokasi: "Jalan Raya Utama Kolongan Satu",
       tag: "Titik Sejarah Budaya"
     },
     {
       id: "misi-jmj",
-      judul: "Pusat Pelayanan Sosial & Makam Susteran JMJ",
-      subjudul: "Pionir Pendidikan Inklusi di Tomohon",
+      judul: "Misi Sosial & Makam Susteran JMJ",
+      subjudul: "Pionir Pendidikan Inklusi",
       periode: "Awal Abad ke-20",
-      deskripsi: "Jejak karya susteran Jesus Maria Joseph (JMJ) dan sekolah khusus tuna netra pertama yang menjadi saksi kepedulian sosial di wilayah ini.",
-      lokasi: "Kompleks Persekolahan Katolik Kolongan Satu",
-      tag: "Pusat Pelayanan Humaniora"
+      deskripsi: "Jejak karya kemanusiaan susteran JMJ dan perintis sekolah inklusi tuna netra pertama di Tomohon.",
+      lokasi: "Kompleks Persekolahan Katolik",
+      tag: "Pelayanan Sosial"
     }
   ],
   referensiValid: [
