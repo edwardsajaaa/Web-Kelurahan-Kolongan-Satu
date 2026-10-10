@@ -178,9 +178,6 @@ export default function ActivitySlider() {
           <h2 className="text-lg sm:text-2xl md:text-3xl 2xl:text-4xl text-white font-bold leading-tight drop-shadow-sm transition-all duration-300">
             {currentSlide.title}
           </h2>
-          <p className="mt-1 sm:mt-2 text-xs sm:text-sm 2xl:text-base text-white/85 leading-relaxed line-clamp-2 drop-shadow-sm font-normal">
-            {currentSlide.subtitle}
-          </p>
         </div>
 
         {/* Indicators & Thumbnails */}
