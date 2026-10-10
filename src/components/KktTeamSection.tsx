@@ -85,7 +85,7 @@ export default function KktTeamSection() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             {/* Stat 1: Total Orang */}
             <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
-              <div className="p-3 bg-[#cce5ff]/70 text-[#006194] rounded-2xl shrink-0">
+              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0">
                 <Users className="w-6 h-6 2xl:w-7 2xl:h-7" />
               </div>
               <div className="space-y-0.5">
@@ -103,7 +103,7 @@ export default function KktTeamSection() {
 
             {/* Stat 2: Bidang Kerja */}
             <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
-              <div className="p-3 bg-[#6cf8bb]/35 text-[#006c49] rounded-2xl shrink-0">
+              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0">
                 <Layers className="w-6 h-6 2xl:w-7 2xl:h-7" />
               </div>
               <div className="space-y-0.5">
@@ -121,7 +121,7 @@ export default function KktTeamSection() {
 
             {/* Stat 3: Angkatan */}
             <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
-              <div className="p-3 bg-[#d3e4fe]/80 text-[#004b73] rounded-2xl shrink-0">
+              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0">
                 <GraduationCap className="w-6 h-6 2xl:w-7 2xl:h-7" />
               </div>
               <div className="space-y-0.5">
@@ -187,7 +187,7 @@ export default function KktTeamSection() {
             <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#6cf8bb]/40 text-[#005236]">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>{supervisors.dosenPengawas.badge}</span>
                   </span>
@@ -202,7 +202,7 @@ export default function KktTeamSection() {
                       {supervisors.dosenPengawas.nip}
                     </span>
                   )}
-                  <p className="text-xs 2xl:text-sm text-[#006c49] font-semibold mt-1.5">
+                  <p className="text-xs 2xl:text-sm text-[#006194] font-semibold mt-1.5">
                     {supervisors.dosenPengawas.role}
                   </p>
                 </div>
@@ -216,7 +216,7 @@ export default function KktTeamSection() {
             <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#d3e4fe]/90 text-[#0b1c30]">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
                     <Award className="w-3.5 h-3.5" />
                     <span>{supervisors.koordinatorP3KKNT.badge}</span>
                   </span>
@@ -226,7 +226,7 @@ export default function KktTeamSection() {
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
                     {supervisors.koordinatorP3KKNT.name}
                   </h4>
-                  <p className="text-xs 2xl:text-sm text-[#004b73] font-semibold mt-1.5">
+                  <p className="text-xs 2xl:text-sm text-[#006194] font-semibold mt-1.5">
                     {supervisors.koordinatorP3KKNT.role}
                   </p>
                 </div>
