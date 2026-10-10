@@ -56,7 +56,7 @@ export default function IntegratedMonografiSection({
   };
 
   const categories = [
-    { id: 'semua', label: '🌟 Semua Data Sekaligus', icon: 'grid_view' },
+    { id: 'semua', label: 'Semua Data Sekaligus', icon: 'grid_view' },
     { id: 'demografi', label: '1. Demografi, Agama & 5 Jaga', icon: 'groups' },
     { id: 'pendidikan', label: '2. Tenaga Kerja & Pendidikan', icon: 'school' },
     { id: 'ekonomi', label: '3. Mata Pencaharian, UMKM & Ternak', icon: 'storefront' },
@@ -981,8 +981,9 @@ export default function IntegratedMonografiSection({
           {/* KOP SURAT PEMERINTAH */}
           <div className="text-center border-b-[3px] border-black pb-2 mb-3 relative">
             <div className="flex items-center justify-center gap-4">
-              <div className="w-14 h-14 border border-black rounded-full flex items-center justify-center font-bold text-base shrink-0">
-                ⭐
+              <div className="w-14 h-14 border-2 border-black rounded-full flex flex-col items-center justify-center font-black text-xs shrink-0 tracking-tighter">
+                <span className="text-[11px] leading-none font-black">K1</span>
+                <span className="text-[8px] font-bold tracking-normal">TOMOHON</span>
               </div>
               <div>
                 <h3 className="text-sm font-bold tracking-wider uppercase m-0 leading-tight">PEMERINTAH KOTA TOMOHON</h3>

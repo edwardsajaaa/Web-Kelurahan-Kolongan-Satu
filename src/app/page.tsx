@@ -918,7 +918,8 @@ export default function LandingPage() {
                         : 'text-[#535f70] hover:text-[#006194]'
                     }`}
                   >
-                    <span>🛰️ Peta 3D Interaktif</span>
+                    <span className="material-symbols-outlined text-[17px]">view_in_ar</span>
+                    <span>Peta 3D Interaktif</span>
                   </button>
                   <button
                     type="button"
@@ -929,7 +930,8 @@ export default function LandingPage() {
                         : 'text-[#535f70] hover:text-[#006194]'
                     }`}
                   >
-                    <span>🗺️ Google Maps Standar</span>
+                    <span className="material-symbols-outlined text-[17px]">map</span>
+                    <span>Google Maps Standar</span>
                   </button>
                 </div>
               </div>

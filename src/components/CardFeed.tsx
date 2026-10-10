@@ -135,7 +135,7 @@ export default function CardFeed({
               <span>+ Tahun Baru</span>
             </button>
 
-            {/* [🗑️ Hapus Periode] Button jika tahun aktif > 2025 */}
+            {/* [Hapus Periode] Button jika tahun aktif > 2025 */}
             {selectedYear > 2025 && onDeleteYear && (
               <button
                 onClick={() => onDeleteYear(selectedYear)}

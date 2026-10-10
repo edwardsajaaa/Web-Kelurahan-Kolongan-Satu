@@ -22,7 +22,8 @@ import {
   Loader2,
   AlertCircle,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Paperclip,
 } from 'lucide-react';
 
 interface ModalLetterRequestProps {
@@ -307,7 +308,7 @@ export default function ModalLetterRequest({
                   </span>
                 </div>
                 <span className="text-[11px] text-slate-500 hidden sm:inline">
-                  Alur: Warga ➔ Staf Karlin ➔ Seklur Ferromel ➔ TTD Lurah Theresia
+                  Alur: Warga &rarr; Staf Karlin &rarr; Seklur Ferromel &rarr; TTD Lurah Theresia
                 </span>
               </div>
 
@@ -385,13 +386,15 @@ export default function ModalLetterRequest({
                       <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                         <div className="flex items-center space-x-2 text-[11px] text-slate-500">
                           {letter.berkasName && (
-                            <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600 border border-slate-200">
-                              📎 {letter.berkasName}
+                            <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600 border border-slate-200 flex items-center gap-1">
+                              <Paperclip className="w-3 h-3 text-slate-500" />
+                              <span>{letter.berkasName}</span>
                             </span>
                           )}
                           {letter.diparafOleh && (
-                            <span className="text-indigo-600 font-medium">
-                              ✓ Diparaf: {letter.diparafOleh}
+                            <span className="text-indigo-600 font-medium flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3 text-indigo-600" />
+                              <span>Diparaf: {letter.diparafOleh}</span>
                             </span>
                           )}
                         </div>

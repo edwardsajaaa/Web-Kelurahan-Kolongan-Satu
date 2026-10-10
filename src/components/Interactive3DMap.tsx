@@ -17,6 +17,17 @@ import {
   MapPin,
   Eye,
   Info,
+  Building2,
+  Landmark,
+  Church,
+  GraduationCap,
+  Heart,
+  Fuel,
+  Coffee,
+  Shield,
+  Star,
+  Maximize2,
+  Navigation,
 } from 'lucide-react';
 
 interface Interactive3DMapProps {
@@ -323,28 +334,28 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
               : 'bg-white/95 text-[#131b2e] ring-1 ring-slate-300/80 backdrop-blur-md'
           }">
             <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${poi.categoryColor}"></span>
-            <span class="text-[11px] font-extrabold whitespace-nowrap tracking-tight ${
+            <span class="text-[11px] font-extrabold whitespace-nowrap tracking-tight flex items-center gap-1 ${
               isKantor ? 'text-amber-200' : isGmim || isChristEdel || isLpka || isLapas || isWalikota || isSpbu || isGeothermal || isStPetrus || isSlb || isPanti ? 'text-white' : 'text-[#131b2e]'
             }">
               ${
                 isKantor
-                  ? '⭐ Kantor Kelurahan'
+                  ? '<svg class="w-3 h-3 inline-block fill-amber-300 mr-0.5" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Kantor Kelurahan'
                   : isGmim
-                  ? '⛪ GMIM Elohim 1'
+                  ? '<svg class="w-3 h-3 inline-block stroke-current fill-none mr-0.5" stroke-width="2" viewBox="0 0 24 24"><path d="M18 22V8a2 2 0 00-2-2H8a2 2 0 00-2 2v14m12 0H6m6-18v6m-3-3h6"/></svg>GMIM Elohim 1'
                   : isChristEdel
-                  ? '⛪ Christianos (Edelweiss)'
+                  ? '<svg class="w-3 h-3 inline-block stroke-current fill-none mr-0.5" stroke-width="2" viewBox="0 0 24 24"><path d="M18 22V8a2 2 0 00-2-2H8a2 2 0 00-2 2v14m12 0H6m6-18v6m-3-3h6"/></svg>Christianos (Edelweiss)'
                   : isStPetrus
-                  ? '🏛️ Aula St. Petrus'
+                  ? '<svg class="w-3 h-3 inline-block stroke-current fill-none mr-0.5" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 10v11m4-11v11m6-11v11m4-11v11M12 3l9 7H3l9-7z"/></svg>Aula St. Petrus'
                   : isSlb
-                  ? '🎓 SLB Kolongan'
+                  ? '<svg class="w-3 h-3 inline-block stroke-current fill-none mr-0.5" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>SLB Kolongan'
                   : isPanti
-                  ? '❤️ Panti Tuna Grahita'
+                  ? '<svg class="w-3 h-3 inline-block stroke-current fill-none mr-0.5" stroke-width="2" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>Panti Tuna Grahita'
                   : isLpka
-                  ? '🏛️ LPKA Tomohon'
+                  ? '<svg class="w-3 h-3 inline-block stroke-current fill-none mr-0.5" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg>LPKA Tomohon'
                   : isLapas
-                  ? '🏛️ Lapas Perempuan'
+                  ? '<svg class="w-3 h-3 inline-block stroke-current fill-none mr-0.5" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg>Lapas Perempuan'
                   : isWalikota
-                  ? '🏢 Kantor Walikota'
+                  ? '<svg class="w-3 h-3 inline-block stroke-current fill-none mr-0.5" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M3 10h18M5 10v11m4-11v11m6-11v11m4-11v11M12 3l9 7H3l9-7z"/></svg>Kantor Walikota'
                   : `${poi.name.split(' ')[0]} ${poi.name.split(' ')[1] || ''}`
               }
             </span>
@@ -476,8 +487,8 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
             className="px-3 py-1.5 rounded-full text-xs font-bold bg-red-600 hover:bg-red-700 text-white transition flex items-center gap-1.5 shadow-xs cursor-pointer"
             title="Tampilkan seluruh garis batas wilayah poligon"
           >
-            <MapPin className="w-3.5 h-3.5 text-white" />
-            <span>🎯 Batas Wilayah Penuh</span>
+            <Maximize2 className="w-3.5 h-3.5 text-white" />
+            <span>Batas Wilayah Penuh</span>
           </button>
 
           {/* 3D View Toggle */}
@@ -503,7 +514,7 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
             title="Beralih Citra Satelit / Peta Jalan"
           >
             <Layers className="w-3.5 h-3.5 text-[#006194]" />
-            <span>{mapStyleType === 'satellite' ? '🛰️ Satelit Asli' : '🗺️ Peta Jalan'}</span>
+            <span>{mapStyleType === 'satellite' ? 'Satelit Asli' : 'Peta Jalan'}</span>
           </button>
 
           {/* Reset Center */}
@@ -522,28 +533,32 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
       <div className="px-4 py-2 bg-white border-b border-[#dae2fd]/60 flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
         <span className="text-[11px] font-bold text-[#535f70] whitespace-nowrap">Filter Lokasi:</span>
         {[
-          { id: 'all', label: `Semua Titik (${KOLONGAN_SATU_POIS.length})` },
-          { id: 'kantor', label: '🏛️ Kantor Kelurahan' },
-          { id: 'pemerintahan', label: '🏢 Pemkot, LPKA & Lapas' },
-          { id: 'ibadah', label: '⛪ Gereja & Ibadah' },
-          { id: 'pendidikan', label: '🎓 SLB & Pendidikan' },
-          { id: 'sosial', label: '❤️ Panti Asuhan' },
-          { id: 'fasilitas', label: '⛽ Aula & Fasilitas' },
-          { id: 'niaga', label: '☕ Kuliner & Niaga' },
-          { id: 'pos_jaga', label: '🛡️ Pos Jaga I - V' },
-        ].map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.id)}
-            className={`px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap transition cursor-pointer ${
-              activeCategory === cat.id
-                ? 'bg-[#006194] text-white shadow-xs'
-                : 'bg-[#faf8ff] hover:bg-[#e2e7ff] text-[#535f70] border border-[#dae2fd]/70'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
+          { id: 'all', label: `Semua Titik (${KOLONGAN_SATU_POIS.length})`, icon: MapPin },
+          { id: 'kantor', label: 'Kantor Kelurahan', icon: Star },
+          { id: 'pemerintahan', label: 'Pemkot, LPKA & Lapas', icon: Building2 },
+          { id: 'ibadah', label: 'Gereja & Ibadah', icon: Church },
+          { id: 'pendidikan', label: 'SLB & Pendidikan', icon: GraduationCap },
+          { id: 'sosial', label: 'Panti Asuhan', icon: Heart },
+          { id: 'fasilitas', label: 'Aula & Fasilitas', icon: Fuel },
+          { id: 'niaga', label: 'Kuliner & Niaga', icon: Coffee },
+          { id: 'pos_jaga', label: 'Pos Jaga I - V', icon: Shield },
+        ].map((cat) => {
+          const IconComp = cat.icon;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={`px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap transition cursor-pointer flex items-center gap-1.5 ${
+                activeCategory === cat.id
+                  ? 'bg-[#006194] text-white shadow-xs'
+                  : 'bg-[#faf8ff] hover:bg-[#e2e7ff] text-[#535f70] border border-[#dae2fd]/70'
+              }`}
+            >
+              <IconComp className="w-3.5 h-3.5 shrink-0" />
+              <span>{cat.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* 3. The 3D Map Viewport */}
@@ -560,14 +575,15 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
             Mencakup: Jl. Zanosui, Jl. Wariki, Jl. P.L. Kaunang, Jl. Mitos, Jl. Slanag, Jl. Sreko hingga Area Geothermal Lahendong.
           </div>
           <div className="flex items-center gap-2 pt-1 border-t border-slate-200/80 text-[10px] font-semibold text-[#006194]">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#006194] ring-2 ring-amber-300"></span>
-            <span>⭐ Kantor Kelurahan = Tepi Jl. Zanosui (Depan Persimpangan)</span>
+            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-400 shrink-0" />
+            <span>Kantor Kelurahan = Tepi Jl. Zanosui (Depan Persimpangan)</span>
           </div>
         </div>
 
         {/* Street Name Guide Bar at Top Center */}
         <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-slate-900/80 backdrop-blur-md border border-slate-700/80 text-white rounded-full px-3.5 py-1 text-[11px] font-medium shadow-lg hidden md:flex items-center gap-2 z-10">
-          <span className="text-cyan-400 font-bold">🛣️ Jalan Utama Terdata:</span>
+          <Navigation className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+          <span className="text-cyan-400 font-bold">Jalan Utama Terdata:</span>
           <span>Jl. Zanosui • Jl. Wariki • Jl. P.L. Kaunang • Jl. Mitos • Jl. Slanag • Jl. Sreko</span>
         </div>
       </div>

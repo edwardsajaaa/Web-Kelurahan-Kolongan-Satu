@@ -14,7 +14,8 @@ import {
   Sparkles,
   CheckCircle2,
   Lock,
-  Smartphone
+  Smartphone,
+  Bell,
 } from 'lucide-react';
 
 interface ModalWhatsAppSimulatorProps {
@@ -103,7 +104,8 @@ export default function ModalWhatsAppSimulator({
           {/* Outgoing Bot Message */}
           <div className="bg-white rounded-2xl rounded-tl-xs p-3.5 shadow-sm max-w-sm border border-slate-200/60 space-y-2.5">
             <div className="flex items-center space-x-1.5 text-emerald-800 text-xs font-bold border-b border-slate-100 pb-1.5">
-              <span>🔔 SISTEM INFORMASI KELURAHAN KOLONGAN SATU</span>
+              <Bell className="w-3.5 h-3.5 text-emerald-700" />
+              <span>SISTEM INFORMASI KELURAHAN KOLONGAN SATU</span>
             </div>
 
             <p className="text-xs text-slate-700 leading-relaxed">
@@ -139,12 +141,12 @@ export default function ModalWhatsAppSimulator({
                 {hasApproved || activeItem.statusTahapan === 'disahkan_lurah' ? (
                   <>
                     <CheckCircle2 className="w-4 h-4 text-white" />
-                    <span>✓ SUDAH DISAHKAN DARI HP</span>
+                    <span>SUDAH DISAHKAN DARI HP</span>
                   </>
                 ) : (
                   <>
                     <ExternalLink className="w-4 h-4" />
-                    <span>👉 KLIK UNTUK SAHKAN DATA INI</span>
+                    <span>KLIK UNTUK SAHKAN DATA INI</span>
                   </>
                 )}
               </button>

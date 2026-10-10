@@ -71,9 +71,15 @@ export default function ModalMonografiPrint({
                 <h2 className="text-base font-extrabold text-slate-900">{item.title}</h2>
               </div>
               <div className="text-right">
-                <span className="text-[10px] uppercase font-bold text-slate-500">Status Validasi</span>
-                <p className="text-xs font-bold text-emerald-800">
-                  {item.statusTahapan === 'disahkan_lurah' ? '✓ DISAHKAN RESMI LURAH' : 'DRAF OPERATOR'}
+                <p className="text-xs font-bold text-emerald-800 flex items-center justify-end gap-1">
+                  {item.statusTahapan === 'disahkan_lurah' ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                      <span>DISAHKAN RESMI LURAH</span>
+                    </>
+                  ) : (
+                    <span>DRAF OPERATOR</span>
+                  )}
                 </p>
               </div>
             </div>
