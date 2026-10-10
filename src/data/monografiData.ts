@@ -666,7 +666,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     category: 'Kependudukan',
     categoryKey: 'kependudukan',
     statsLabel: 'Agregat Penduduk 2025',
-    statsValue: '1.512 Jiwa • 1.512 KK',
+    statsValue: '1.512 Jiwa • 550 KK',
     badgeLabel: 'Data Mutakhir 2025',
     image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=900&auto=format&fit=crop&q=80',
     kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
@@ -681,7 +681,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     lastUpdated: '10 Januari 2025 - 08:30 WITA',
     metrics: {
       totalWarga: 1512,
-      kepalaKeluarga: 1512,
+      kepalaKeluarga: 550,
       pria: 730,
       wanita: 782,
       customMetrics: [
@@ -705,7 +705,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
       headers: ['Parameter Wilayah & Demografi', 'Nilai / Kuantitas', 'Satuan', 'Keterangan'],
       rows: [
         ['Total Penduduk 2025', '1.512', 'Jiwa', '730 Laki-laki, 782 Perempuan'],
-        ['Kepala Keluarga (KK)', '1.512', 'KK', 'Tercatat register dukcapil'],
+        ['Kepala Keluarga (KK)', '550', 'KK', 'Tercatat register dukcapil'],
         ['Hak Pilih Pemilu', '1.245', 'Jiwa', 'Warga usia 17 tahun ke atas / menikah'],
         ['Luas Wilayah Total', '208,25', 'Hektar', 'Kecamatan Tomohon Tengah'],
         ['Tanah Kering', '185,75', 'Hektar', 'Potensi pengembangan dan kebun'],
@@ -720,7 +720,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     category: 'Wilayah Jaga',
     categoryKey: 'wilayah',
     statsLabel: 'Populasi 2025',
-    statsValue: '315 Jiwa • 315 KK',
+    statsValue: '315 Jiwa • 107 KK',
     badgeLabel: 'Gerbang Timur',
     image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=900&auto=format&fit=crop&q=80',
     palaName: 'Jilly Turambi',
@@ -735,7 +735,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     lastUpdated: '12 Januari 2025 - 09:00 WITA',
     metrics: {
       totalWarga: 315,
-      kepalaKeluarga: 315,
+      kepalaKeluarga: 107,
       pria: 153,
       wanita: 162,
     }
@@ -747,7 +747,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     category: 'Wilayah Jaga',
     categoryKey: 'wilayah',
     statsLabel: 'Populasi 2025',
-    statsValue: '292 Jiwa • 292 KK',
+    statsValue: '292 Jiwa • 110 KK',
     badgeLabel: 'Pusat Hunian Asri',
     image: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=900&auto=format&fit=crop&q=80',
     palaName: 'Robert Goni',
@@ -761,7 +761,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     lastUpdated: '12 Januari 2025 - 09:15 WITA',
     metrics: {
       totalWarga: 292,
-      kepalaKeluarga: 292,
+      kepalaKeluarga: 110,
       pria: 141,
       wanita: 151,
     }
@@ -773,7 +773,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     category: 'Wilayah Jaga',
     categoryKey: 'wilayah',
     statsLabel: 'Populasi 2025',
-    statsValue: '301 Jiwa • 301 KK',
+    statsValue: '301 Jiwa • 114 KK',
     badgeLabel: 'Pusat Pemerintahan',
     image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900&auto=format&fit=crop&q=80',
     palaName: 'Meidy Supit',
@@ -787,7 +787,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     lastUpdated: '12 Januari 2025 - 09:30 WITA',
     metrics: {
       totalWarga: 301,
-      kepalaKeluarga: 301,
+      kepalaKeluarga: 114,
       pria: 145,
       wanita: 156,
     }
@@ -799,7 +799,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     category: 'Wilayah Jaga',
     categoryKey: 'wilayah',
     statsLabel: 'Populasi 2025',
-    statsValue: '308 Jiwa • 308 KK',
+    statsValue: '308 Jiwa • 109 KK',
     badgeLabel: 'Sentra Hortikultura',
     image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=900&auto=format&fit=crop&q=80',
     palaName: 'Frits Pangalila',
@@ -813,7 +813,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     lastUpdated: '12 Januari 2025 - 09:45 WITA',
     metrics: {
       totalWarga: 308,
-      kepalaKeluarga: 308,
+      kepalaKeluarga: 109,
       pria: 149,
       wanita: 159,
     }
@@ -825,7 +825,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     category: 'Wilayah Jaga',
     categoryKey: 'wilayah',
     statsLabel: 'Populasi 2025',
-    statsValue: '296 Jiwa • 296 KK',
+    statsValue: '296 Jiwa • 110 KK',
     badgeLabel: 'Lereng Asri Barat',
     image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900&auto=format&fit=crop&q=80',
     palaName: 'Steven Wowor',
@@ -839,7 +839,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     lastUpdated: '12 Januari 2025 - 10:00 WITA',
     metrics: {
       totalWarga: 296,
-      kepalaKeluarga: 296,
+      kepalaKeluarga: 110,
       pria: 142,
       wanita: 154,
     }

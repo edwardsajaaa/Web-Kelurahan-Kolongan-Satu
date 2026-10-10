@@ -38,7 +38,7 @@ export const DATA_MONOGRAFI_2025 = {
     total_jiwa: 1512,
     laki_laki: 730,
     perempuan: 782,
-    total_kk: 1512,
+    total_kk: 550,
     hak_pilih: 1245,
     kelompok_usia: {
       balita_0_6: 121,
