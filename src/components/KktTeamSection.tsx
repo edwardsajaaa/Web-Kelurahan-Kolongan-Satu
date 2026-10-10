@@ -173,8 +173,8 @@ export default function KktTeamSection() {
                       {supervisors.dosenPembimbing.nip}
                     </span>
                   )}
-                  <p className="text-xs 2xl:text-sm text-[#535f70] mt-1.5 leading-relaxed">
-                    {supervisors.dosenPembimbing.title}
+                  <p className="text-xs 2xl:text-sm text-[#006194] font-semibold mt-1.5">
+                    {supervisors.dosenPembimbing.role}
                   </p>
                 </div>
               </div>
@@ -202,8 +202,8 @@ export default function KktTeamSection() {
                       {supervisors.dosenPengawas.nip}
                     </span>
                   )}
-                  <p className="text-xs 2xl:text-sm text-[#535f70] mt-1.5 leading-relaxed">
-                    {supervisors.dosenPengawas.title}
+                  <p className="text-xs 2xl:text-sm text-[#006c49] font-semibold mt-1.5">
+                    {supervisors.dosenPengawas.role}
                   </p>
                 </div>
               </div>
@@ -226,8 +226,8 @@ export default function KktTeamSection() {
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
                     {supervisors.koordinatorP3KKNT.name}
                   </h4>
-                  <p className="text-xs 2xl:text-sm text-[#535f70] mt-1.5 leading-relaxed">
-                    {supervisors.koordinatorP3KKNT.title}
+                  <p className="text-xs 2xl:text-sm text-[#004b73] font-semibold mt-1.5">
+                    {supervisors.koordinatorP3KKNT.role}
                   </p>
                 </div>
               </div>
