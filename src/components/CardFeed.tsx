@@ -1,7 +1,7 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { MonografiItem } from '@/data/monografiData';
-import { Search, Filter, CheckCircle2, Clock, FileEdit, ChevronRight } from 'lucide-react';
+import { Search, Filter, CheckCircle2, Clock, FileEdit, ChevronRight, CalendarPlus, X, AlertCircle, Copy } from 'lucide-react';
 
 interface CardFeedProps {
   items: MonografiItem[];
@@ -41,6 +41,11 @@ export default function CardFeed({
   availableYears = [2024, 2025],
   onCreateYear,
 }: CardFeedProps) {
+  // Modal state untuk Tambah Periode Baru
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newYearInput, setNewYearInput] = useState<number>(() => Math.max(...availableYears, 2025) + 1);
+  const [modalError, setModalError] = useState<string | null>(null);
+
   // Filter logic
   const filteredItems = items.filter((item) => {
     const matchYear = item.year === selectedYear;
@@ -55,25 +60,28 @@ export default function CardFeed({
     return matchYear && matchCategory && matchSearch;
   });
 
-  const handleAddNewYearClick = () => {
+  const handleOpenNewYearModal = () => {
     const maxYear = Math.max(...availableYears, 2025);
-    const suggested = maxYear + 1;
-    const input = window.prompt(`Masukkan tahun periode baru untuk disalin dari ${maxYear}:`, String(suggested));
-    if (input) {
-      const parsed = parseInt(input.trim(), 10);
-      if (!isNaN(parsed) && parsed >= 2020 && parsed <= 2050) {
-        if (availableYears.includes(parsed)) {
-          alert(`Tahun ${parsed} sudah ada dalam daftar arsip.`);
-          onChangeYear(parsed);
-          return;
-        }
-        if (onCreateYear) {
-          onCreateYear(parsed);
-        }
-      } else {
-        alert('Tahun tidak valid. Harap masukkan angka tahun antara 2020 - 2050.');
-      }
+    setNewYearInput(maxYear + 1);
+    setModalError(null);
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmCreateYear = (e: React.FormEvent) => {
+    e.preventDefault();
+    const val = Number(newYearInput);
+    if (isNaN(val) || val < 2020 || val > 2050) {
+      setModalError('Tahun harus berupa angka valid antara 2020 - 2050.');
+      return;
     }
+    if (availableYears.includes(val)) {
+      setModalError(`Periode tahun ${val} sudah ada dalam sistem.`);
+      return;
+    }
+    if (onCreateYear) {
+      onCreateYear(val);
+    }
+    setIsModalOpen(false);
   };
 
   return (
@@ -116,11 +124,12 @@ export default function CardFeed({
 
             {/* [+ Tahun Baru] Button */}
             <button
-              onClick={handleAddNewYearClick}
+              onClick={handleOpenNewYearModal}
               type="button"
-              className="px-2 py-1 rounded-lg text-[11px] font-bold text-primary bg-[#e2e7ff] hover:bg-[#d4deff] border border-[#dae2fd] transition flex items-center gap-1 shadow-xs cursor-pointer"
+              className="px-2.5 py-1 rounded-xl text-[11px] font-bold text-[#006194] bg-[#e2e7ff] hover:bg-[#d4deff] border border-[#dae2fd] transition flex items-center gap-1 shadow-xs cursor-pointer"
               title="Buka periode monografi tahun baru (salin draf dari tahun terakhir)"
             >
+              <CalendarPlus className="w-3.5 h-3.5" />
               <span>+ Tahun Baru</span>
             </button>
           </div>
@@ -261,6 +270,102 @@ export default function CardFeed({
           Total <span className="font-bold text-[#131b2e]">{filteredItems.length}</span> modul monografi aktif
         </p>
       </div>
+
+      {/* MODAL DIALOG: BUKA PERIODE TAHUN BARU */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-[#dae2fd]">
+            {/* Modal Header */}
+            <div className="p-5 bg-gradient-to-r from-[#006194] to-[#004f7a] text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center text-white">
+                  <CalendarPlus className="w-5 h-5 text-sky-200" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Buka Periode Monografi Baru</h3>
+                  <p className="text-[11px] text-sky-200">Kelurahan Kolongan Satu</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleConfirmCreateYear} className="p-6 space-y-4 text-xs">
+              <div className="p-3.5 bg-[#f2f3ff] rounded-2xl border border-[#dae2fd] flex items-start gap-2.5 text-[#004f7a] leading-relaxed">
+                <Copy className="w-4 h-4 text-[#006194] shrink-0 mt-0.5" />
+                <span>
+                  Sistem akan <strong>menyalin otomatis struktur modul monografi</strong> (Kependudukan, Jaga 1–5, Luas Wilayah, Ternak, dsb) sebagai draf awal agar aparatur tinggal memperbarui angka terbarunya.
+                </span>
+              </div>
+
+              {modalError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 flex items-center gap-2 text-xs">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <span>{modalError}</span>
+                </div>
+              )}
+
+              <div className="space-y-1.5">
+                <label className="font-bold text-[#131b2e] block">
+                  Tahun Periode Baru:
+                </label>
+                <input
+                  type="number"
+                  min={2020}
+                  max={2050}
+                  value={newYearInput}
+                  onChange={(e) => {
+                    setNewYearInput(parseInt(e.target.value) || 0);
+                    setModalError(null);
+                  }}
+                  className="w-full text-base font-black text-[#131b2e] bg-[#faf8ff] border border-[#dae2fd] rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-[#006194] focus:outline-none"
+                  placeholder="Contoh: 2026"
+                  required
+                />
+                <span className="text-[10px] text-[#71787e]">
+                  Tahun baru ini otomatis langsung tampil di tombol filter Landing Page publik.
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="font-bold text-[#131b2e] block">
+                  Salin Data Dasar Dari:
+                </label>
+                <div className="p-2.5 bg-[#faf8ff] border border-[#dae2fd] rounded-xl font-semibold text-[#535f70] flex items-center justify-between">
+                  <span>Periode Tahun Terakhir ({Math.max(...availableYears, 2025)})</span>
+                  <span className="text-[10px] bg-[#e2e7ff] text-[#006194] px-2 py-0.5 rounded-full font-bold">
+                    Otomatis Disalin
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-[#e2e7ff]">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#535f70] hover:text-[#131b2e] bg-[#f2f3ff] transition cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-[#006194] hover:bg-[#004f7a] shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <CalendarPlus className="w-4 h-4" />
+                  <span>Siapkan Periode {newYearInput || 'Baru'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
