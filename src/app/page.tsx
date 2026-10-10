@@ -841,13 +841,14 @@ export default function LandingPage() {
                   </p>
                 </div>
                 <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
-                  <Link
-                    href="/portal"
+                  <a
+                    href="#peta-wilayah"
+                    onClick={() => setMapMode('3d')}
                     className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all"
                   >
                     <span>Lihat Wilayah</span>
                     <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
-                  </Link>
+                  </a>
                 </div>
               </div>
 
