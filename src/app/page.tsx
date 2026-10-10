@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import ActivitySlider from '@/components/ActivitySlider';
 import IntegratedMonografiSection from '@/components/IntegratedMonografiSection';
 import StrukturOrganisasiSection from '@/components/StrukturOrganisasiSection';
+import FasilitasPublikSection from '@/components/FasilitasPublikSection';
 import KktTeamSection from '@/components/KktTeamSection';
 import { AvailableYear, CURRENT_ACTIVE_YEAR, DATA_MONOGRAFI_2024, DATA_MONOGRAFI_2025, DATA_SEJARAH_KOLONGAN_SATU } from '@/data';
 import { INITIAL_REPORTS, CitizenReport } from '@/data/reportsData';
@@ -220,6 +221,12 @@ export default function LandingPage() {
               className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
             >
               Monografi
+            </a>
+            <a
+              href="#fasilitas-wilayah"
+              className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
+            >
+              Fasilitas
             </a>
             <a
               href="#peta-wilayah"
@@ -919,6 +926,10 @@ export default function LandingPage() {
             </div>
           </section>
 
+          {/* ============================================================ */}
+          {/* 7.5. FASILITAS & SARANA PUBLIK KELURAHAN                     */}
+          {/* ============================================================ */}
+          <FasilitasPublikSection onDirectToMap={() => setMapMode('3d')} />
 
           {/* ============================================================ */}
           {/* 8. GEOGRAPHIC 3D MAP & TERRITORY SHOWCASE                     */}
