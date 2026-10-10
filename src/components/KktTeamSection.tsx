@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { GraduationCap, Users, Sparkles, Building2 } from 'lucide-react';
+import { GraduationCap } from 'lucide-react';
 import { KKT_TEAM_DATA, KktMember } from '@/data/kktTeamData';
 
 export default function KktTeamSection() {
@@ -42,7 +42,7 @@ export default function KktTeamSection() {
         {/* ============================================================ */}
         {/* 1. SECTION HEADER (Harmonized with Landing Page Aesthetic)   */}
         {/* ============================================================ */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between pb-8 border-b border-[#eaedff] gap-4">
+        <div className="pb-8 border-b border-[#eaedff]">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-1.5 bg-[#f2f3ff] text-[#006194] px-3.5 py-1 rounded-full text-xs 2xl:text-sm font-bold border border-[#dae2fd]">
               <GraduationCap className="w-4 h-4" />
@@ -54,11 +54,6 @@ export default function KktTeamSection() {
             <p className="text-xs sm:text-sm 2xl:text-base text-[#535f70] max-w-2xl leading-relaxed">
               Mahasiswa Pengabdian Masyarakat {poskoLocation}, Kecamatan Tomohon Tengah. Bersinergi bersama Pemerintah Kelurahan dan warga dalam mewujudkan keterbukaan data monografi dan inovasi pelayanan publik terpadu.
             </p>
-          </div>
-
-          <div className="flex items-center gap-2 self-start md:self-auto bg-[#faf8ff] px-4 py-2 rounded-2xl border border-[#dae2fd] text-xs 2xl:text-sm text-[#006194] font-semibold shrink-0">
-            <Building2 className="w-4 h-4" />
-            <span>Posko Pengabdian Aktif</span>
           </div>
         </div>
 
