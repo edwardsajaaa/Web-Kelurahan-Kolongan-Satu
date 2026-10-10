@@ -51,7 +51,7 @@ export const KKT_TEAM_DATA: KktTeamConfig = {
     totalAnggota: 14,
     totalBidang: 4,
     angkatanNumber: '149',
-    detailAnggota: '3 Pengurus Inti • 11 Anggota Bidang',
+    detailAnggota: '3 Pengurus Inti, 11 Anggota Bidang',
     daftarBidang: 'Program, Humas, Publikasi & Pelaporan',
   },
   supervisors: {
