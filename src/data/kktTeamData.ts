@@ -17,6 +17,7 @@ export interface KktTeamConfig {
   bidangProgram: KktMember[];
   bidangHumas: KktMember[];
   bidangPublikasi: KktMember[];
+  bidangPelaporan: KktMember[];
 }
 
 export const KKT_TEAM_DATA: KktTeamConfig = {
@@ -116,6 +117,22 @@ export const KKT_TEAM_DATA: KktTeamConfig = {
       role: 'Anggota',
       badge: 'Anggota Bidang',
       photoUrl: '/images/team/felita-rapa.png',
+    },
+  ],
+  bidangPelaporan: [
+    {
+      id: 'israel-leonil-sengkey',
+      name: 'Israel Leonil Sengkey',
+      role: 'Koordinator',
+      badge: 'Koordinator Divisi',
+      photoUrl: '/images/team/israel-sengkey.png',
+    },
+    {
+      id: 'riqelme-hosea-joyersi-rori',
+      name: 'Riqelme Hosea Joyersi Rori',
+      role: 'Anggota',
+      badge: 'Anggota Bidang',
+      photoUrl: '/images/team/riqelme-rori.png',
     },
   ],
 };
