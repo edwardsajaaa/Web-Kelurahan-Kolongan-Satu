@@ -5,7 +5,7 @@ import { GraduationCap, Users, Sparkles, Building2 } from 'lucide-react';
 import { KKT_TEAM_DATA, KktMember } from '@/data/kktTeamData';
 
 export default function KktTeamSection() {
-  const { pengurusPosko, bidangProgram, angkatan, university, poskoLocation } = KKT_TEAM_DATA;
+  const { pengurusPosko, bidangProgram, bidangHumas, angkatan, university, poskoLocation } = KKT_TEAM_DATA;
 
   const renderMemberCard = (member: KktMember, isLeader: boolean = false) => (
     <div key={member.id} className="group flex flex-col text-left">
@@ -97,6 +97,25 @@ export default function KktTeamSection() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-4xl">
             {bidangProgram.map((m) => renderMemberCard(m, m.role.toLowerCase().includes('koordinator')))}
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* 4. GROUP 3: BIDANG HUBUNGAN MASYARAKAT (HUMAS)               */}
+        {/* ============================================================ */}
+        <div className="space-y-6 pt-4 border-t border-[#eaedff]">
+          <div className="flex items-center gap-3">
+            <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-bold text-[#131b2e] tracking-tight">
+              Bidang Hubungan Masyarakat (Humas)
+            </h3>
+            <div className="h-0.5 flex-1 bg-[#eaedff]" />
+            <span className="text-xs 2xl:text-sm text-[#535f70] font-medium hidden sm:inline">
+              {bidangHumas.length} Anggota
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 max-w-4xl">
+            {bidangHumas.map((m) => renderMemberCard(m, m.role.toLowerCase().includes('koordinator')))}
           </div>
         </div>
       </div>

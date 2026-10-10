@@ -15,6 +15,7 @@ export interface KktTeamConfig {
   kota: string;
   pengurusPosko: KktMember[];
   bidangProgram: KktMember[];
+  bidangHumas: KktMember[];
 }
 
 export const KKT_TEAM_DATA: KktTeamConfig = {
@@ -68,6 +69,29 @@ export const KKT_TEAM_DATA: KktTeamConfig = {
       role: 'Anggota',
       badge: 'Anggota Bidang',
       photoUrl: '/images/team/shallomitha-korua.png',
+    },
+  ],
+  bidangHumas: [
+    {
+      id: 'krisindah-natalia-pamondolang',
+      name: 'Krisindah Natalia Pamondolang',
+      role: 'Koordinator',
+      badge: 'Koordinator Divisi',
+      photoUrl: '/images/team/krisindah-pamondolang.png',
+    },
+    {
+      id: 'cindi-valerina-kembuan',
+      name: 'Cindi Valerina Kembuan',
+      role: 'Anggota',
+      badge: 'Anggota Bidang',
+      photoUrl: '/images/team/cindi-kembuan.png',
+    },
+    {
+      id: 'morientes-cannavaro-pakasi',
+      name: 'Morientes Cannavaro Pakasi',
+      role: 'Anggota',
+      badge: 'Anggota Bidang',
+      photoUrl: '/images/team/morientes-pakasi.png',
     },
   ],
 };
