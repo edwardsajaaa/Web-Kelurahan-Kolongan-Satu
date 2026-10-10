@@ -407,10 +407,10 @@ export default function LandingPage() {
                   </span>
                 </div>
                 <div>
-                  <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
+                  <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006c49] transition-colors">
                     {currentTotalKK.toLocaleString('id-ID')}
                   </div>
-                  <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
+                  <div className="text-sm 2xl:text-base text-[#006c49] font-semibold">
                     Kepala Keluarga (KK)
                   </div>
                 </div>
@@ -429,10 +429,10 @@ export default function LandingPage() {
                   </span>
                 </div>
                 <div>
-                  <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
+                  <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#9c4300] transition-colors">
                     {currentLuasHa.toLocaleString('id-ID')}
                   </div>
-                  <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
+                  <div className="text-sm 2xl:text-base text-[#9c4300] font-semibold">
                     Hektar (Ha)
                   </div>
                 </div>
@@ -451,10 +451,10 @@ export default function LandingPage() {
                   </span>
                 </div>
                 <div>
-                  <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#006194] transition-colors">
+                  <div className="text-4xl 2xl:text-5xl 3xl:text-6xl leading-none text-[#131b2e] font-bold tracking-tight mb-1 group-hover:text-[#5d53a5] transition-colors">
                     {currentProduktif.toLocaleString('id-ID')}
                   </div>
-                  <div className="text-sm 2xl:text-base text-[#006194] font-semibold">
+                  <div className="text-sm 2xl:text-base text-[#5d53a5] font-semibold">
                     Jiwa (Usia 18–56 Tahun)
                   </div>
                 </div>
