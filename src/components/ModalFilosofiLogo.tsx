@@ -8,7 +8,8 @@ import {
   Church,
   BookOpen,
   Leaf,
-  Compass,
+  Users,
+  Palette,
   MapPin,
   Sparkles,
   ExternalLink,
@@ -40,38 +41,44 @@ export default function ModalFilosofiLogo({ isOpen, onClose }: ModalFilosofiLogo
     {
       icon: Mountain,
       color: 'text-sky-600 bg-sky-50 border-sky-200',
-      title: 'Gunung Lokon & Langit Biru Cerah',
-      desc: 'Melambangkan kemegahan alam Kota Tomohon, keteguhan tekad, serta cita-cita luhur mahasiswa dalam mengabdi di tanah Minahasa di bawah naungan Gunung Lokon yang agung.',
+      title: 'Gunung dan Alam',
+      desc: 'Mencerminkan kekuatan serta potensi daerah.',
     },
     {
       icon: Church,
       color: 'text-amber-600 bg-amber-50 border-amber-200',
-      title: 'Gereja & Simbol Religi',
-      desc: 'Mencerminkan nilai religius, moralitas, kerukunan antarumat, dan kehangatan kekeluargaan warga Kelurahan Kolongan Satu yang berlandaskan kasih persaudaraan.',
-    },
-    {
-      icon: MapPin,
-      color: 'text-blue-600 bg-blue-50 border-blue-200',
-      title: 'Papan Posko "TOMOHON KOLONGAN 1" & Pemukiman',
-      desc: 'Menegaskan identitas lokasi posko pengabdian nyata. Melambangkan kehadiran mahasiswa yang membaur harmonis dan bersinergi langsung bersama masyarakat desa.',
+      title: 'Perkampungan dan Rumah Ibadah',
+      desc: 'Melambangkan keharmonisan masyarakat.',
     },
     {
       icon: BookOpen,
       color: 'text-indigo-600 bg-indigo-50 border-indigo-200',
-      title: 'Buku Terbuka & Tiga Figur Akademisi',
-      desc: 'Representasi Tri Dharma Perguruan Tinggi (Pendidikan, Penelitian, dan Pengabdian). Tiga figur insan akademis melambangkan sinergi gotong royong, kebersamaan, dan kesatuan tekad melayani.',
+      title: 'Buku Terbuka',
+      desc: 'Merepresentasikan ilmu pengetahuan.',
+    },
+    {
+      icon: Users,
+      color: 'text-blue-600 bg-blue-50 border-blue-200',
+      title: 'Tiga Figur Manusia',
+      desc: 'Menggambarkan kolaborasi mahasiswa dan masyarakat.',
     },
     {
       icon: Leaf,
       color: 'text-emerald-600 bg-emerald-50 border-emerald-200',
-      title: 'Sepasang Daun Hijau',
-      desc: 'Melambangkan pertumbuhan berkelanjutan, kesuburan tanah agraris Kota Tomohon (Kota Bunga), serta semangat pembaruan dan kelestarian lingkungan hidup.',
+      title: 'Daun Hijau',
+      desc: 'Melambangkan pertumbuhan dan keberlanjutan.',
     },
     {
-      icon: Compass,
+      icon: Palette,
+      color: 'text-teal-600 bg-teal-50 border-teal-200',
+      title: 'Warna Biru dan Hijau',
+      desc: 'Mencerminkan kepercayaan, ketenangan, kehidupan, dan kesejahteraan.',
+    },
+    {
+      icon: MapPin,
       color: 'text-cyan-700 bg-cyan-50 border-cyan-200',
-      title: 'Bingkai Lingkaran & Biru Dongker (Navy)',
-      desc: 'Bentuk lingkaran melambangkan kebulatan tekad dan ikatan persaudaraan yang utuh. Warna biru dongker melambangkan kedalaman ilmu, profesionalisme akademis UNSRAT, dan ketenangan bertindak.',
+      title: 'Identitas KKT 149 UNSRAT – Kota Tomohon • Kolongan 1',
+      desc: 'Menunjukkan angkatan dan lokasi pelaksanaan kegiatan.',
     },
   ];
 
@@ -142,12 +149,23 @@ export default function ModalFilosofiLogo({ isOpen, onClose }: ModalFilosofiLogo
                 Lambang Resmi KKT 149 UNSRAT Posko Kolongan Satu
               </h4>
               <p className="text-xs sm:text-sm text-[#535f70] leading-relaxed">
-                Setiap goresan dan elemen visual dalam lambang ini memadukan jati diri akademisi Universitas Sam Ratulangi dengan kearifan lokal, bentang alam, serta kehidupan bermasyarakat di Kelurahan Kolongan Satu, Kota Tomohon.
+                Logo KKT 149 UNSRAT melambangkan semangat pengabdian, pendidikan, kebersamaan, dan pembangunan masyarakat di Kelurahan Kolongan Satu, Kota Tomohon.
               </p>
             </div>
           </div>
 
-          {/* Grid of 6 Philosophical Elements */}
+          {/* Box Filosofi Singkat (Sesuai Referensi Resmi) */}
+          <div className="bg-gradient-to-br from-[#0c1e35] to-[#122847] text-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-[#203a61] shadow-sm space-y-2">
+            <div className="flex items-center gap-2 text-sky-300 text-xs sm:text-sm font-bold uppercase tracking-wider">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              <span>Filosofi Singkat</span>
+            </div>
+            <p className="text-xs sm:text-sm 2xl:text-base text-slate-100 leading-relaxed font-normal">
+              Logo KKT 149 UNSRAT melambangkan semangat pengabdian, pendidikan, kebersamaan, dan pembangunan masyarakat. Gunung dan alam mencerminkan kekuatan serta potensi daerah, perkampungan dan rumah ibadah melambangkan keharmonisan masyarakat, sementara buku terbuka merepresentasikan ilmu pengetahuan. Tiga figur manusia menggambarkan kolaborasi mahasiswa dan masyarakat, sedangkan daun hijau melambangkan pertumbuhan dan keberlanjutan. Warna biru dan hijau mencerminkan kepercayaan, ketenangan, kehidupan, dan kesejahteraan. Identitas KKT 149 UNSRAT – Kota Tomohon • Kolongan 1 menunjukkan angkatan dan lokasi pelaksanaan kegiatan.
+            </p>
+          </div>
+
+          {/* Grid of Philosophical Elements */}
           <div className="space-y-3">
             <h5 className="text-sm font-bold uppercase tracking-wider text-[#131b2e]">
               Rincian Unsur &amp; Makna Simbolis
