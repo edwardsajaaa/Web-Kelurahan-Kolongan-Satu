@@ -195,7 +195,7 @@ export default function LandingPage() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-8 2xl:gap-12">
+          <nav className="hidden lg:flex items-center gap-7 2xl:gap-10">
             <a
               href="#"
               className="text-[14px] 2xl:text-[16px] text-[#006194] font-semibold transition-colors hover:text-[#007bb9]"
@@ -213,6 +213,12 @@ export default function LandingPage() {
               className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
             >
               Monografi
+            </a>
+            <a
+              href="#peta-wilayah"
+              className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
+            >
+              Peta Wilayah
             </a>
             <a
               href="#layanan-cepat"
@@ -274,6 +280,13 @@ export default function LandingPage() {
               className="text-[14px] text-[#3f4850] font-medium py-1.5"
             >
               Monografi
+            </a>
+            <a
+              href="#peta-wilayah"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[14px] text-[#3f4850] font-medium py-1.5"
+            >
+              Peta Wilayah
             </a>
             <a
               href="#layanan-cepat"
@@ -906,7 +919,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 8. GEOGRAPHIC 3D MAP & TERRITORY SHOWCASE                     */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print" id="peta-wilayah">
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 scroll-mt-24 no-print" id="peta-wilayah">
             <div className="bg-white rounded-3xl p-6 sm:p-8 2xl:p-12 shadow-sm border border-[#e2e7ff] space-y-6 2xl:space-y-8">
               {/* Section Header with Mode Switcher */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#dae2fd]/60 pb-6">
