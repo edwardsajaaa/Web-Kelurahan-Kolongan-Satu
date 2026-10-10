@@ -93,11 +93,11 @@ function PortalLoginForm() {
       <header className="w-full bg-[#ffffff]/90 backdrop-blur-xl border-b border-[#e2e7ff]/80 shadow-[0_1px_12px_rgba(0,0,0,0.03)] px-4 sm:px-6 lg:px-8 py-3.5 z-20">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="p-1 bg-[#f2f3ff] rounded-full shadow-xs shrink-0 group-hover:scale-105 transition-transform">
+            <div className="p-1 bg-[#f2f3ff] rounded-xl shadow-xs shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center">
               <img
-                alt="Lambang Kolongan Satu"
-                className="w-10 h-10 rounded-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmHZWdfGwGmtKd7WQmqYAolpSTVfdzZ9o_PS86bfdJVmhgEbRRth-v4rnoCOXBuQ4rQllgVR5nednaoxhTKE3HaZrfgKH07dp48WXlGpdCkPwVw7t1SLyV-UQxj_n3EiZqaWXZItQiD2p_vqtKi_xSE74TrV0f1V-Azvr4pEqGb2SCR7zqAIzDYHRNzTburxA3gDsFwOEtNColVLoZ5UF1Xy0WSKOkbAkPEIA04HcG2N0n-qDAhHKdo7iOJD-lul2L9S0"
+                alt="Lambang Kota Tomohon - Kelurahan Kolongan Satu"
+                className="w-10 h-10 object-contain"
+                src="/images/logo-tomohon.png"
               />
             </div>
             <div className="flex flex-col text-left">

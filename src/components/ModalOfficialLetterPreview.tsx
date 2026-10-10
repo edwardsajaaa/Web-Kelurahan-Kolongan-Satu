@@ -53,10 +53,14 @@ export default function ModalOfficialLetterPreview({
         <div className="flex-1 overflow-y-auto p-8 md:p-12 bg-white text-slate-900 font-serif leading-relaxed print:p-0 print:overflow-visible">
           {/* KOP SURAT RESMI */}
           <div className="text-center border-b-4 border-double border-slate-900 pb-3 mb-6 relative">
-            {/* Logo Lambang Daerah Kota Tomohon placeholder */}
+            {/* Logo Lambang Daerah Kota Tomohon */}
             <div className="flex items-center justify-center space-x-4 mb-1">
-              <div className="w-14 h-14 rounded-full border-2 border-slate-800 flex items-center justify-center font-bold text-xs font-sans text-slate-800 bg-slate-50">
-                LOGO
+              <div className="w-14 h-14 flex items-center justify-center shrink-0">
+                <img
+                  src="/images/logo-tomohon.png"
+                  alt="Lambang Daerah Kota Tomohon"
+                  className="w-14 h-14 object-contain"
+                />
               </div>
               <div>
                 <h3 className="text-sm font-bold tracking-wider uppercase font-sans">
