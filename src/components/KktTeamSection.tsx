@@ -93,7 +93,7 @@ export default function KktTeamSection() {
                   Total Anggota Posko
                 </span>
                 <div className="text-2xl sm:text-3xl 2xl:text-4xl font-extrabold text-[#131b2e] tracking-tight">
-                  {stats.totalAnggota} <span className="text-sm 2xl:text-base font-semibold text-[#535f70]">Orang</span>
+                  {stats.totalAnggota}
                 </div>
                 <p className="text-xs 2xl:text-sm text-[#535f70] pt-1">
                   {stats.detailAnggota}
@@ -111,7 +111,7 @@ export default function KktTeamSection() {
                   Bidang Kerja
                 </span>
                 <div className="text-2xl sm:text-3xl 2xl:text-4xl font-extrabold text-[#131b2e] tracking-tight">
-                  {stats.totalBidang} <span className="text-sm 2xl:text-base font-semibold text-[#535f70]">Bidang</span>
+                  {stats.totalBidang}
                 </div>
                 <p className="text-xs 2xl:text-sm text-[#535f70] pt-1">
                   {stats.daftarBidang}
@@ -129,7 +129,7 @@ export default function KktTeamSection() {
                   Angkatan KKT
                 </span>
                 <div className="text-2xl sm:text-3xl 2xl:text-4xl font-extrabold text-[#131b2e] tracking-tight">
-                  Angkatan {stats.angkatanNumber}
+                  {stats.angkatanNumber}
                 </div>
                 <p className="text-xs 2xl:text-sm text-[#535f70] pt-1">
                   Universitas Sam Ratulangi (UNSRAT)
