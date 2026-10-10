@@ -13,7 +13,6 @@ import {
   RotateCcw,
   ExternalLink,
   MapPin,
-  Eye,
   Info,
   Building2,
   Landmark,
@@ -541,24 +540,6 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
           </div>
 
           <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-            <button
-              type="button"
-              onClick={() => {
-                if (mapInstanceRef.current) {
-                  mapInstanceRef.current.flyTo({
-                    center: selectedPoi.coordinates,
-                    zoom: 17,
-                    pitch: is3DMode ? 65 : 0,
-                    bearing: is3DMode ? 20 : 0,
-                    duration: 1200,
-                  });
-                }
-              }}
-              className="px-3.5 py-2 rounded-full text-xs font-semibold bg-white hover:bg-[#e2e7ff] text-[#006194] border border-[#dae2fd] transition flex items-center gap-1.5 shadow-xs cursor-pointer"
-            >
-              <Eye className="w-3.5 h-3.5" />
-              <span>Fokus 3D</span>
-            </button>
             <a
               href={selectedPoi.gmapsUrl}
               target="_blank"
