@@ -8,6 +8,7 @@ import { INITIAL_LETTERS, LetterRequest } from '@/data/lettersData';
 import dynamic from 'next/dynamic';
 import ActivitySlider from '@/components/ActivitySlider';
 import IntegratedMonografiSection from '@/components/IntegratedMonografiSection';
+import KktTeamSection from '@/components/KktTeamSection';
 import { AvailableYear, CURRENT_ACTIVE_YEAR, DATA_MONOGRAFI_2024, DATA_MONOGRAFI_2025, DATA_SEJARAH_KOLONGAN_SATU } from '@/data';
 import { INITIAL_REPORTS, CitizenReport } from '@/data/reportsData';
 
@@ -219,6 +220,12 @@ export default function LandingPage() {
             >
               Layanan Publik
             </a>
+            <a
+              href="#tim-kkt"
+              className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
+            >
+              Tim KKT
+            </a>
           </nav>
 
           {/* Right Action: Masuk Portal */}
@@ -274,6 +281,13 @@ export default function LandingPage() {
               className="text-[14px] text-[#3f4850] font-medium py-1.5"
             >
               Layanan Publik
+            </a>
+            <a
+              href="#tim-kkt"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[14px] text-[#3f4850] font-medium py-1.5"
+            >
+              Tim KKT
             </a>
             <Link
               href="/portal"
@@ -1043,6 +1057,11 @@ export default function LandingPage() {
               )}
             </div>
           </section>
+
+          {/* ============================================================ */}
+          {/* 8.5. STRUKTUR TIM KKT (PENGABDIAN MAHASISWA)                 */}
+          {/* ============================================================ */}
+          <KktTeamSection />
         </div>
       </main>
 
@@ -1092,6 +1111,9 @@ export default function LandingPage() {
                 <Link href="/portal" className="text-[#3f4850] hover:text-[#006194] transition-colors">
                   UMKM &amp; Potensi Desa
                 </Link>
+                <a href="#tim-kkt" className="text-[#3f4850] hover:text-[#006194] transition-colors">
+                  Struktur Tim KKT
+                </a>
               </nav>
             </div>
 
