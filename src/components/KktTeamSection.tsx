@@ -33,7 +33,7 @@ export default function KktTeamSection() {
       </div>
 
       {/* Member Details */}
-      <div className="pt-3 2xl:pt-4 space-y-0.5">
+      <div className="pt-3 2xl:pt-4 space-y-0.5 text-center">
         <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] group-hover:text-[#006194] transition-colors leading-snug">
           {member.name}
         </h4>
@@ -84,8 +84,8 @@ export default function KktTeamSection() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             {/* Stat 1: Total Orang */}
-            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
-              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0">
+            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex flex-col items-center text-center shadow-2xs hover:shadow-sm transition-all">
+              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0 mb-2">
                 <Users className="w-6 h-6 2xl:w-7 2xl:h-7" />
               </div>
               <div className="space-y-0.5">
@@ -102,8 +102,8 @@ export default function KktTeamSection() {
             </div>
 
             {/* Stat 2: Bidang Kerja */}
-            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
-              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0">
+            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex flex-col items-center text-center shadow-2xs hover:shadow-sm transition-all">
+              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0 mb-2">
                 <Layers className="w-6 h-6 2xl:w-7 2xl:h-7" />
               </div>
               <div className="space-y-0.5">
@@ -120,8 +120,8 @@ export default function KktTeamSection() {
             </div>
 
             {/* Stat 3: Angkatan */}
-            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex items-start gap-4 shadow-2xs hover:shadow-sm transition-all">
-              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0">
+            <div className="bg-[#faf8ff] border border-[#eaedff] rounded-2xl p-5 2xl:p-6 flex flex-col items-center text-center shadow-2xs hover:shadow-sm transition-all">
+              <div className="p-3 bg-[#cce5ff]/80 text-[#004b73] rounded-2xl shrink-0 mb-2">
                 <GraduationCap className="w-6 h-6 2xl:w-7 2xl:h-7" />
               </div>
               <div className="space-y-0.5">
@@ -155,16 +155,16 @@ export default function KktTeamSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
             {/* Dosen Pembimbing Lapangan */}
-            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2">
+            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between items-center text-center shadow-2xs hover:shadow-sm transition-all">
+              <div className="space-y-3 flex flex-col items-center w-full">
+                <div className="flex items-center justify-center gap-2">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
                     <UserCheck className="w-3.5 h-3.5" />
                     <span>{supervisors.dosenPembimbing.badge}</span>
                   </span>
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 </div>
-                <div>
+                <div className="w-full text-center">
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
                     {supervisors.dosenPembimbing.name}
                   </h4>
@@ -178,22 +178,22 @@ export default function KktTeamSection() {
                   </p>
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium">
+              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium w-full text-center">
                 {supervisors.dosenPembimbing.institution}
               </div>
             </div>
 
             {/* Dosen Pengawas Lapangan */}
-            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2">
+            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between items-center text-center shadow-2xs hover:shadow-sm transition-all">
+              <div className="space-y-3 flex flex-col items-center w-full">
+                <div className="flex items-center justify-center gap-2">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>{supervisors.dosenPengawas.badge}</span>
                   </span>
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 </div>
-                <div>
+                <div className="w-full text-center">
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
                     {supervisors.dosenPengawas.name}
                   </h4>
@@ -207,22 +207,22 @@ export default function KktTeamSection() {
                   </p>
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium">
+              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium w-full text-center">
                 {supervisors.dosenPengawas.institution}
               </div>
             </div>
 
             {/* Koordinator P3KKNT */}
-            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between shadow-2xs hover:shadow-sm transition-all">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between gap-2">
+            <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between items-center text-center shadow-2xs hover:shadow-sm transition-all">
+              <div className="space-y-3 flex flex-col items-center w-full">
+                <div className="flex items-center justify-center gap-2">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
                     <Award className="w-3.5 h-3.5" />
                     <span>{supervisors.koordinatorP3KKNT.badge}</span>
                   </span>
                   <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 </div>
-                <div>
+                <div className="w-full text-center">
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
                     {supervisors.koordinatorP3KKNT.name}
                   </h4>
@@ -231,7 +231,7 @@ export default function KktTeamSection() {
                   </p>
                 </div>
               </div>
-              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium">
+              <div className="mt-4 pt-3 border-t border-[#eaedff] text-[11px] 2xl:text-xs text-[#707881] font-medium w-full text-center">
                 {supervisors.koordinatorP3KKNT.institution}
               </div>
             </div>
