@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {
-  Network,
   Briefcase,
   UserCheck,
   Shield,
@@ -76,11 +75,7 @@ export default function StrukturOrganisasiSection() {
         {/* SECTION HEADER                                               */}
         {/* ============================================================ */}
         <div className="flex flex-col md:flex-row md:items-end justify-between pb-6 border-b border-[#eaedff] gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#cce5ff]/70 text-[#006194] text-xs font-bold">
-              <Network className="w-3.5 h-3.5" />
-              <span>Struktur Pemerintahan</span>
-            </div>
+          <div>
             <h2 className="text-2xl sm:text-3xl 2xl:text-4xl text-[#131b2e] font-bold tracking-tight">
               Struktur Organisasi &amp; Tata Kelola
             </h2>
