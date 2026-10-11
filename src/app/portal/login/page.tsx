@@ -143,14 +143,13 @@ function PortalLoginForm() {
             <div className="text-center space-y-2.5">
               <div className="inline-flex items-center gap-1.5 bg-brand-50 text-brand-700 border border-brand-200/70 px-3.5 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase">
                 <ShieldCheck className="w-3.5 h-3.5 text-brand-600" />
-                <span>Gerbang Keamanan Akses Portal</span>
+                <span>Portal Aparatur</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                Masuk Portal <span className="text-brand-600">Aparatur Kelurahan</span>
+                Masuk Portal <span className="text-brand-600">Aparatur</span>
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto leading-relaxed">
-                Akses portal e-Monografi dilindungi dan hanya dapat diakses oleh aparatur kelurahan berwenang:{' '}
-                <strong>Lurah</strong> &amp; <strong>Sekretaris Kelurahan</strong>.
+              <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+                Khusus <strong>Lurah</strong> &amp; <strong>Sekretaris Kelurahan</strong>.
               </p>
             </div>
 

@@ -263,8 +263,7 @@ export default function DetailView({
             {item.title}
           </h3>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
-            {item.description ||
-              'Area input data resmi tingkat kelurahan. Parameter angka di bawah ini akan dihitung otomatis serta disajikan langsung ke infografis landing page warga.'}
+            {item.description || 'Data monografi resmi Kelurahan Kolongan Satu.'}
           </p>
         </div>
 
@@ -385,9 +384,8 @@ export default function DetailView({
                       Jiwa
                     </span>
                   </div>
-                  <div className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-500 bg-white/80 py-1 px-2 rounded-lg border border-slate-200/60">
-                    <Sparkles className="w-3.5 h-3.5 text-brand-500 shrink-0" />
-                    <span>Hasil penjumlahan Laki-laki + Perempuan</span>
+                  <div className="mt-2 text-[11px] text-slate-400">
+                    <span>Otomatis (Laki-laki + Perempuan)</span>
                   </div>
                 </div>
               </div>
@@ -421,8 +419,8 @@ export default function DetailView({
                       KK
                     </span>
                   </div>
-                  <p className="mt-2 text-[11px] text-slate-500">
-                    Buku Register Kepala Keluarga {year}
+                  <p className="mt-2 text-[11px] text-slate-400">
+                    Register KK {year}
                   </p>
                 </div>
               </div>
@@ -454,8 +452,8 @@ export default function DetailView({
                       Jiwa
                     </span>
                   </div>
-                  <p className="mt-2 text-[11px] text-slate-500">
-                    Warga jenis kelamin laki-laki
+                  <p className="mt-2 text-[11px] text-slate-400">
+                    Warga laki-laki
                   </p>
                 </div>
               </div>
@@ -489,8 +487,8 @@ export default function DetailView({
                       Jiwa
                     </span>
                   </div>
-                  <p className="mt-2 text-[11px] text-slate-500">
-                    Warga jenis kelamin perempuan
+                  <p className="mt-2 text-[11px] text-slate-400">
+                    Warga perempuan
                   </p>
                 </div>
               </div>
@@ -502,10 +500,10 @@ export default function DetailView({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
               <div>
                 <h4 className="text-sm font-bold text-slate-900 tracking-tight">
-                  II. Rincian Indikator Variabel (Luas Lahan, Geografis, Sanitasi &amp; Penunjang)
+                  II. Indikator Tambahan
                 </h4>
                 <p className="text-xs text-slate-500">
-                  Parameter terinci yang disematkan dalam data profil umum Kelurahan Kolongan Satu
+                  Parameter wilayah dan sarana
                 </p>
               </div>
               <button
@@ -656,7 +654,7 @@ export default function DetailView({
           {/* SECTION 4: Field Apparatus & Notes */}
           <div className="bg-slate-50/70 rounded-2xl border border-slate-200 p-6 space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600">
-              Aparatur Penanggung Jawab &amp; Catatan Rinci Lapangan
+              Aparatur &amp; Catatan Lapangan
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -706,7 +704,7 @@ export default function DetailView({
           {/* SECTION 5: Bottom Floating / Sticky Action Bar */}
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
             <span className="text-xs text-slate-400">
-              Semua perubahan dicatat dalam Audit Trail Admin Kelurahan Kolongan Satu.
+              Tercatat pada audit log sistem.
             </span>
             <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
               <button

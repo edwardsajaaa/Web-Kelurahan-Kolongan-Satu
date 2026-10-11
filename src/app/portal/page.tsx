@@ -657,11 +657,8 @@ export default function PortalPage() {
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Kategori Monografi:
-                </span>
-                <span className="text-xs text-slate-400">
-                  Pilih lembar kerja untuk mengisi sub-sektor
                 </span>
               </div>
 
