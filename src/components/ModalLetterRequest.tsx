@@ -25,7 +25,144 @@ import {
   ExternalLink,
   Paperclip,
   MessageCircle,
+  BookOpen,
+  CheckSquare,
+  FileSpreadsheet,
+  BadgeCheck,
 } from 'lucide-react';
+
+export interface LetterRequirementGuide {
+  id: string;
+  nama: string;
+  singkatan: string;
+  deskripsi: string;
+  persyaratan: string[];
+  waktuPelayanan: string;
+  biaya: string;
+  keterangan: string;
+}
+
+export const KATALOG_SURAT_GUIDE: LetterRequirementGuide[] = [
+  {
+    id: 'sku',
+    nama: 'Surat Keterangan Usaha (SKU)',
+    singkatan: 'SKU',
+    deskripsi: 'Keterangan resmi legalitas usaha mandiri / UMKM warga di wilayah Kelurahan Kolongan Satu untuk syarat perbankan, KUR modal usaha, atau legalitas.',
+    persyaratan: [
+      'Fotokopi KTP Pemohon (Warga Kolongan Satu / Lokasi Usaha)',
+      'Fotokopi Kartu Keluarga (KK)',
+      'Foto tempat / aktivitas usaha di lingkungan setempat',
+      'Surat Pengantar dari Kepala Lingkungan (Pala)',
+    ],
+    waktuPelayanan: '1 Hari Kerja',
+    biaya: 'Gratis (Rp 0)',
+    keterangan: 'Wajib mencantumkan bidang usaha, alamat usaha, dan tahun mulai beroperasi.',
+  },
+  {
+    id: 'domisili',
+    nama: 'Surat Keterangan Domisili Warga',
+    singkatan: 'Domisili',
+    deskripsi: 'Keterangan tempat tinggal resmi bagi warga yang bertempat tinggal di Lingkungan I sampai V Kelurahan Kolongan Satu.',
+    persyaratan: [
+      'Fotokopi KTP Pemohon',
+      'Fotokopi Kartu Keluarga (KK)',
+      'Bukti tempat tinggal (bukti sewa / sertifikat / surat pengantar pemilik)',
+      'Surat Pengantar dari Kepala Lingkungan (Pala)',
+    ],
+    waktuPelayanan: '1 Hari Kerja',
+    biaya: 'Gratis (Rp 0)',
+    keterangan: 'Digunakan untuk pembukaan rekening bank, syarat kerja, atau urusan kependudukan.',
+  },
+  {
+    id: 'skck',
+    nama: 'Surat Pengantar Catatan Kepolisian (SKCK)',
+    singkatan: 'SKCK',
+    deskripsi: 'Surat rekomendasi kelurahan sebagai syarat wajib penerbitan SKCK di Polsek Tomohon Tengah / Polres Tomohon.',
+    persyaratan: [
+      'Fotokopi KTP & Kartu Keluarga (KK)',
+      'Fotokopi Akta Kelahiran',
+      'Surat Pengantar dari Kepala Lingkungan (Pala)',
+      'Pas foto 4x6 latar merah (3 lembar dibawa ke Polsek)',
+    ],
+    waktuPelayanan: '1 Hari Kerja',
+    biaya: 'Gratis (Rp 0)',
+    keterangan: 'Diperlukan untuk melamar pekerjaan, seleksi CPNS/BUMN, atau pendidikan kedinasan.',
+  },
+  {
+    id: 'belum-menikah',
+    nama: 'Surat Keterangan Belum Menikah',
+    singkatan: 'Belum Menikah',
+    deskripsi: 'Keterangan resmi status lajang / belum pernah menikah bagi warga yang hendak melangsungkan perkawinan atau syarat beasiswa.',
+    persyaratan: [
+      'Fotokopi KTP & Kartu Keluarga (KK) Pemohon',
+      'Surat Pernyataan Belum Pernah Menikah bermaterai Rp 10.000',
+      'Surat Pengantar dari Kepala Lingkungan (Pala)',
+      'Fotokopi KTP 2 orang saksi warga setempat',
+    ],
+    waktuPelayanan: '1 Hari Kerja',
+    biaya: 'Gratis (Rp 0)',
+    keterangan: 'Syarat wajib pendaftaran nikah di KUA / Catatan Sipil serta pendaftaran beasiswa/tunjangan.',
+  },
+  {
+    id: 'sktm',
+    nama: 'Surat Keterangan Tidak Mampu (SKTM)',
+    singkatan: 'SKTM',
+    deskripsi: 'Keterangan kondisi sosial ekonomi keluarga prasejahtera untuk keperluan bantuan sosial, beasiswa KIP Kuliah, atau keringanan medis.',
+    persyaratan: [
+      'Fotokopi KTP & Kartu Keluarga (KK)',
+      'Surat Pengantar Kepala Lingkungan (Pala) hasil verifikasi lapangan',
+      'Foto kondisi tempat tinggal / rumah warga',
+      'Surat pernyataan penghasilan keluarga bermaterai',
+    ],
+    waktuPelayanan: '1 Hari Kerja',
+    biaya: 'Gratis (Rp 0)',
+    keterangan: 'Diverifikasi langsung secara faktual oleh Kepala Lingkungan agar tepat sasaran.',
+  },
+  {
+    id: 'kematian',
+    nama: 'Surat Keterangan Kematian',
+    singkatan: 'Kematian',
+    deskripsi: 'Pencatatan resmi peristiwa kematian warga di wilayah Kelurahan Kolongan Satu.',
+    persyaratan: [
+      'Fotokopi KTP & KK Almarhum / Almarhumah',
+      'Fotokopi KTP & KK Pelapor / Saksi Ahli Waris',
+      'Surat Keterangan Medis RS / Puskesmas (bila ada)',
+      'Surat Pengantar dari Kepala Lingkungan (Pala)',
+    ],
+    waktuPelayanan: 'Langsung Terbit (Prioritas)',
+    biaya: 'Gratis (Rp 0)',
+    keterangan: 'Dasar pengurusan Akta Kematian di Disdukcapil Tomohon dan klaim asuransi kematian.',
+  },
+  {
+    id: 'kelahiran',
+    nama: 'Surat Keterangan Kelahiran',
+    singkatan: 'Kelahiran',
+    deskripsi: 'Pencatatan peristiwa kelahiran anak di wilayah Kelurahan Kolongan Satu.',
+    persyaratan: [
+      'Fotokopi KTP Ayah & Ibu',
+      'Fotokopi Kartu Keluarga & Buku Nikah / Akta Perkawinan',
+      'Surat Keterangan Lahir dari Bidan / Rumah Sakit',
+      'Surat Pengantar dari Kepala Lingkungan (Pala)',
+    ],
+    waktuPelayanan: '1 Hari Kerja',
+    biaya: 'Gratis (Rp 0)',
+    keterangan: 'Dasar pengurusan Akta Kelahiran anak di Disdukcapil Kota Tomohon.',
+  },
+  {
+    id: 'penghasilan',
+    nama: 'Surat Keterangan Penghasilan / Kerja',
+    singkatan: 'Penghasilan',
+    deskripsi: 'Keterangan taksiran pendapatan bagi pekerja mandiri, petani, atau wiraswasta yang tidak memiliki slip gaji formal.',
+    persyaratan: [
+      'Fotokopi KTP & Kartu Keluarga (KK)',
+      'Surat Pernyataan Rincian Penghasilan Bermaterai Rp 10.000',
+      'Surat Pengantar dari Kepala Lingkungan (Pala)',
+    ],
+    waktuPelayanan: '1 Hari Kerja',
+    biaya: 'Gratis (Rp 0)',
+    keterangan: 'Diperlukan untuk syarat pengajuan beasiswa anak, pendaftaran perguruan tinggi, atau kredit bank.',
+  },
+];
 
 export const PALA_WHATSAPP_CONTACTS: Record<number, { nama: string; phone: string; label: string }> = {
   1: { nama: 'Meky Mario Turangan', phone: '0895-2917-5850', label: 'Kepala Lingkungan I (Jaga 1)' },
@@ -60,7 +197,7 @@ export default function ModalLetterRequest({
   currentOfficial,
   onPrintLetter,
 }: ModalLetterRequestProps) {
-  const [activeTab, setActiveTab] = useState<'daftar' | 'ajukan' | 'lacak'>('daftar');
+  const [activeTab, setActiveTab] = useState<'daftar' | 'katalog' | 'ajukan' | 'lacak'>('daftar');
 
   // Form states
   const [nik, setNik] = useState('');
@@ -231,6 +368,47 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
     }
   };
 
+  // Kirim Update Status ke WA Pemohon (Fitur Sekretariat / Admin)
+  const handleSendStatusToCitizenWa = (letter: LetterRequest) => {
+    const rawPhone = letter.nomorWaPemohon || '';
+    const cleanPhone = rawPhone.replace(/[^0-9]/g, '').replace(/^0/, '62');
+    const targetPhone = cleanPhone || '6289529175850';
+
+    let statusText = 'Diajukan Warga (Menunggu Verifikasi Berkas)';
+    if (letter.statusSurat === 'diverifikasi_staf') {
+      statusText = 'Diverifikasi Staf Pelayanan & Menunggu Paraf Seklur';
+    } else if (letter.statusSurat === 'diparaf_seklur') {
+      statusText = 'Telah Diparaf Seklur & Menunggu TTD Elektronik Lurah';
+    } else if (letter.statusSurat === 'selesai_disahkan') {
+      statusText = 'SELESAI & DISAHKAN LURAH (Siap Diambil / Diunduh)';
+    }
+
+    const message = `*PEMBERITAHUAN STATUS PELAYANAN SURAT*
+*PEMERINTAH KELURAHAN KOLONGAN SATU*
+----------------------------------------
+Yth. Bpk/Ibu *${letter.namaPemohon}*,
+Berikut status perkembangan berkas permohonan surat Anda di Kantor Kelurahan:
+
+• *No. Registrasi :* ${letter.noRegistrasi}
+• *Jenis Surat    :* ${letter.jenisSurat}
+• *Tanggal Masuk  :* ${letter.tanggalDiajukan}
+• *Status Terkini :* ${statusText}
+${letter.catatanPetugas ? `• *Catatan Petugas:* ${letter.catatanPetugas}\n` : ''}
+${
+  letter.statusSurat === 'selesai_disahkan'
+    ? 'Dokumen surat resmi Anda telah disahkan dan siap diambil di Kantor Kelurahan atau dicetak mandiri.'
+    : 'Berkas Anda sedang diproses sesuai tahapan SOP pelayanan kelurahan.'
+}
+
+Terima kasih atas kerja samanya.
+_Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
+
+    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(message)}`;
+    if (typeof window !== 'undefined') {
+      window.open(waUrl, '_blank');
+    }
+  };
+
   // Tracking Search Function
   const handleSearchTracking = async (queryToSearch: string) => {
     const q = queryToSearch.trim();
@@ -314,10 +492,10 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
         <div className="p-5 border-b border-slate-200 bg-gradient-to-r from-sky-900 to-slate-900 text-white flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300">
-              <FileText className="w-5 h-5" />
+              <FileSpreadsheet className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">Layanan Persuratan Mandiri Warga</h2>
+              <h2 className="text-base font-bold text-white">Pusat Rekapitulasi & Pelayanan Persuratan</h2>
               <p className="text-xs text-slate-300">
                 Pemerintah Kelurahan Kolongan Satu, Kecamatan Tomohon Tengah
               </p>
@@ -332,29 +510,50 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 bg-slate-50 px-5 pt-3 gap-2">
+        <div className="flex border-b border-slate-200 bg-slate-50 px-5 pt-3 gap-2 overflow-x-auto">
           <button
             onClick={() => {
               setActiveTab('daftar');
               setSubmittedLetter(null);
             }}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${activeTab === 'daftar'
-              ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-              }`}
+            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 shrink-0 ${
+              activeTab === 'daftar'
+                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
           >
-            <span>Daftar Berkas Permohonan</span>
+            <FileSpreadsheet className="w-3.5 h-3.5" />
+            <span>Rekap & Antrean Surat</span>
             <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-sky-100 text-sky-800 font-bold">
               {letters.length}
             </span>
           </button>
 
           <button
+            onClick={() => {
+              setActiveTab('katalog');
+              setSubmittedLetter(null);
+            }}
+            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 shrink-0 ${
+              activeTab === 'katalog'
+                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 text-sky-600" />
+            <span>Katalog & Syarat Berkas</span>
+            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">
+              {KATALOG_SURAT_GUIDE.length} Jenis
+            </span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('ajukan')}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${activeTab === 'ajukan'
-              ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-              }`}
+            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 shrink-0 ${
+              activeTab === 'ajukan'
+                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
           >
             <Sparkles className="w-3.5 h-3.5 text-sky-600" />
             <span>Ajukan Surat Mandiri</span>
@@ -365,10 +564,11 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
               setActiveTab('lacak');
               setSubmittedLetter(null);
             }}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 ${activeTab === 'lacak'
-              ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-              : 'border-transparent text-slate-500 hover:text-slate-800'
-              }`}
+            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 shrink-0 ${
+              activeTab === 'lacak'
+                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
+            }`}
           >
             <Search className="w-3.5 h-3.5 text-slate-500" />
             <span>Lacak Resi Permohonan</span>
@@ -380,6 +580,51 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
           {/* TAB 1: DAFTAR BERKAS */}
           {activeTab === 'daftar' && (
             <div className="space-y-4">
+              {/* Rekap 4 Metrik Statistik Pelayanan Surat */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span className="text-[10px] uppercase font-bold tracking-wider">Total Surat Masuk</span>
+                    <FileText className="w-4 h-4 text-sky-600" />
+                  </div>
+                  <div className="text-2xl font-black text-slate-900 mt-1">{letters.length}</div>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Semua permohonan aktif</p>
+                </div>
+
+                <div className="bg-white p-3.5 rounded-2xl border border-amber-200 shadow-2xs">
+                  <div className="flex items-center justify-between text-amber-500">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-amber-800">Menunggu Verifikasi</span>
+                    <Clock className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div className="text-2xl font-black text-amber-900 mt-1">
+                    {letters.filter((l) => l.statusSurat === 'diajukan').length}
+                  </div>
+                  <p className="text-[10px] text-amber-700 mt-0.5">Antrean staf kelurahan</p>
+                </div>
+
+                <div className="bg-white p-3.5 rounded-2xl border border-sky-200 shadow-2xs">
+                  <div className="flex items-center justify-between text-sky-500">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-sky-800">Proses / Paraf Seklur</span>
+                    <BadgeCheck className="w-4 h-4 text-sky-600" />
+                  </div>
+                  <div className="text-2xl font-black text-sky-900 mt-1">
+                    {letters.filter((l) => l.statusSurat === 'diverifikasi_staf' || l.statusSurat === 'diparaf_seklur').length}
+                  </div>
+                  <p className="text-[10px] text-sky-700 mt-0.5">Verifikasi & paraf Seklur</p>
+                </div>
+
+                <div className="bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-2xs">
+                  <div className="flex items-center justify-between text-emerald-500">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-800">Selesai & Sah</span>
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div className="text-2xl font-black text-emerald-900 mt-1">
+                    {letters.filter((l) => l.statusSurat === 'selesai_disahkan').length}
+                  </div>
+                  <p className="text-[10px] text-emerald-700 mt-0.5">Disahkan Lurah Theresia</p>
+                </div>
+              </div>
+
               <div className="flex items-center justify-between text-xs text-slate-600 bg-white p-3.5 rounded-2xl border border-slate-200">
                 <div className="flex items-center space-x-2">
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
@@ -511,6 +756,16 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
                             </button>
                           )}
 
+                          {/* Kirim Update Status ke WA Pemohon */}
+                          <button
+                            onClick={() => handleSendStatusToCitizenWa(letter)}
+                            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold rounded-xl transition flex items-center space-x-1.5 shadow-2xs"
+                            title="Kirim perkembangan status surat langsung ke nomor WhatsApp warga pemohon"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Kirim ke WA Warga</span>
+                          </button>
+
                           {/* Print / Preview Button */}
                           <button
                             onClick={() => onPrintLetter(letter)}
@@ -528,7 +783,92 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
             </div>
           )}
 
-          {/* TAB 2: AJUKAN SURAT MANDIRI */}
+          {/* TAB 2: KATALOG & PERSYARATAN BERKAS RESMI */}
+          {activeTab === 'katalog' && (
+            <div className="space-y-4">
+              <div className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-sky-600" />
+                    Standar Operasional Prosedur (SOP) & Persyaratan Surat Warga
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Daftar resmi kelengkapan berkas warga Kelurahan Kolongan Satu. Seluruh layanan persuratan 100% Bebas Biaya (Gratis).
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 text-xs shrink-0">
+                  <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg font-bold">
+                    Biaya: Rp 0 (Gratis)
+                  </span>
+                  <span className="px-2.5 py-1 bg-sky-50 text-sky-700 border border-sky-200 rounded-lg font-bold">
+                    Waktu: 1 Hari Kerja
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {KATALOG_SURAT_GUIDE.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:border-sky-300 hover:shadow-md transition flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <span className="px-2.5 py-0.5 text-[11px] font-extrabold uppercase tracking-wide bg-sky-100 text-sky-800 rounded-full border border-sky-200">
+                          {item.singkatan}
+                        </span>
+                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          {item.biaya}
+                        </span>
+                      </div>
+                      <h4 className="text-sm font-bold text-slate-900">{item.nama}</h4>
+                      <p className="text-xs text-slate-600 mt-1 leading-relaxed">{item.deskripsi}</p>
+
+                      <div className="mt-3.5 pt-3 border-t border-slate-100">
+                        <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                          <CheckSquare className="w-3.5 h-3.5 text-sky-600" />
+                          Syarat Dokumen Diperlukan:
+                        </p>
+                        <ul className="space-y-1.5">
+                          {item.persyaratan.map((syarat, idx) => (
+                            <li key={idx} className="text-xs text-slate-600 flex items-start gap-2">
+                              <span className="text-sky-500 font-bold">•</span>
+                              <span>{syarat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {item.keterangan && (
+                        <p className="mt-3 text-[11px] text-slate-500 italic bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                          Catatan: {item.keterangan}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                      <span className="text-[11px] text-slate-500 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                        {item.waktuPelayanan}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setJenisSurat(item.nama);
+                          setActiveTab('ajukan');
+                        }}
+                        className="px-3 py-1.5 bg-sky-700 hover:bg-sky-800 text-white text-xs font-bold rounded-xl transition flex items-center gap-1 shadow-2xs"
+                      >
+                        <span>Buat Surat Ini</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: AJUKAN SURAT MANDIRI */}
           {activeTab === 'ajukan' && (
             <div className="space-y-4">
               {/* SUCCESS MODAL CARD IF RECENTLY SUBMITTED */}

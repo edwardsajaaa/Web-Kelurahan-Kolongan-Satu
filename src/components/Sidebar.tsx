@@ -74,7 +74,7 @@ export default function Sidebar({
     },
     {
       id: 'surat',
-      label: 'Layanan Surat Online',
+      label: 'Rekap & Penerbitan Surat',
       icon: FileText,
       badge: pendingLettersCount > 0 ? `${pendingLettersCount}` : null,
       badgeColor: 'bg-amber-100 text-amber-900',
