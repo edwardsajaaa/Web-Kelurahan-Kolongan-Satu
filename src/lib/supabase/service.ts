@@ -461,6 +461,37 @@ let inMemorySummaries: Record<number, AnnualMonografiSummary> = {
 };
 
 export async function fetchMonografiItems(): Promise<MonografiItem[]> {
+  if (isServerSupabaseConfigured) {
+    try {
+      const serverClient = createServerClient();
+      const { data, error } = await (serverClient as any)
+        .from('monografi_rekap')
+        .select('*')
+        .order('tahun', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        const dbItems: MonografiItem[] = data.map((row: any) => {
+          const rincian = row.rincian_data || {};
+          return {
+            ...rincian,
+            year: row.tahun || rincian.year,
+            statusTahapan: row.status_tahapan || rincian.statusTahapan,
+            lastUpdated: row.updated_at
+              ? `${new Date(row.updated_at).toLocaleDateString('id-ID')} - Database Supabase`
+              : rincian.lastUpdated,
+          };
+        });
+
+        inMemoryMonografi = dbItems;
+        const availableYears = Array.from(new Set(dbItems.map((it) => it.year)));
+        availableYears.forEach((yr) => syncSummaryFromItems(yr));
+        return dbItems;
+      }
+    } catch (err) {
+      console.warn('[Supabase] Gagal mengambil monografi dari database, menggunakan data memori:', err);
+    }
+  }
+
   return inMemoryMonografi;
 }
 
@@ -552,6 +583,22 @@ export async function updateMonografiTahapan(
       inMemorySummaries[yr].statusTahapan = newTahapan;
       inMemorySummaries[yr].lastUpdated = `${new Date().toLocaleDateString('id-ID')} - Disahkan ${officialName}`;
     }
+
+    if (isServerSupabaseConfigured) {
+      try {
+        const serverClient = createServerClient();
+        await (serverClient as any)
+          .from('monografi_rekap')
+          .update({
+            rincian_data: updatedItem,
+            status_tahapan: newTahapan,
+            updated_at: new Date().toISOString(),
+          })
+          .filter('rincian_data->>id', 'eq', id);
+      } catch (err) {
+        console.warn('[Supabase] Gagal menyimpan update tahapan monografi ke DB:', err);
+      }
+    }
   }
 
   return updatedItem;
@@ -585,6 +632,22 @@ export async function updateMonografiContent(
 
   if (updatedItem) {
     syncSummaryFromItems((updatedItem as MonografiItem).year);
+
+    if (isServerSupabaseConfigured) {
+      try {
+        const serverClient = createServerClient();
+        await (serverClient as any)
+          .from('monografi_rekap')
+          .update({
+            rincian_data: updatedItem,
+            status_tahapan: (updatedItem as MonografiItem).statusTahapan,
+            updated_at: new Date().toISOString(),
+          })
+          .filter('rincian_data->>id', 'eq', id);
+      } catch (err) {
+        console.warn('[Supabase] Gagal menyimpan konten monografi ke DB:', err);
+      }
+    }
   }
 
   return updatedItem;
@@ -643,6 +706,22 @@ export async function createNewYearMonografi(
     ...clonedItems,
   ];
 
+  if (isServerSupabaseConfigured) {
+    try {
+      const serverClient = createServerClient();
+      await (serverClient as any).from('periode_tahun').upsert({ tahun: newYear, status_terkunci: false });
+      const insertRows = clonedItems.map((item) => ({
+        tahun: newYear,
+        kategori: item.categoryKey || 'kependudukan',
+        rincian_data: item,
+        status_tahapan: 'draft',
+      }));
+      await (serverClient as any).from('monografi_rekap').insert(insertRows);
+    } catch (e) {
+      console.warn('[Supabase] Gagal menyimpan periode baru ke DB:', e);
+    }
+  }
+
   return {
     newYear,
     items: clonedItems,
@@ -657,6 +736,17 @@ export async function deleteYearMonografi(year: number): Promise<boolean> {
 
   delete inMemorySummaries[year];
   inMemoryMonografi = inMemoryMonografi.filter((m) => m.year !== year);
+
+  if (isServerSupabaseConfigured) {
+    try {
+      const serverClient = createServerClient();
+      await (serverClient as any).from('monografi_rekap').delete().eq('tahun', year);
+      await (serverClient as any).from('periode_tahun').delete().eq('tahun', year);
+    } catch (e) {
+      console.warn('[Supabase] Gagal menghapus periode dari DB:', e);
+    }
+  }
+
   return true;
 }
 
