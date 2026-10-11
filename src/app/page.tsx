@@ -598,12 +598,8 @@ export default function LandingPage() {
               {/* Header Seksi */}
               <div className="pb-6 border-b border-[#eaedff]">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 bg-[#cce5ff]/70 px-3 2xl:px-4 py-1 2xl:py-1.5 rounded-full text-[#006194] text-xs 2xl:text-sm font-bold mb-2 2xl:mb-3">
-                    <span className="material-symbols-outlined text-[16px] 2xl:text-[18px]">history_edu</span>
-                    <span>Warisan Nimawanua • Tanah Adat Minahasa</span>
-                  </div>
                   <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold tracking-tight">
-                    Jejak Sejarah &amp; Warisan Nimawanua
+                    Jejak Sejarah
                   </h2>
                 </div>
               </div>
