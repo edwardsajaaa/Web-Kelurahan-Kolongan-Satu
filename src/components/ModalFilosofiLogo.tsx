@@ -107,16 +107,16 @@ export default function ModalFilosofiLogo({ isOpen, onClose }: ModalFilosofiLogo
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Bar */}
-        <div className="p-4 sm:p-6 bg-gradient-to-r from-[#006194] to-[#004770] text-white flex items-center justify-between shrink-0 shadow-sm">
+        <div className="p-4 sm:p-6 bg-white border-b border-[#eaedff] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white shrink-0 shadow-xs">
-              <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-sky-200" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-[#cce5ff] text-[#006194] flex items-center justify-center shrink-0 shadow-2xs">
+              <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-[#006194]" />
             </div>
             <div>
-              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-sky-200">
+              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#006194]">
                 KKT Angkatan 149 &bull; Universitas Sam Ratulangi
               </div>
-              <h3 className="text-base sm:text-xl 2xl:text-2xl font-bold text-white tracking-tight leading-snug">
+              <h3 className="text-base sm:text-xl 2xl:text-2xl font-bold text-[#131b2e] tracking-tight leading-snug">
                 Makna &amp; Filosofi Lambang KKT Posko Kolongan Satu
               </h3>
             </div>
@@ -126,7 +126,7 @@ export default function ModalFilosofiLogo({ isOpen, onClose }: ModalFilosofiLogo
             <a
               href="/images/logo-kkt-149.png"
               download="Lambang_KKT149_Kolongan_Satu.png"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-semibold backdrop-blur-md transition cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#006194] hover:bg-[#004f7a] text-white text-xs font-semibold shadow-2xs transition cursor-pointer"
               title="Unduh Berkas Lambang"
             >
               <Download className="w-3.5 h-3.5" />
@@ -135,7 +135,7 @@ export default function ModalFilosofiLogo({ isOpen, onClose }: ModalFilosofiLogo
             <button
               type="button"
               onClick={onClose}
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer shrink-0"
+              className="w-9 h-9 rounded-full bg-[#f2f3ff] hover:bg-[#eaedff] text-[#535f70] hover:text-[#131b2e] border border-[#dae2fd] flex items-center justify-center transition cursor-pointer shrink-0"
               title="Tutup (Esc)"
             >
               <X className="w-5 h-5" />
