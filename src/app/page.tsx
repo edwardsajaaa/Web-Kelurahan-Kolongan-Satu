@@ -197,12 +197,18 @@ export default function LandingPage() {
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-7 2xl:gap-10">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-6 2xl:gap-8">
             <a
               href="#"
               className="text-[14px] 2xl:text-[16px] text-[#006194] font-semibold transition-colors hover:text-[#007bb9]"
             >
               Beranda
+            </a>
+            <a
+              href="#profil"
+              className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
+            >
+              Profil
             </a>
             <a
               href="#struktur-organisasi"
@@ -214,7 +220,7 @@ export default function LandingPage() {
               href="#sejarah"
               className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
             >
-              Profil &amp; Sejarah
+              Sejarah
             </a>
             <a
               href="#monografi-wilayah"
@@ -282,11 +288,25 @@ export default function LandingPage() {
               Beranda
             </a>
             <a
+              href="#profil"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[14px] text-[#3f4850] font-medium py-1.5"
+            >
+              Profil
+            </a>
+            <a
+              href="#struktur-organisasi"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[14px] text-[#3f4850] font-medium py-1.5"
+            >
+              Struktur Pemerintahan
+            </a>
+            <a
               href="#sejarah"
               onClick={() => setMobileMenuOpen(false)}
               className="text-[14px] text-[#3f4850] font-medium py-1.5"
             >
-              Profil &amp; Sejarah
+              Sejarah
             </a>
             <a
               href="#monografi-wilayah"
@@ -494,7 +514,10 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 4. VISI & MISI KELURAHAN (Dipimpin Lurah)                    */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print">
+          <section
+            id="profil"
+            className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print scroll-mt-24"
+          >
             <div className="bg-[#eaedff] rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#dae2fd]">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 2xl:gap-12 items-center">
                 {/* Photo & Name Lurah */}

@@ -70,8 +70,11 @@ export default function KetentuanLayananPage() {
             <Link href="/" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
               Beranda
             </Link>
-            <Link href="/#profil-wilayah" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
-              Profil & Sejarah
+            <Link href="/#profil" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
+              Profil
+            </Link>
+            <Link href="/#sejarah" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
+              Sejarah
             </Link>
             <Link href="/#monografi-wilayah" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
               Monografi
