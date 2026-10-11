@@ -750,3 +750,211 @@ export async function deleteYearMonografi(year: number): Promise<boolean> {
   return true;
 }
 
+// ==========================================
+// 4. APARATUR KELURAHAN AUTH & SECURITY (LURAH & SEKRETARIS)
+// ==========================================
+
+export interface AparaturUser {
+  id: string;
+  name: string;
+  nip: string;
+  roleCode: 'superadmin' | 'admin_seklur';
+  roleTitle: string;
+  phone: string;
+  avatarText: string;
+  jabatan: string;
+}
+
+export const INITIAL_APARATUR_ACCOUNTS = [
+  {
+    id: 'lurah-1',
+    name: 'Theresia J. Kaunang, SE',
+    nip: '19731206 200312 2 007',
+    roleCode: 'superadmin' as const,
+    roleTitle: 'Lurah (Superadmin)',
+    jabatan: 'Lurah Kolongan Satu',
+    phone: '0812-4455-8891',
+    avatarText: 'TK',
+    validIdentifiers: [
+      '19731206 200312 2 007',
+      '197312062003122007',
+      'lurah',
+      'lurah.kolongansatu',
+      'theresia.kaunang',
+      'theresia',
+      'kaunang',
+    ],
+    validPasswords: [
+      'lurah123',
+      'LurahKKT2026!',
+      'kolongansatu',
+      '19731206',
+    ],
+  },
+  {
+    id: 'seklur-1',
+    name: 'Febronia L. Pijoh, S.Kom',
+    nip: '19780203 200902 2 002',
+    roleCode: 'admin_seklur' as const,
+    roleTitle: 'Sekretaris Kelurahan (Admin Utama)',
+    jabatan: 'Sekretaris Kelurahan',
+    phone: '0813-5566-7788',
+    avatarText: 'FP',
+    validIdentifiers: [
+      '19780203 200902 2 002',
+      '197802032009022002',
+      '19780203 200501 1 012',
+      '197802032005011012',
+      'seklur',
+      'sekretaris',
+      'seklur.kolongansatu',
+      'febronia.pijoh',
+      'febronia',
+      'pijoh',
+    ],
+    validPasswords: [
+      'seklur123',
+      'SeklurKKT2026!',
+      'kolongansatu',
+      '19780203',
+      'adminseklur',
+    ],
+  },
+];
+
+export async function authenticateAparatur(
+  identifier: string,
+  passwordInput: string,
+  clientIp?: string
+): Promise<{ success: boolean; message: string; user?: AparaturUser }> {
+  const cleanId = identifier.trim().toLowerCase();
+  const cleanPwd = passwordInput.trim();
+
+  // Try checking in Supabase database first if configured
+  if (isServerSupabaseConfigured) {
+    try {
+      const serverClient = createServerClient();
+      const { data: dbUsers, error } = await (serverClient as any)
+        .from('aparatur_users')
+        .select('*');
+
+      if (!error && dbUsers && dbUsers.length > 0) {
+        const found = dbUsers.find(
+          (u: any) =>
+            (u.nip && u.nip.toLowerCase().replace(/\s+/g, '') === cleanId.replace(/\s+/g, '')) ||
+            (u.username && u.username.toLowerCase() === cleanId) ||
+            (u.email && u.email.toLowerCase() === cleanId)
+        );
+
+        if (found) {
+          // Check role: only Lurah and Seklur allowed
+          if (found.role_code !== 'superadmin' && found.role_code !== 'admin_seklur') {
+            return {
+              success: false,
+              message: 'Akses Ditolak: Hanya Aparatur Kelurahan (Lurah & Sekretaris Kelurahan) yang memiliki hak akses portal.',
+            };
+          }
+
+          if (found.password === cleanPwd || found.password_hash === cleanPwd) {
+            // Update last login
+            await (serverClient as any)
+              .from('aparatur_users')
+              .update({ last_login_at: new Date().toISOString() })
+              .eq('id', found.id);
+
+            // Audit log
+            await (serverClient as any)
+              .from('audit_logs')
+              .insert({
+                aksi: 'LOGIN_PORTAL_SUCCESS',
+                skema_tabel: 'aparatur_users',
+                rekaman_perubahan: { nip: found.nip, nama: found.nama_lengkap, role: found.role_code, ip: clientIp },
+              });
+
+            return {
+              success: true,
+              message: `Login berhasil. Selamat datang, ${found.nama_lengkap}!`,
+              user: {
+                id: found.id,
+                name: found.nama_lengkap,
+                nip: found.nip,
+                roleCode: found.role_code,
+                roleTitle: found.role_code === 'superadmin' ? 'Lurah (Superadmin)' : 'Sekretaris Kelurahan (Admin Utama)',
+                jabatan: found.jabatan || (found.role_code === 'superadmin' ? 'Lurah Kolongan Satu' : 'Sekretaris Kelurahan'),
+                phone: found.nomor_wa || '0813-5566-7788',
+                avatarText: found.nama_lengkap.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase(),
+              },
+            };
+          } else {
+            return {
+              success: false,
+              message: 'Kata Sandi atau PIN Keamanan salah. Silakan periksa kembali.',
+            };
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[Supabase] Auth database query error, fallback to secure seed:', e);
+    }
+  }
+
+  // Fallback to verified aparatur accounts
+  const matchedAccount = INITIAL_APARATUR_ACCOUNTS.find((acc) =>
+    acc.validIdentifiers.some(
+      (id) =>
+        id.toLowerCase() === cleanId ||
+        id.replace(/\s+/g, '') === cleanId.replace(/\s+/g, '')
+    )
+  );
+
+  if (!matchedAccount) {
+    return {
+      success: false,
+      message:
+        'Akses Ditolak: Hak akses portal dibatasi khusus untuk Aparatur Kelurahan (Lurah & Sekretaris Kelurahan). Identitas tidak terdaftar.',
+    };
+  }
+
+  const isPasswordValid = matchedAccount.validPasswords.includes(cleanPwd);
+  if (!isPasswordValid) {
+    return {
+      success: false,
+      message: 'Kata Sandi atau PIN Keamanan salah. Silakan periksa kembali.',
+    };
+  }
+
+  // Log in Supabase audit_logs if available
+  if (isServerSupabaseConfigured) {
+    try {
+      const serverClient = createServerClient();
+      await (serverClient as any).from('audit_logs').insert({
+        aksi: 'LOGIN_PORTAL_SUCCESS',
+        skema_tabel: 'aparatur_users',
+        rekaman_perubahan: {
+          nip: matchedAccount.nip,
+          nama: matchedAccount.name,
+          role: matchedAccount.roleCode,
+          ip: clientIp,
+        },
+      });
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  return {
+    success: true,
+    message: `Login berhasil. Selamat datang, ${matchedAccount.name}!`,
+    user: {
+      id: matchedAccount.id,
+      name: matchedAccount.name,
+      nip: matchedAccount.nip,
+      roleCode: matchedAccount.roleCode,
+      roleTitle: matchedAccount.roleTitle,
+      jabatan: matchedAccount.jabatan,
+      phone: matchedAccount.phone,
+      avatarText: matchedAccount.avatarText,
+    },
+  };
+}
+

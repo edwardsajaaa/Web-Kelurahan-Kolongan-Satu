@@ -1,29 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Sekretaris Kelurahan official credentials
-const SEKLU_VALID_IDENTIFIERS = [
-  '19780203 200902 2 002',
-  '197802032009022002',
-  'febronia.pijoh',
-  'febronia',
-  'pijoh',
-  '19780203 200501 1 012',
-  '197802032005011012',
-  'seklur',
-  'sekretaris',
-  'ferromel.pua',
-  'ferromel',
-  'seklur.kolongansatu',
-];
-
-// Valid passwords / security PINs for Sekretaris Kelurahan
-const VALID_PASSWORDS = [
-  'seklur123',
-  'SeklurKKT2026!',
-  'kolongansatu',
-  '19780203',
-  'adminseklur',
-];
+import { authenticateAparatur } from '@/lib/supabase/service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,61 +13,59 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const cleanIdentifier = identifier.trim().toLowerCase();
-    const cleanPassword = password.trim();
+    const clientIp =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      '127.0.0.1';
 
-    // Check if the identifier belongs to Sekretaris Kelurahan
-    const isSeklurIdentifier = SEKLU_VALID_IDENTIFIERS.some(
-      (id) => id.toLowerCase() === cleanIdentifier || id.replace(/\s+/g, '') === cleanIdentifier.replace(/\s+/g, '')
-    );
+    // Verify through Supabase service with database + secure aparatur store
+    const authResult = await authenticateAparatur(identifier, password, clientIp);
 
-    if (!isSeklurIdentifier) {
+    if (!authResult.success || !authResult.user) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            'Akses Ditolak: Hak akses portal dibatasi khusus untuk Sekretaris Kelurahan (Febronia L. Pijoh, S.Kom). Identitas pengguna tidak dikenali sebagai Sekretaris Kelurahan.',
-        },
-        { status: 403 }
-      );
-    }
-
-    // Check password
-    const isPasswordValid = VALID_PASSWORDS.includes(cleanPassword);
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Kata Sandi atau PIN Keamanan salah. Silakan periksa kembali.',
+          message: authResult.message,
         },
         { status: 401 }
       );
     }
 
-    // Valid Seklur login
+    const user = authResult.user;
+    const authCookieValue =
+      user.roleCode === 'superadmin' ? 'lurah_authenticated' : 'seklur_authenticated';
+
     const response = NextResponse.json({
       success: true,
-      message: 'Login berhasil. Selamat datang, Sekretaris Kelurahan!',
-      user: {
-        id: 'seklur-1',
-        name: 'Febronia L. Pijoh, S.Kom',
-        roleCode: 'admin_seklur',
-        roleTitle: 'Sekretaris Kelurahan (Admin Utama)',
-        nip: '19780203 200902 2 002',
-        phone: '0813-5566-7788',
-      },
+      message: authResult.message,
+      user,
     });
 
-    // Set secure auth cookies
-    const cookieAge = 60 * 60 * 24 * 7; // 7 days
-    response.cookies.set('kkt_portal_auth', 'seklur_authenticated', {
+    // Set secure authentication cookies (7 days duration)
+    const cookieAge = 60 * 60 * 24 * 7;
+
+    response.cookies.set('kkt_portal_auth', authCookieValue, {
       path: '/',
       maxAge: cookieAge,
       sameSite: 'lax',
-      httpOnly: false, // Accessible by client and middleware
+      httpOnly: false,
     });
 
-    response.cookies.set('kkt_user_role', 'admin_seklur', {
+    response.cookies.set('kkt_user_role', user.roleCode, {
+      path: '/',
+      maxAge: cookieAge,
+      sameSite: 'lax',
+      httpOnly: false,
+    });
+
+    response.cookies.set('kkt_user_name', user.name, {
+      path: '/',
+      maxAge: cookieAge,
+      sameSite: 'lax',
+      httpOnly: false,
+    });
+
+    response.cookies.set('kkt_user_nip', user.nip, {
       path: '/',
       maxAge: cookieAge,
       sameSite: 'lax',

@@ -54,6 +54,26 @@ CREATE TABLE IF NOT EXISTS user_profiles (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 3b. Tabel Khusus Akun Keamanan Aparatur Kelurahan (Lurah & Seklur)
+CREATE TABLE IF NOT EXISTS aparatur_users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nip VARCHAR(35) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    nama_lengkap VARCHAR(150) NOT NULL,
+    jabatan VARCHAR(100) NOT NULL,
+    role_code VARCHAR(50) NOT NULL, -- 'superadmin', 'admin_seklur'
+    password_hash VARCHAR(255) NOT NULL,
+    nomor_wa VARCHAR(20),
+    is_active BOOLEAN DEFAULT TRUE,
+    last_login_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+INSERT INTO aparatur_users (nip, username, nama_lengkap, jabatan, role_code, password_hash, nomor_wa) VALUES
+('19731206 200312 2 007', 'lurah', 'Theresia J. Kaunang, SE', 'Lurah Kolongan Satu', 'superadmin', 'lurah123', '0812-4455-8891'),
+('19780203 200902 2 002', 'seklur', 'Febronia L. Pijoh, S.Kom', 'Sekretaris Kelurahan', 'admin_seklur', 'seklur123', '0813-5566-7788')
+ON CONFLICT (nip) DO NOTHING;
+
 -- 4. Tabel Periode Tahun Data
 CREATE TABLE IF NOT EXISTS periode_tahun (
     tahun INT PRIMARY KEY,

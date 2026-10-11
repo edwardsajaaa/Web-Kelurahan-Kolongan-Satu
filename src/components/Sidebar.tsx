@@ -269,19 +269,19 @@ export default function Sidebar({
       >
         <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-sky-700 text-white flex items-center justify-center font-bold text-xs tracking-wider shrink-0 shadow-inner">
-            FP
+            {currentOfficial.avatarText || (currentOfficial.roleCode === 'superadmin' ? 'TK' : 'FP')}
           </div>
           <div className="overflow-hidden min-w-0 flex-1">
             <p className="text-xs font-bold text-slate-900 truncate">
-              Febronia L. Pijoh, S.Kom
+              {currentOfficial.name}
             </p>
             <p className="text-[10px] text-slate-500 truncate">
-              Sekretaris Kelurahan
+              {currentOfficial.roleTitle || (currentOfficial.roleCode === 'superadmin' ? 'Lurah Kolongan Satu' : 'Sekretaris Kelurahan')}
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
               <span className="text-[9px] font-semibold text-emerald-700">
-                Sesi Admin Tunggal
+                {currentOfficial.roleCode === 'superadmin' ? 'Sesi Lurah (Superadmin)' : 'Sesi Sekretaris Kelurahan'}
               </span>
             </div>
           </div>

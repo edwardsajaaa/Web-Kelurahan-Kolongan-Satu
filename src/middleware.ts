@@ -5,19 +5,24 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Security Gate: Protect all /portal routes except /portal/login
+  const authCookie = request.cookies.get("kkt_portal_auth");
+  const isValidAparatur =
+    authCookie &&
+    (authCookie.value === "lurah_authenticated" ||
+      authCookie.value === "seklur_authenticated" ||
+      authCookie.value === "aparatur_authenticated");
+
   if (pathname.startsWith("/portal") && pathname !== "/portal/login") {
-    const authCookie = request.cookies.get("kkt_portal_auth");
-    if (!authCookie || authCookie.value !== "seklur_authenticated") {
+    if (!isValidAparatur) {
       const loginUrl = new URL("/portal/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
   }
 
-  // If user is already authenticated as Seklur and visits /portal/login, redirect to /portal
+  // If user is already authenticated as aparatur and visits /portal/login, redirect to /portal
   if (pathname === "/portal/login") {
-    const authCookie = request.cookies.get("kkt_portal_auth");
-    if (authCookie && authCookie.value === "seklur_authenticated") {
+    if (isValidAparatur) {
       return NextResponse.redirect(new URL("/portal", request.url));
     }
   }

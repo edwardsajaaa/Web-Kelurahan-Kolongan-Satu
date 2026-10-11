@@ -97,6 +97,9 @@ export default function PortalPage() {
             window.location.href = '/portal/login';
             return;
           }
+          if (sessionData.user) {
+            setCurrentOfficial(sessionData.user);
+          }
         }
       } catch (err) {
         console.warn('Gagal memverifikasi sesi login:', err);
