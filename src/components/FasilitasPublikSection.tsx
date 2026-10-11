@@ -280,15 +280,15 @@ export const FASILITAS_DATA: FasilitasItem[] = [
   },
   {
     id: 'sanitasi-odf-paripurna',
-    name: 'Sanitasi Total & Sertifikasi 100% ODF',
+    name: 'Pengawasan Sanitasi & Jamban Sehat',
     category: 'sanitasi_air',
-    categoryLabel: 'Sanitasi & Jamban Sehat',
+    categoryLabel: 'Sanitasi Pemukiman',
     categoryColor: 'bg-[#6cf8bb]/40 text-[#005236]',
     icon: ShieldCheck,
-    jaga: '550 Kepala Keluarga (100% KK)',
+    jaga: 'Wilayah Lingkungan I s/d V',
     alamat: 'Seluruh Wilayah Kelurahan Kolongan Satu',
-    deskripsi: 'Status Paripurna Bebas Buang Air Besar Sembarangan (Open Defecation Free) dengan 100% jamban sehat keluarga dan tangki septik aman.',
-    status: '100% ODF Paripurna',
+    deskripsi: 'Program pemeliharaan sarana sanitasi warga melalui pengawasan jamban keluarga sehat dan pembuangan limbah domestik terpadu.',
+    status: 'Terkelola / Berkelanjutan',
   },
   {
     id: 'drainase-dan-sungai',
@@ -417,8 +417,8 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
               <Droplets className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">14 Titik &amp; ODF</span>
-              <span className="text-[11px] text-[#535f70] font-medium block">Sanitasi &amp; Air Bersih</span>
+              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">14 Titik</span>
+              <span className="text-[11px] text-[#535f70] font-medium block">Mata Air &amp; Sanitasi</span>
             </div>
           </div>
         </div>
@@ -553,13 +553,13 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
                 Sarana Sanitasi Lingkungan &amp; Sumber Daya Air Kolongan Satu
               </h3>
               <p className="text-xs sm:text-sm text-[#535f70] max-w-3xl leading-relaxed">
-                Kelurahan Kolongan Satu dianugerahi berkah geografis lereng pegunungan dengan limpahan mata air alami, sistem drainase terpadu, dan pencapaian 100% ODF (Open Defecation Free) mandiri.
+                Kelurahan Kolongan Satu dianugerahi limpahan sumber mata air alami pegunungan, jaringan drainase terpadu, serta pemeliharaan sanitasi lingkungan pemukiman warga secara berkesinambungan.
               </p>
             </div>
             <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#6cf8bb]/40 text-[#005236] text-xs font-bold border border-[#6cf8bb]">
-                <ShieldCheck className="w-4 h-4 text-[#006c49]" />
-                <span>100% ODF Terverifikasi</span>
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#cce5ff] text-[#006194] text-xs font-bold border border-[#99cbff]">
+                <ShieldCheck className="w-4 h-4 text-[#006194]" />
+                <span>Sanitasi &amp; Lingkungan Sehat</span>
               </span>
             </div>
           </div>
@@ -606,7 +606,7 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-[#006c49] shrink-0" />
               <span>
-                <strong>Sistem Sanitasi Ramah Lingkungan:</strong> Seluruh 550 Kepala Keluarga telah memiliki jamban keluarga sehat bersekat dan tangki septik permanen (Zero BABS). Pengangkutan sampah dikoordinasikan rutin bersama Dinas Lingkungan Hidup Kota Tomohon.
+                <strong>Sistem Sanitasi Lingkungan:</strong> Pemukiman warga aktif memelihara jamban keluarga sehat mandiri dan tangki septik terawat guna menjaga kelestarian air tanah. Pengangkutan sampah dikoordinasikan rutin bersama Dinas Lingkungan Hidup Kota Tomohon.
               </span>
             </div>
           </div>
