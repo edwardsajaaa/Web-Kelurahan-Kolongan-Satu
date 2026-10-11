@@ -18,12 +18,15 @@ import {
   Fuel,
   Coffee,
   CheckCircle2,
+  Droplets,
+  Waves,
+  ShieldCheck,
 } from 'lucide-react';
 
 export interface FasilitasItem {
   id: string;
   name: string;
-  category: 'pemerintahan' | 'ibadah' | 'kesehatan' | 'pendidikan' | 'infrastruktur';
+  category: 'pemerintahan' | 'ibadah' | 'kesehatan' | 'pendidikan' | 'infrastruktur' | 'sanitasi_air';
   categoryLabel: string;
   categoryColor: string;
   icon: any;
@@ -237,6 +240,68 @@ export const FASILITAS_DATA: FasilitasItem[] = [
     status: 'Buka Setiap Hari',
     gmapsUrl: 'https://www.google.com/maps/search/?api=1&query=Renao+Bakeshop+Tomohon',
   },
+
+  // 6. Sanitasi Lingkungan & Sumber Daya Air
+  {
+    id: 'mata-air-alami',
+    name: '14 Titik Mata Air Alami Vulkanik',
+    category: 'sanitasi_air',
+    categoryLabel: 'Sumber Daya Air Alami',
+    categoryColor: 'bg-[#d0f0fd] text-[#006194]',
+    icon: Droplets,
+    jaga: 'Tersebar di Jaga 1 s/d 5',
+    alamat: 'Koridor lereng & resapan alami Kolongan Satu',
+    deskripsi: 'Sebaran 14 titik mata air vulkanik alami dengan debit stabil dan jernih yang menjadi sumber vital air bersih warga.',
+    status: 'Debit Terjaga & Terawat',
+  },
+  {
+    id: 'sumur-pompa-mandiri',
+    name: '380 Unit Sumur Pompa & Gali Mandiri',
+    category: 'sanitasi_air',
+    categoryLabel: 'Air Bersih Rumah Tangga',
+    categoryColor: 'bg-[#d0f0fd] text-[#006194]',
+    icon: Droplets,
+    jaga: 'Wilayah Lingkungan I – V',
+    alamat: 'Area pemukiman 5 Lingkungan Jaga',
+    deskripsi: 'Sumur pompa dan sumur gali keluarga yang dirawat berkala dengan kualitas air tanah higienis dan tidak berbau.',
+    status: '380 Unit Berfungsi Normal',
+  },
+  {
+    id: 'jaringan-pdam',
+    name: 'Jaringan Perpipaan Air PDAM (160 Rumah)',
+    category: 'sanitasi_air',
+    categoryLabel: 'Infrastruktur Air Bersih',
+    categoryColor: 'bg-[#d0f0fd] text-[#006194]',
+    icon: Waves,
+    jaga: 'Jaga 1, 2, 3, 4, 5',
+    alamat: 'Jaringan pipa transmisi PDAM Kota Tomohon',
+    deskripsi: 'Suplai air bersih terdistribusi ke 160 sambungan rumah melalui kemitraan PDAM Tomohon dan PAM Kelurahan.',
+    status: 'Distribusi Lancar',
+  },
+  {
+    id: 'sanitasi-odf-paripurna',
+    name: 'Sanitasi Total & Sertifikasi 100% ODF',
+    category: 'sanitasi_air',
+    categoryLabel: 'Sanitasi & Jamban Sehat',
+    categoryColor: 'bg-[#6cf8bb]/40 text-[#005236]',
+    icon: ShieldCheck,
+    jaga: '550 Kepala Keluarga (100% KK)',
+    alamat: 'Seluruh Wilayah Kelurahan Kolongan Satu',
+    deskripsi: 'Status Paripurna Bebas Buang Air Besar Sembarangan (Open Defecation Free) dengan 100% jamban sehat keluarga dan tangki septik aman.',
+    status: '100% ODF Paripurna',
+  },
+  {
+    id: 'drainase-dan-sungai',
+    name: 'Saluran Drainase 3.200 M & Aliran Sungai',
+    category: 'sanitasi_air',
+    categoryLabel: 'Drainase & Pengendali Banjir',
+    categoryColor: 'bg-[#d0f0fd] text-[#006194]',
+    icon: Waves,
+    jaga: 'Koridor Utama 5 Jaga',
+    alamat: 'Sepanjang jalan penghubung & batas alam',
+    deskripsi: 'Jaringan saluran drainase permanen sepanjang 3,2 km terhubung dengan aliran sungai alami sebagai resapan dan pencegah genangan air.',
+    status: 'Kondisi Baik & Terawat',
+  },
 ];
 
 interface FasilitasPublikSectionProps {
@@ -253,6 +318,7 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
     { id: 'kesehatan', label: 'Kesehatan', icon: HeartPulse, count: 3 },
     { id: 'pendidikan', label: 'Pendidikan & Sosial', icon: GraduationCap, count: 2 },
     { id: 'infrastruktur', label: 'Energi & Niaga', icon: Zap, count: 3 },
+    { id: 'sanitasi_air', label: 'Sanitasi & Sumber Air', icon: Droplets, count: 5 },
   ];
 
   const filteredData = activeTab === 'all'
@@ -293,9 +359,9 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
         </div>
 
         {/* ============================================================ */}
-        {/* QUICK STATS SUMMARY BANNER (5 STATS PILLARS)                 */}
+        {/* QUICK STATS SUMMARY BANNER (6 STATS PILLARS)                 */}
         {/* ============================================================ */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#eaedff] flex items-center gap-3 shadow-2xs">
             <div className="w-10 h-10 rounded-xl bg-[#cce5ff] text-[#006194] flex items-center justify-center shrink-0">
               <Building2 className="w-5 h-5" />
@@ -336,13 +402,23 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#eaedff] flex items-center gap-3 shadow-2xs col-span-2 sm:col-span-1">
+          <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#eaedff] flex items-center gap-3 shadow-2xs">
             <div className="w-10 h-10 rounded-xl bg-[#eaedff] text-[#004b73] flex items-center justify-center shrink-0">
               <Zap className="w-5 h-5" />
             </div>
             <div>
               <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">3 Unit</span>
               <span className="text-[11px] text-[#535f70] font-medium block">Geothermal &amp; Energi</span>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#eaedff] flex items-center gap-3 shadow-2xs col-span-2 sm:col-span-1">
+            <div className="w-10 h-10 rounded-xl bg-[#d0f0fd] text-[#006194] flex items-center justify-center shrink-0">
+              <Droplets className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">14 Titik &amp; ODF</span>
+              <span className="text-[11px] text-[#535f70] font-medium block">Sanitasi &amp; Air Bersih</span>
             </div>
           </div>
         </div>
@@ -461,6 +537,79 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
               </div>
             );
           })}
+        </div>
+
+        {/* ============================================================ */}
+        {/* INFRASTRUKTUR SANITASI & SUMBER DAYA AIR BANNER              */}
+        {/* ============================================================ */}
+        <div className="bg-gradient-to-br from-[#faf8ff] via-[#f0f4ff] to-[#e8f2ff] rounded-3xl p-6 sm:p-8 2xl:p-10 border border-[#dae2fd] shadow-sm space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#dae2fd]/70 pb-5">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#cce5ff] text-[#006194]">
+                <Droplets className="w-3.5 h-3.5" />
+                <span>Ketahanan Lingkungan Hidup &amp; Air Bersih</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-bold text-[#131b2e]">
+                Sarana Sanitasi Lingkungan &amp; Sumber Daya Air Kolongan Satu
+              </h3>
+              <p className="text-xs sm:text-sm text-[#535f70] max-w-3xl leading-relaxed">
+                Kelurahan Kolongan Satu dianugerahi berkah geografis lereng pegunungan dengan limpahan mata air alami, sistem drainase terpadu, dan pencapaian 100% ODF (Open Defecation Free) mandiri.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#6cf8bb]/40 text-[#005236] text-xs font-bold border border-[#6cf8bb]">
+                <ShieldCheck className="w-4 h-4 text-[#006c49]" />
+                <span>100% ODF Terverifikasi</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-white p-4.5 rounded-2xl border border-[#dae2fd] shadow-2xs">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-[#006194] flex items-center justify-between">
+                <span>Mata Air Alami</span>
+                <Droplets className="w-4 h-4 text-[#006194]" />
+              </div>
+              <div className="text-2xl font-black text-[#131b2e] mt-1.5">14 Titik</div>
+              <p className="text-xs text-[#535f70] mt-1">Debit stabil pegunungan vulkanik di Jaga 1–5</p>
+            </div>
+
+            <div className="bg-white p-4.5 rounded-2xl border border-[#dae2fd] shadow-2xs">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-[#006194] flex items-center justify-between">
+                <span>Sumur Pompa Warga</span>
+                <Droplets className="w-4 h-4 text-[#006194]" />
+              </div>
+              <div className="text-2xl font-black text-[#131b2e] mt-1.5">380 Unit</div>
+              <p className="text-xs text-[#535f70] mt-1">Sumur pompa &amp; gali higienis bebas bau</p>
+            </div>
+
+            <div className="bg-white p-4.5 rounded-2xl border border-[#dae2fd] shadow-2xs">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-[#006194] flex items-center justify-between">
+                <span>Sambungan PDAM</span>
+                <Waves className="w-4 h-4 text-[#006194]" />
+              </div>
+              <div className="text-2xl font-black text-[#131b2e] mt-1.5">160 Rumah</div>
+              <p className="text-xs text-[#535f70] mt-1">Jaringan transmisi teratur PDAM Tomohon</p>
+            </div>
+
+            <div className="bg-white p-4.5 rounded-2xl border border-[#dae2fd] shadow-2xs">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-[#006194] flex items-center justify-between">
+                <span>Saluran Drainase</span>
+                <Waves className="w-4 h-4 text-[#006194]" />
+              </div>
+              <div className="text-2xl font-black text-[#131b2e] mt-1.5">3.200 Meter</div>
+              <p className="text-xs text-[#535f70] mt-1">Saluran permanen pencegah genangan &amp; banjir</p>
+            </div>
+          </div>
+
+          <div className="p-4 bg-white/80 rounded-2xl border border-[#dae2fd] text-xs text-[#535f70] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#006c49] shrink-0" />
+              <span>
+                <strong>Sistem Sanitasi Ramah Lingkungan:</strong> Seluruh 550 Kepala Keluarga telah memiliki jamban keluarga sehat bersekat dan tangki septik permanen (Zero BABS). Pengangkutan sampah dikoordinasikan rutin bersama Dinas Lingkungan Hidup Kota Tomohon.
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
