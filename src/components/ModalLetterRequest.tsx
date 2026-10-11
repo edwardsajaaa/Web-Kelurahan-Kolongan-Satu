@@ -308,7 +308,7 @@ export default function ModalLetterRequest({
                   </span>
                 </div>
                 <span className="text-[11px] text-slate-500 hidden sm:inline">
-                  Alur: Warga &rarr; Staf Karlin &rarr; Seklur Ferromel &rarr; TTD Lurah Theresia
+                  Alur: Warga &rarr; Staf Karlin &rarr; Seklur Febronia &rarr; TTD Lurah Theresia
                 </span>
               </div>
 
@@ -410,10 +410,10 @@ export default function ModalLetterRequest({
                             </button>
                           )}
 
-                          {/* Role Action: Seklur Ferromel paraf */}
+                          {/* Role Action: Seklur Febronia paraf */}
                           {(currentOfficial.roleCode === 'admin_seklur' || currentOfficial.roleCode === 'superadmin') && (isStafVerified || isNew) && (
                             <button
-                              onClick={() => onUpdateStatus(letter.id, 'diparaf_seklur', 'Paraf verifikasi administratif oleh Seklur Ferromel L. Pua, S.Kom')}
+                              onClick={() => onUpdateStatus(letter.id, 'diparaf_seklur', 'Paraf verifikasi administratif oleh Seklur Febronia L. Pijoh, S.Kom')}
                               className="px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-xl hover:bg-amber-700 transition flex items-center space-x-1"
                             >
                               <span>Beri Paraf Seklur</span>
@@ -801,7 +801,7 @@ export default function ModalLetterRequest({
                       const steps = [
                         { step: 1, title: 'Diajukan', desc: 'Menunggu Verifikasi', sub: 'Warga Mandiri' },
                         { step: 2, title: 'Diproses', desc: 'Pemeriksaan Berkas', sub: 'Staf Karlin' },
-                        { step: 3, title: 'Diparaf Seklur', desc: 'Ferromel L. Pua, S.Kom', sub: 'Paraf Administratif' },
+                        { step: 3, title: 'Diparaf Seklur', desc: 'Febronia L. Pijoh, S.Kom', sub: 'Paraf Administratif' },
                         { step: 4, title: 'Selesai Disahkan', desc: 'Theresia J. Kaunang, SE', sub: 'TTD Elektronik Lurah' },
                       ];
 

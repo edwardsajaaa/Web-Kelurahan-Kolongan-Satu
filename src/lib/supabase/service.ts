@@ -43,7 +43,7 @@ export async function fetchLetters(): Promise<LetterRequest[]> {
               item.status_surat === 'selesai_disahkan'
                 ? 'Selesai & Disahkan Lurah'
                 : item.status_surat === 'diparaf_seklur'
-                ? 'Diparaf Seklur Ferromel'
+                ? 'Diparaf Seklur Febronia'
                 : item.status_surat === 'diverifikasi_staf'
                 ? 'Diverifikasi Staf Karlin'
                 : 'Diajukan Warga',
@@ -122,7 +122,7 @@ export async function updateLetterStatus(
         updated_at: new Date().toISOString(),
       };
       if (note) updatePayload.catatan_petugas = note;
-      if (newStatus === 'diparaf_seklur') updatePayload.diparaf_oleh = officialName || 'Ferromel L. Pua, S.Kom';
+      if (newStatus === 'diparaf_seklur') updatePayload.diparaf_oleh = officialName || 'Febronia L. Pijoh, S.Kom';
       if (newStatus === 'selesai_disahkan') updatePayload.disahkan_oleh = officialName || 'Theresia J. Kaunang, SE';
 
       await (serverClient as any)
@@ -143,12 +143,12 @@ export async function updateLetterStatus(
           newStatus === 'selesai_disahkan'
             ? 'Selesai & Disahkan Lurah'
             : newStatus === 'diparaf_seklur'
-            ? 'Diparaf Seklur Ferromel'
+            ? 'Diparaf Seklur Febronia'
             : newStatus === 'diverifikasi_staf'
             ? 'Diverifikasi Staf Karlin'
             : 'Ditolak',
         catatanPetugas: note || l.catatanPetugas,
-        diparafOleh: newStatus === 'diparaf_seklur' ? officialName || 'Ferromel L. Pua, S.Kom (Seklur)' : l.diparafOleh,
+        diparafOleh: newStatus === 'diparaf_seklur' ? officialName || 'Febronia L. Pijoh, S.Kom (Seklur)' : l.diparafOleh,
         disahkanOleh: newStatus === 'selesai_disahkan' ? officialName || 'Theresia J. Kaunang, SE (Lurah)' : l.disahkanOleh,
         tanggalSelesai: newStatus === 'selesai_disahkan' ? new Date().toLocaleString('id-ID') : l.tanggalSelesai,
       };
@@ -194,7 +194,7 @@ export async function findLetterByRegistration(query: string): Promise<LetterReq
             data.status_surat === 'selesai_disahkan'
               ? 'Selesai & Disahkan Lurah'
               : data.status_surat === 'diparaf_seklur'
-              ? 'Diparaf Seklur Ferromel'
+              ? 'Diparaf Seklur Febronia'
               : data.status_surat === 'diverifikasi_staf'
               ? 'Diverifikasi Staf Karlin'
               : 'Diajukan Warga',

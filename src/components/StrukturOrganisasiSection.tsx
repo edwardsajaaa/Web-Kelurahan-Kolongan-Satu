@@ -8,60 +8,61 @@ import {
   Shield,
   HeartHandshake,
   Hammer,
-  MapPin,
-  Building2,
 } from 'lucide-react';
 
 export default function StrukturOrganisasiSection() {
   const seksiTeknis = [
     {
-      badge: 'KASIE. PEMERINTAHAN & TRANTIB',
+      badge: 'KASIE. PEMERINTAHAN DAN TRANTIB',
       badgeColor: 'bg-[#cce5ff] text-[#004b73]',
       icon: Shield,
-      name: 'DJHONNY MAWEIKERE, S.IP',
-      pembantu: 'Pembantu Kasie Pemerintahan',
+      name: 'DJONNY MAWEIKERE, S.IP',
+      nip: '19700616 200801 1 027',
+      pembantu: 'Pembantu Kasie. Pemerintahan dan Trantib',
     },
     {
       badge: 'KASIE. KESRA',
       badgeColor: 'bg-[#6cf8bb]/40 text-[#005236]',
       icon: HeartHandshake,
       name: 'ENGLIN LIMI TUMIWA, S.IP',
-      pembantu: 'Pembantu Kasie Kesra',
+      nip: '19900318 201102 2 001',
+      pembantu: 'Pembantu Kasie. Kesra',
     },
     {
       badge: 'KASIE. PEMBANGUNAN',
       badgeColor: 'bg-[#d3e4fe] text-[#004b73]',
       icon: Hammer,
       name: 'RAYNOLD MATINDAS, SE',
-      pembantu: 'Pembantu Kasie Pembangunan',
+      nip: '19821105 201102 1 001',
+      pembantu: 'Pembantu Kasie. Pembangunan',
     },
   ];
 
   const unsurKewilayahan = [
     {
       lingkungan: 'LINGKUNGAN I',
-      pala: 'Meky Mario Turangan',
-      mevrouw: 'Athanasius Ricky Tirie',
+      pala: 'MEKY MARIO TURANGAN',
+      mevrouw: 'ATHANASIUS RICKY TIBIE',
     },
     {
       lingkungan: 'LINGKUNGAN II',
-      pala: 'Devid P.H. Tasik',
-      mevrouw: 'Antonius Kapojos',
+      pala: 'DEVID P.N. TASIK',
+      mevrouw: 'ANTONIUS KAPOJOS',
     },
     {
       lingkungan: 'LINGKUNGAN III',
-      pala: 'Agustinus Kaparang',
-      mevrouw: 'Paulus Montolalu',
+      pala: 'AGUSTINUS KAPARANG',
+      mevrouw: 'PAULUS MONTOLALU',
     },
     {
       lingkungan: 'LINGKUNGAN IV',
-      pala: 'Novemblys Pusung',
-      mevrouw: 'Jefry Mawikere',
+      pala: 'NOVEMBLYS PUSUNG',
+      mevrouw: 'JEFRY MAWIKERE',
     },
     {
       lingkungan: 'LINGKUNGAN V',
-      pala: 'Boy Turambi',
-      mevrouw: 'Meilhi Nelson Muaja',
+      pala: 'DRY TURAMBI',
+      mevrouw: 'MUKLI NELSON MUAJA',
     },
   ];
 
@@ -85,7 +86,7 @@ export default function StrukturOrganisasiSection() {
             </h2>
           </div>
           <p className="text-xs sm:text-sm 2xl:text-base text-[#535f70] max-w-md 2xl:max-w-lg leading-relaxed">
-            Hierarki kepemimpinan dan pembagian tugas aparatur Kelurahan Kolongan Satu, Kecamatan Tomohon Tengah.
+            Papan struktur resmi aparatur Pemerintah Kelurahan Kolongan Satu, Kecamatan Tomohon Tengah.
           </p>
         </div>
 
@@ -95,15 +96,18 @@ export default function StrukturOrganisasiSection() {
         <div className="space-y-8 pt-2">
           {/* LEVEL 1: LURAH (Top Center) */}
           <div className="flex flex-col items-center">
-            <div className="w-full max-w-md bg-white rounded-2xl border-2 border-[#006194] shadow-sm p-5 2xl:p-6 text-center relative group hover:shadow-md transition-shadow">
-              <span className="inline-block px-4 py-1 rounded-full text-xs font-bold bg-[#006194] text-white uppercase tracking-wider mb-2.5">
+            <div className="w-full max-w-lg bg-white rounded-2xl border-2 border-[#006194] shadow-sm p-5 2xl:p-6 text-center relative group hover:shadow-md transition-shadow">
+              <span className="inline-block px-5 py-1 rounded-full text-xs font-bold bg-[#006194] text-white uppercase tracking-wider mb-2.5">
                 Lurah
               </span>
-              <h3 className="text-lg sm:text-xl 2xl:text-2xl font-bold text-[#131b2e] leading-snug">
+              <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-extrabold text-[#131b2e] leading-snug">
                 THERESIA J. KAUNANG, SE
               </h3>
-              <p className="text-xs sm:text-sm text-[#006194] font-semibold mt-1">
-                Pimpinan Utama Wilayah
+              <p className="text-xs sm:text-sm font-mono font-semibold text-[#006194] mt-1 bg-[#cce5ff]/40 inline-block px-3 py-0.5 rounded-full">
+                NIP : 19731206 200312 2 007
+              </p>
+              <p className="text-xs text-[#535f70] font-medium mt-1.5">
+                Pimpinan Utama Wilayah Kelurahan Kolongan Satu
               </p>
             </div>
 
@@ -128,7 +132,7 @@ export default function StrukturOrganisasiSection() {
                   JABATAN FUNGSIONAL
                 </h4>
                 <p className="text-xs sm:text-sm text-[#535f70] mt-1.5 leading-relaxed">
-                  Pelayanan dan tugas teknis operasional keahlian.
+                  Pelayanan teknis, operasional keahlian, dan penunjang tugas pokok kelurahan.
                 </p>
               </div>
             </div>
@@ -145,22 +149,25 @@ export default function StrukturOrganisasiSection() {
                   </div>
                 </div>
                 <h4 className="text-base sm:text-lg font-bold text-[#131b2e] mt-3">
-                  FEBRONIA L. PIJOL, S.KOM
+                  FEBRONIA L. PIJOH, S.Kom
                 </h4>
-                <p className="text-xs sm:text-sm text-[#006194] font-semibold mt-0.5 mb-3">
-                  Sekretaris Kelurahan
+                <p className="text-xs sm:text-sm font-mono font-semibold text-[#006194] mt-0.5 mb-3">
+                  NIP : 19780203 200902 2 002
                 </p>
 
                 {/* Sub-roles inside secretariat */}
                 <div className="space-y-2 pt-2 border-t border-[#dae2fd]/70">
                   <div className="flex items-center justify-between text-xs py-1.5 px-3 bg-white/90 rounded-xl border border-[#eaedff]">
-                    <span className="font-semibold text-[#131b2e]">Karlin S. Pieter</span>
+                    <div>
+                      <span className="font-semibold text-[#131b2e] block">KARLIN S. PIETER</span>
+                      <span className="text-[10px] text-[#535f70] font-mono">NIP : 19710830 201102 2 001</span>
+                    </div>
                     <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-[#cce5ff]/80 text-[#004b73]">
                       Pelaksana
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-xs py-1.5 px-3 bg-white/90 rounded-xl border border-[#eaedff]">
-                    <span className="text-[#535f70] font-medium">Aparatur Staf</span>
+                    <span className="text-[#535f70] font-medium">-</span>
                     <span className="text-[11px] font-medium text-[#535f70]">
                       Pembantu Sekretaris
                     </span>
@@ -201,12 +208,17 @@ export default function StrukturOrganisasiSection() {
                         <IconComp className="w-3.5 h-3.5" />
                       </div>
                     </div>
-                    <h4 className="text-base sm:text-lg font-bold text-[#131b2e] leading-snug">
-                      {item.name}
-                    </h4>
+                    <div>
+                      <h4 className="text-base sm:text-lg font-bold text-[#131b2e] leading-snug">
+                        {item.name}
+                      </h4>
+                      <p className="text-xs font-mono font-semibold text-[#006194] mt-0.5">
+                        NIP : {item.nip}
+                      </p>
+                    </div>
                   </div>
                   <div className="pt-3 mt-4 border-t border-[#eaedff] flex items-center justify-between text-[11px] 2xl:text-xs text-[#535f70]">
-                    <span>Staf Pembantu:</span>
+                    <span>Staf:</span>
                     <span className="font-semibold text-[#131b2e]">{item.pembantu}</span>
                   </div>
                 </div>
@@ -227,7 +239,7 @@ export default function StrukturOrganisasiSection() {
                 <span>Unsur Kewilayahan (Kepala Lingkungan &amp; Wakil)</span>
               </div>
               <span className="text-[11px] text-[#535f70] font-normal mt-0.5">
-                Aparatur Pelaksana di Tingkat Lingkungan I sampai Lingkungan V
+                Aparatur Pelaksana Tingkat Lingkungan I sampai Lingkungan V
               </span>
             </div>
           </div>
@@ -245,7 +257,7 @@ export default function StrukturOrganisasiSection() {
                   </div>
                   <div className="space-y-0.5 mb-3">
                     <span className="text-[10px] 2xl:text-[11px] font-bold text-[#535f70] uppercase tracking-wider block">
-                      Kepala (Pala)
+                      Kepala Lingkungan
                     </span>
                     <p className="text-xs sm:text-sm font-bold text-[#131b2e] leading-snug">
                       {lingk.pala}
@@ -253,7 +265,7 @@ export default function StrukturOrganisasiSection() {
                   </div>
                   <div className="space-y-0.5 pt-2.5 border-t border-[#eaedff]">
                     <span className="text-[10px] 2xl:text-[11px] font-bold text-[#535f70] uppercase tracking-wider block">
-                      Wakil (Mevrouw)
+                      Wakil Kepala Lingkungan
                     </span>
                     <p className="text-xs sm:text-sm font-semibold text-[#006194] leading-snug">
                       {lingk.mevrouw}

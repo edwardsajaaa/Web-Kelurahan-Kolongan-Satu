@@ -1338,8 +1338,8 @@ export default function IntegratedMonografiSection({
               <div className="text-center w-64">
                 <p className="mb-0">Mengetahui &amp; Memverifikasi,</p>
                 <p className="font-bold mb-12">SEKRETARIS KELURAHAN KOLONGAN SATU</p>
-                <p className="font-bold underline text-[11px] mb-0">FERROMEL L. PUA, S.Kom</p>
-                <p className="text-[9px] text-gray-700">NIP. 19850412 201102 1 002</p>
+                <p className="font-bold underline text-[11px] mb-0">FEBRONIA L. PIJOH, S.Kom</p>
+                <p className="text-[9px] text-gray-700">NIP. 19780203 200902 2 002</p>
               </div>
 
               {/* Stempel Kelurahan Tempat */}
@@ -1355,7 +1355,7 @@ export default function IntegratedMonografiSection({
                 <p className="mb-0">Tahun Anggaran: {activeYear}</p>
                 <p className="font-bold mb-12">LURAH KOLONGAN SATU,</p>
                 <p className="font-bold underline text-[11px] mb-0">THERESIA J. KAUNANG, SE</p>
-                <p className="text-[9px] text-gray-700">NIP. 19680702 199903 2 001</p>
+                <p className="text-[9px] text-gray-700">NIP. 19731206 200312 2 007</p>
               </div>
             </div>
           </div>

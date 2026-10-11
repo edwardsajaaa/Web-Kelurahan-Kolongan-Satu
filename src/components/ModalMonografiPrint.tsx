@@ -164,10 +164,10 @@ export default function ModalMonografiPrint({
               <p className="text-slate-600">Mengetahui & Memverifikasi,</p>
               <p className="font-bold text-slate-900 mt-0.5">Sekretaris Kelurahan Kolongan Satu</p>
               <div className="h-16 flex items-center justify-center italic text-slate-700 font-serif">
-                Ferromel L. Pua, S.Kom
+                Febronia L. Pijoh, S.Kom
               </div>
-              <p className="font-bold underline text-slate-950">FERROMEL L. PUA, S.Kom</p>
-              <p className="text-[10px] text-slate-600 font-mono">NIP. 19780203 200501 1 012</p>
+              <p className="font-bold underline text-slate-950">FEBRONIA L. PIJOH, S.Kom</p>
+              <p className="text-[10px] text-slate-600 font-mono">NIP. 19780203 200902 2 002</p>
             </div>
 
             <div>
@@ -177,7 +177,7 @@ export default function ModalMonografiPrint({
                 Theresia J. Kaunang, SE
               </div>
               <p className="font-bold underline text-slate-950">THERESIA J. KAUNANG, SE</p>
-              <p className="text-[10px] text-slate-600 font-mono">NIP. 19731206 199803 2 004</p>
+              <p className="text-[10px] text-slate-600 font-mono">NIP. 19731206 200312 2 007</p>
             </div>
           </div>
         </div>

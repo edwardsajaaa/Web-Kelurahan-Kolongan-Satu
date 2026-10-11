@@ -9,10 +9,10 @@ export async function GET(request: NextRequest) {
       authenticated: true,
       user: {
         id: 'seklur-1',
-        name: 'Ferromel L. Pua, S.Kom',
+        name: 'Febronia L. Pijoh, S.Kom',
         roleCode: roleCookie?.value || 'admin_seklur',
         roleTitle: 'Sekretaris Kelurahan (Admin Utama)',
-        nip: '19780203 200501 1 012',
+        nip: '19780203 200902 2 002',
         phone: '0813-5566-7788',
       },
     });

@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // Sekretaris Kelurahan official credentials
 const SEKLU_VALID_IDENTIFIERS = [
+  '19780203 200902 2 002',
+  '197802032009022002',
+  'febronia.pijoh',
+  'febronia',
+  'pijoh',
   '19780203 200501 1 012',
   '197802032005011012',
   'seklur',
@@ -45,7 +50,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message:
-            'Akses Ditolak: Hak akses portal dibatasi khusus untuk Sekretaris Kelurahan (Ferromel L. Pua, S.Kom). Identitas pengguna tidak dikenali sebagai Sekretaris Kelurahan.',
+            'Akses Ditolak: Hak akses portal dibatasi khusus untuk Sekretaris Kelurahan (Febronia L. Pijoh, S.Kom). Identitas pengguna tidak dikenali sebagai Sekretaris Kelurahan.',
         },
         { status: 403 }
       );
@@ -69,10 +74,10 @@ export async function POST(request: NextRequest) {
       message: 'Login berhasil. Selamat datang, Sekretaris Kelurahan!',
       user: {
         id: 'seklur-1',
-        name: 'Ferromel L. Pua, S.Kom',
+        name: 'Febronia L. Pijoh, S.Kom',
         roleCode: 'admin_seklur',
         roleTitle: 'Sekretaris Kelurahan (Admin Utama)',
-        nip: '19780203 200501 1 012',
+        nip: '19780203 200902 2 002',
         phone: '0813-5566-7788',
       },
     });

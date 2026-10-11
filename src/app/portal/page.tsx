@@ -28,7 +28,7 @@ export default function PortalPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   
-  // User Authentication & Role: Dedicated Sekretaris Kelurahan (Ferromel L. Pua, S.Kom)
+  // User Authentication & Role: Dedicated Sekretaris Kelurahan (Febronia L. Pijoh, S.Kom)
   const seklurOfficial = OFFICIALS.find((o) => o.roleCode === 'admin_seklur') || OFFICIALS[1];
   const [currentOfficial, setCurrentOfficial] = useState<Official>(seklurOfficial);
 
@@ -194,13 +194,13 @@ export default function PortalPage() {
               ...item,
               statusTahapan: 'diverifikasi_seklur',
               badgeLabel: 'Diverifikasi Seklur',
-              lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Paraf Seklur Ferromel L. Pua`,
+              lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Paraf Seklur Febronia L. Pijoh`,
             }
           : item
       )
     );
 
-    showToast(`Data "${itemTitle}" telah diverifikasi administratif oleh Seklur Ferromel L. Pua, S.Kom!`);
+    showToast(`Data "${itemTitle}" telah diverifikasi administratif oleh Seklur Febronia L. Pijoh, S.Kom!`);
 
     try {
       const res = await fetch('/api/monografi', {
@@ -209,7 +209,7 @@ export default function PortalPage() {
         body: JSON.stringify({
           id: itemId,
           statusTahapan: 'diverifikasi_seklur',
-          officialName: 'Seklur Ferromel L. Pua, S.Kom',
+          officialName: 'Seklur Febronia L. Pijoh, S.Kom',
         }),
       });
 
@@ -333,12 +333,12 @@ export default function PortalPage() {
                 newStatus === 'diverifikasi_staf'
                   ? 'Diverifikasi Staf Karlin'
                   : newStatus === 'diparaf_seklur'
-                  ? 'Diparaf Seklur Ferromel'
+                  ? 'Diparaf Seklur Febronia'
                   : newStatus === 'selesai_disahkan'
                   ? 'Selesai & Disahkan Lurah'
                   : 'Ditolak',
               catatanPetugas: note || l.catatanPetugas,
-              diparafOleh: newStatus === 'diparaf_seklur' ? 'Ferromel L. Pua, S.Kom (Seklur)' : l.diparafOleh,
+              diparafOleh: newStatus === 'diparaf_seklur' ? 'Febronia L. Pijoh, S.Kom (Seklur)' : l.diparafOleh,
               disahkanOleh: newStatus === 'selesai_disahkan' ? 'Theresia J. Kaunang, SE (Lurah)' : l.disahkanOleh,
               tanggalSelesai: newStatus === 'selesai_disahkan' ? new Date().toLocaleString('id-ID') : l.tanggalSelesai,
             }

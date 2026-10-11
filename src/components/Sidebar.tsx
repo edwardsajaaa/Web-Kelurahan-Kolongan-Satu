@@ -204,13 +204,13 @@ export default function Sidebar({
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold text-[#131b2e] truncate">
-                Ferromel L. Pua, S.Kom
+                Febronia L. Pijoh, S.Kom
               </p>
               <p className="text-[10px] text-[#006194] font-semibold truncate">
                 Sekretaris Kelurahan
               </p>
               <p className="text-[9px] text-[#707881] font-mono truncate">
-                NIP: 19780203 200501 1 012
+                NIP: 19780203 200902 2 002
               </p>
             </div>
           </div>

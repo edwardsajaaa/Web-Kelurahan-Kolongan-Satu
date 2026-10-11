@@ -152,10 +152,10 @@ function PortalLoginForm() {
                   </span>
                 </div>
                 <h3 className="text-sm font-bold text-[#131b2e] truncate mt-0.5">
-                  Ferromel L. Pua, S.Kom
+                  Febronia L. Pijoh, S.Kom
                 </h3>
                 <p className="text-xs text-[#535f70] font-medium truncate">
-                  Sekretaris Kelurahan • NIP: 19780203 200501 1 012
+                  Sekretaris Kelurahan • NIP: 19780203 200902 2 002
                 </p>
               </div>
             </div>

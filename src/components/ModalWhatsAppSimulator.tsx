@@ -113,7 +113,7 @@ export default function ModalWhatsAppSimulator({
             </p>
 
             <p className="text-xs text-slate-700 leading-relaxed">
-              Data monografi baru telah diverifikasi oleh Sekretaris Kelurahan (<strong>Ferromel L. Pua, S.Kom</strong>) dan menunggu pengesahan Anda:
+              Data monografi baru telah diverifikasi oleh Sekretaris Kelurahan (<strong>Febronia L. Pijoh, S.Kom</strong>) dan menunggu pengesahan Anda:
             </p>
 
             <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs space-y-1 font-mono">

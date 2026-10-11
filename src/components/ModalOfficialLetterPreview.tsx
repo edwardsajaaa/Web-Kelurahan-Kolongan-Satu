@@ -162,7 +162,7 @@ export default function ModalOfficialLetterPreview({
                 THERESIA J. KAUNANG, SE
               </p>
               <p className="text-[10px] text-slate-600 font-mono">
-                NIP. 19731206 199803 2 004
+                NIP. 19731206 200312 2 007
               </p>
             </div>
           </div>
