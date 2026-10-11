@@ -112,37 +112,10 @@ export default function Sidebar({
         {/* Section: Master Data Wilayah */}
         <div>
           <span className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            Master Data Wilayah
+            Monografi Kelurahan (2025)
           </span>
           <ul className="mt-2 space-y-1">
-
-
-            {/* 2. Wilayah Jaga I - V */}
-            <li>
-              <button
-                type="button"
-                onClick={() => onSelectNav('wilayah')}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
-                  activeNav === 'wilayah'
-                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
-                }`}
-              >
-                <span className="flex items-center gap-2.5">
-                  <MapPin
-                    className={`w-4 h-4 ${
-                      activeNav === 'wilayah' ? 'text-brand-600' : 'text-slate-400'
-                    }`}
-                  />
-                  <span>Wilayah Jaga I – V</span>
-                </span>
-                <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono">
-                  5 Jaga
-                </span>
-              </button>
-            </li>
-
-            {/* 3. Kependudukan & KK */}
+            {/* Rekapitulasi Kependudukan & Teritorial 2025 */}
             <li>
               <button
                 type="button"
@@ -159,32 +132,10 @@ export default function Sidebar({
                       activeNav === 'kependudukan' ? 'text-brand-600' : 'text-slate-400'
                     }`}
                   />
-                  <span>Kependudukan &amp; KK</span>
+                  <span>Rekap Kependudukan &amp; Teritorial</span>
                 </span>
                 <span className="text-[10px] bg-sky-100 text-brand-700 px-1.5 py-0.5 rounded font-medium">
                   1.512
-                </span>
-              </button>
-            </li>
-
-            {/* 4. Sarana & Sanitasi */}
-            <li>
-              <button
-                type="button"
-                onClick={() => onSelectNav('lingkungan')}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
-                  activeNav === 'lingkungan'
-                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
-                }`}
-              >
-                <span className="flex items-center gap-2.5">
-                  <Building
-                    className={`w-4 h-4 ${
-                      activeNav === 'lingkungan' ? 'text-brand-600' : 'text-slate-400'
-                    }`}
-                  />
-                  <span>Sarana &amp; Sanitasi</span>
                 </span>
               </button>
             </li>

@@ -30,7 +30,7 @@ import {
 export default function PortalPage() {
   // Master data states
   const [monografiList, setMonografiList] = useState<MonografiItem[]>(MONOGRAFI_ITEMS);
-  const [availableYears, setAvailableYears] = useState<number[]>([2024, 2025]);
+  const [availableYears, setAvailableYears] = useState<number[]>([2025]);
   const [selectedId, setSelectedId] = useState<string>('kependudukan-2025');
   const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -458,18 +458,10 @@ export default function PortalPage() {
       return;
     }
 
-    if (navId === 'wilayah') {
-      setSelectedCategory('wilayah');
-      const found = monografiList.find((m) => m.year === selectedYear && m.categoryKey === 'wilayah');
-      if (found) setSelectedId(found.id);
-    } else if (navId === 'kependudukan') {
-      setSelectedCategory('kependudukan');
-      const found = monografiList.find((m) => m.year === selectedYear && m.categoryKey === 'kependudukan');
-      if (found) setSelectedId(found.id);
-    } else if (navId === 'lingkungan') {
-      setSelectedCategory('lingkungan');
-      const found = monografiList.find((m) => m.year === selectedYear && m.categoryKey === 'lingkungan');
-      if (found) setSelectedId(found.id);
+    setSelectedCategory('all');
+    const target = monografiList.find((m) => m.id === 'kependudukan-2025') || monografiList[0];
+    if (target) {
+      setSelectedId(target.id);
     }
   };
 
