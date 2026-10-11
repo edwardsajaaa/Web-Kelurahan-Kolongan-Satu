@@ -311,7 +311,7 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
               <Church className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">5 Unit</span>
+              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">3 Unit</span>
               <span className="text-[11px] text-[#535f70] font-medium block">Sarana Ibadah</span>
             </div>
           </div>
@@ -321,8 +321,8 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
               <HeartPulse className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">Pustu &amp; Posyandu</span>
-              <span className="text-[11px] text-[#535f70] font-medium block">Kesehatan Warga</span>
+              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">3 Unit</span>
+              <span className="text-[11px] text-[#535f70] font-medium block">Pustu &amp; Posyandu</span>
             </div>
           </div>
 
@@ -331,8 +331,8 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">SLB &amp; Panti</span>
-              <span className="text-[11px] text-[#535f70] font-medium block">Pendidikan &amp; Sosial</span>
+              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">2 Unit</span>
+              <span className="text-[11px] text-[#535f70] font-medium block">SLB &amp; Panti</span>
             </div>
           </div>
 
@@ -341,8 +341,8 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
               <Zap className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">Geothermal</span>
-              <span className="text-[11px] text-[#535f70] font-medium block">Energi Bersih</span>
+              <span className="text-lg sm:text-xl font-extrabold text-[#131b2e] block leading-tight">3 Unit</span>
+              <span className="text-[11px] text-[#535f70] font-medium block">Geothermal &amp; Energi</span>
             </div>
           </div>
         </div>
