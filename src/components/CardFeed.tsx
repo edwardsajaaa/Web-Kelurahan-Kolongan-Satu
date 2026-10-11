@@ -24,7 +24,6 @@ export const CATEGORY_OPTIONS = [
   { key: 'kependudukan', label: 'Kependudukan' },
   { key: 'pendidikan', label: 'Pendidikan' },
   { key: 'ekonomi', label: 'Ekonomi' },
-  { key: 'peternakan', label: 'Peternakan' },
   { key: 'lingkungan', label: 'Air & Sanitasi' },
   { key: 'transparansi', label: 'Transparansi' },
 ];
@@ -157,7 +156,7 @@ export default function CardFeed({
             type="text"
             value={searchQuery}
             onChange={(e) => onChangeSearch(e.target.value)}
-            placeholder="Cari Jaga, kependudukan, ternak..."
+            placeholder="Cari Jaga, kependudukan, wilayah..."
             className="w-full bg-[#faf8ff] border border-[#dae2fd] rounded-xl pl-8 pr-3 py-1.5 text-xs text-[#131b2e] placeholder-[#707881] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
           />
           {searchQuery && (

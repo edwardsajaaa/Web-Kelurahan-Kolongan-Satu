@@ -443,9 +443,6 @@ export default function PortalPage() {
     } else if (navId === 'pendidikan') {
       setSelectedCategory('pendidikan');
       setSelectedId('pendidikan-sosial');
-    } else if (navId === 'peternakan') {
-      setSelectedCategory('peternakan');
-      setSelectedId('ternak');
     } else if (navId === 'lingkungan') {
       setSelectedCategory('lingkungan');
       setSelectedId('air-sanitasi');

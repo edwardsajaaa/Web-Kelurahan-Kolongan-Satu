@@ -7,7 +7,6 @@ import {
   FileText,
   AlertTriangle,
   Droplets,
-  PawPrint,
   MapPin,
   PlusCircle,
   FilePlus,
@@ -59,12 +58,6 @@ export default function Sidebar({
       label: 'Kependudukan & KK',
       icon: Users,
       badge: '1.484 Jiwa',
-    },
-    {
-      id: 'peternakan',
-      label: 'Potensi & Ternak',
-      icon: PawPrint,
-      badge: null,
     },
     {
       id: 'lingkungan',
