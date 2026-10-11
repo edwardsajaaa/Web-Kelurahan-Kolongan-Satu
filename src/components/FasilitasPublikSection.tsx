@@ -542,72 +542,116 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
         {/* ============================================================ */}
         {/* INFRASTRUKTUR SANITASI & SUMBER DAYA AIR BANNER              */}
         {/* ============================================================ */}
-        <div className="bg-gradient-to-br from-[#faf8ff] via-[#f0f4ff] to-[#e8f2ff] rounded-3xl p-6 sm:p-8 2xl:p-10 border border-[#dae2fd] shadow-sm space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#dae2fd]/70 pb-5">
-            <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#cce5ff] text-[#006194]">
-                <Droplets className="w-3.5 h-3.5" />
-                <span>Ketahanan Lingkungan Hidup &amp; Air Bersih</span>
+        <div className="bg-white rounded-3xl p-6 sm:p-8 2xl:p-10 border border-[#dae2fd] shadow-sm space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+            <div className="space-y-1.5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#e8f2ff] text-[#006194]">
+                <Droplets className="w-3.5 h-3.5 text-[#006194]" />
+                <span>Lingkungan Hidup &amp; Air Bersih</span>
               </div>
-              <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-bold text-[#131b2e]">
-                Sarana Sanitasi Lingkungan &amp; Sumber Daya Air Kolongan Satu
+              <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-extrabold text-[#131b2e] tracking-tight">
+                Sarana Sanitasi Lingkungan &amp; Sumber Daya Air
               </h3>
-              <p className="text-xs sm:text-sm text-[#535f70] max-w-3xl leading-relaxed">
-                Kelurahan Kolongan Satu dianugerahi limpahan sumber mata air alami pegunungan, jaringan drainase terpadu, serta pemeliharaan sanitasi lingkungan pemukiman warga secara berkesinambungan.
+              <p className="text-xs sm:text-sm text-[#535f70] max-w-2xl leading-relaxed">
+                Cakupan sumber air bersih, saluran drainase, dan pengelolaan sanitasi pemukiman Kolongan Satu.
               </p>
             </div>
-            <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#cce5ff] text-[#006194] text-xs font-bold border border-[#99cbff]">
-                <ShieldCheck className="w-4 h-4 text-[#006194]" />
-                <span>Sanitasi &amp; Lingkungan Sehat</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 text-[#006c49] text-xs font-bold border border-emerald-200">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Sanitasi Terpantau Baik</span>
               </span>
             </div>
           </div>
 
+          {/* 4 Metric Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white p-4.5 rounded-2xl border border-[#dae2fd] shadow-2xs">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#006194] flex items-center justify-between">
-                <span>Mata Air Alami</span>
-                <Droplets className="w-4 h-4 text-[#006194]" />
+            {/* Card 1 */}
+            <div className="bg-slate-50/70 hover:bg-white p-5 rounded-2xl border border-slate-200 hover:border-[#006194]/40 hover:shadow-xs transition-all group">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-[#006194] transition-colors">
+                  Mata Air Alami
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-sky-100/70 text-sky-700 flex items-center justify-center shrink-0">
+                  <Droplets className="w-4 h-4" />
+                </div>
               </div>
-              <div className="text-2xl font-black text-[#131b2e] mt-1.5">14 Titik</div>
-              <p className="text-xs text-[#535f70] mt-1">Debit stabil pegunungan vulkanik di Jaga 1–5</p>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight mt-3">
+                14 Titik
+              </div>
+              <span className="inline-block mt-2 text-[11px] font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md">
+                Jaga 1 – 5
+              </span>
             </div>
 
-            <div className="bg-white p-4.5 rounded-2xl border border-[#dae2fd] shadow-2xs">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#006194] flex items-center justify-between">
-                <span>Sumur Pompa Warga</span>
-                <Droplets className="w-4 h-4 text-[#006194]" />
+            {/* Card 2 */}
+            <div className="bg-slate-50/70 hover:bg-white p-5 rounded-2xl border border-slate-200 hover:border-[#006194]/40 hover:shadow-xs transition-all group">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-[#006194] transition-colors">
+                  Sumur Warga
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-cyan-100/70 text-cyan-700 flex items-center justify-center shrink-0">
+                  <Droplets className="w-4 h-4" />
+                </div>
               </div>
-              <div className="text-2xl font-black text-[#131b2e] mt-1.5">380 Unit</div>
-              <p className="text-xs text-[#535f70] mt-1">Sumur pompa &amp; gali higienis bebas bau</p>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight mt-3">
+                380 Unit
+              </div>
+              <span className="inline-block mt-2 text-[11px] font-semibold text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded-md">
+                Sumur Mandiri
+              </span>
             </div>
 
-            <div className="bg-white p-4.5 rounded-2xl border border-[#dae2fd] shadow-2xs">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#006194] flex items-center justify-between">
-                <span>Sambungan PDAM</span>
-                <Waves className="w-4 h-4 text-[#006194]" />
+            {/* Card 3 */}
+            <div className="bg-slate-50/70 hover:bg-white p-5 rounded-2xl border border-slate-200 hover:border-[#006194]/40 hover:shadow-xs transition-all group">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-[#006194] transition-colors">
+                  Sambungan PDAM
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-blue-100/70 text-blue-700 flex items-center justify-center shrink-0">
+                  <Waves className="w-4 h-4" />
+                </div>
               </div>
-              <div className="text-2xl font-black text-[#131b2e] mt-1.5">160 Rumah</div>
-              <p className="text-xs text-[#535f70] mt-1">Jaringan transmisi teratur PDAM Tomohon</p>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight mt-3">
+                160 Rumah
+              </div>
+              <span className="inline-block mt-2 text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
+                Pelanggan Aktif
+              </span>
             </div>
 
-            <div className="bg-white p-4.5 rounded-2xl border border-[#dae2fd] shadow-2xs">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-[#006194] flex items-center justify-between">
-                <span>Saluran Drainase</span>
-                <Waves className="w-4 h-4 text-[#006194]" />
+            {/* Card 4 */}
+            <div className="bg-slate-50/70 hover:bg-white p-5 rounded-2xl border border-slate-200 hover:border-[#006194]/40 hover:shadow-xs transition-all group">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 group-hover:text-[#006194] transition-colors">
+                  Saluran Drainase
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-teal-100/70 text-teal-700 flex items-center justify-center shrink-0">
+                  <Waves className="w-4 h-4" />
+                </div>
               </div>
-              <div className="text-2xl font-black text-[#131b2e] mt-1.5">3.200 Meter</div>
-              <p className="text-xs text-[#535f70] mt-1">Saluran permanen pencegah genangan &amp; banjir</p>
+              <div className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight mt-3">
+                3.200 Meter
+              </div>
+              <span className="inline-block mt-2 text-[11px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">
+                Drainase Pemukiman
+              </span>
             </div>
           </div>
 
-          <div className="p-4 bg-white/80 rounded-2xl border border-[#dae2fd] text-xs text-[#535f70] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          {/* Clean Highlights Strip */}
+          <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600 border-t border-slate-100">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#006c49] shrink-0" />
-              <span>
-                <strong>Sistem Sanitasi Lingkungan:</strong> Pemukiman warga aktif memelihara jamban keluarga sehat mandiri dan tangki septik terawat guna menjaga kelestarian air tanah. Pengangkutan sampah dikoordinasikan rutin bersama Dinas Lingkungan Hidup Kota Tomohon.
-              </span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Jamban keluarga sehat &amp; tangki septik mandiri terawat</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Pengangkutan sampah rutin berkoordinasi dengan DLH</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Debit mata air alami stabil sepanjang tahun</span>
             </div>
           </div>
         </div>
