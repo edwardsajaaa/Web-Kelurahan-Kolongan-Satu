@@ -8,61 +8,20 @@ import {
   HeartHandshake,
   Hammer,
 } from 'lucide-react';
+import { AparaturData, INITIAL_APARATUR_DATA } from '@/data/landingContentData';
 
-export default function StrukturOrganisasiSection() {
-  const seksiTeknis = [
-    {
-      badge: 'KASIE. PEMERINTAHAN DAN TRANTIB',
-      badgeColor: 'bg-[#cce5ff] text-[#004b73]',
-      icon: Shield,
-      name: 'DJONNY MAWEIKERE, S.IP',
-      nip: '19700616 200801 1 027',
-      pembantu: 'Pembantu Kasie. Pemerintahan dan Trantib',
-    },
-    {
-      badge: 'KASIE. KESRA',
-      badgeColor: 'bg-[#6cf8bb]/40 text-[#005236]',
-      icon: HeartHandshake,
-      name: 'ENGLIN LIMI TUMIWA, S.IP',
-      nip: '19900318 201102 2 001',
-      pembantu: 'Pembantu Kasie. Kesra',
-    },
-    {
-      badge: 'KASIE. PEMBANGUNAN',
-      badgeColor: 'bg-[#d3e4fe] text-[#004b73]',
-      icon: Hammer,
-      name: 'RAYNOLD MATINDAS, SE',
-      nip: '19821105 201102 1 001',
-      pembantu: 'Pembantu Kasie. Pembangunan',
-    },
-  ];
+interface StrukturOrganisasiSectionProps {
+  aparatur?: AparaturData;
+}
 
-  const unsurKewilayahan = [
-    {
-      lingkungan: 'LINGKUNGAN I',
-      pala: 'MEKY MARIO TURANGAN',
-      mevrouw: 'ATHANASIUS RICKY TIBIE',
-    },
-    {
-      lingkungan: 'LINGKUNGAN II',
-      pala: 'DEVID P.N. TASIK',
-      mevrouw: 'ANTONIUS KAPOJOS',
-    },
-    {
-      lingkungan: 'LINGKUNGAN III',
-      pala: 'AGUSTINUS KAPARANG',
-      mevrouw: 'PAULUS MONTOLALU',
-    },
-    {
-      lingkungan: 'LINGKUNGAN IV',
-      pala: 'NOVEMBLYS PUSUNG',
-      mevrouw: 'JEFRY MAWIKERE',
-    },
-    {
-      lingkungan: 'LINGKUNGAN V',
-      pala: 'DRY TURAMBI',
-      mevrouw: 'MUKLI NELSON MUAJA',
-    },
+export default function StrukturOrganisasiSection({ aparatur }: StrukturOrganisasiSectionProps) {
+  const currentData = aparatur || INITIAL_APARATUR_DATA;
+
+  const kasieIcons = [Shield, HeartHandshake, Hammer];
+  const kasieBadgeColors = [
+    'bg-[#cce5ff] text-[#004b73]',
+    'bg-[#6cf8bb]/40 text-[#005236]',
+    'bg-[#d3e4fe] text-[#004b73]',
   ];
 
   return (
@@ -93,16 +52,16 @@ export default function StrukturOrganisasiSection() {
           <div className="flex flex-col items-center">
             <div className="w-full max-w-lg bg-white rounded-2xl border-2 border-[#006194] shadow-sm p-5 2xl:p-6 text-center relative group hover:shadow-md transition-shadow">
               <span className="inline-block px-5 py-1 rounded-full text-xs font-bold bg-[#006194] text-white uppercase tracking-wider mb-2.5">
-                Lurah
+                {currentData.lurah.jabatan || 'Lurah'}
               </span>
               <h3 className="text-xl sm:text-2xl 2xl:text-3xl font-extrabold text-[#131b2e] leading-snug">
-                THERESIA J. KAUNANG, SE
+                {currentData.lurah.nama}
               </h3>
               <p className="text-xs sm:text-sm font-mono font-semibold text-[#006194] mt-1 bg-[#cce5ff]/40 inline-block px-3 py-0.5 rounded-full">
-                NIP : 19731206 200312 2 007
+                NIP : {currentData.lurah.nip}
               </p>
               <p className="text-xs text-[#535f70] font-medium mt-1.5">
-                Pimpinan Utama Wilayah Kelurahan Kolongan Satu
+                {currentData.lurah.deskripsi || 'Pimpinan Utama Wilayah Kelurahan Kolongan Satu'}
               </p>
             </div>
 
@@ -137,25 +96,29 @@ export default function StrukturOrganisasiSection() {
               <div>
                 <div className="flex items-center justify-between">
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#006194] text-white">
-                    SEKRETARIS
+                    {currentData.seklur.jabatan || 'SEKRETARIS'}
                   </span>
                   <div className="w-8 h-8 rounded-lg bg-white/80 text-[#006194] flex items-center justify-center shadow-2xs">
                     <UserCheck className="w-4 h-4" />
                   </div>
                 </div>
                 <h4 className="text-base sm:text-lg font-bold text-[#131b2e] mt-3">
-                  FEBRONIA L. PIJOH, S.Kom
+                  {currentData.seklur.nama}
                 </h4>
                 <p className="text-xs sm:text-sm font-mono font-semibold text-[#006194] mt-0.5 mb-3">
-                  NIP : 19780203 200902 2 002
+                  NIP : {currentData.seklur.nip}
                 </p>
 
                 {/* Sub-roles inside secretariat */}
                 <div className="space-y-2 pt-2 border-t border-[#dae2fd]/70">
                   <div className="flex items-center justify-between text-xs py-1.5 px-3 bg-white/90 rounded-xl border border-[#eaedff]">
                     <div>
-                      <span className="font-semibold text-[#131b2e] block">KARLIN S. PIETER</span>
-                      <span className="text-[10px] text-[#535f70] font-mono">NIP : 19710830 201102 2 001</span>
+                      <span className="font-semibold text-[#131b2e] block">
+                        {currentData.pelaksana.nama}
+                      </span>
+                      <span className="text-[10px] text-[#535f70] font-mono">
+                        NIP : {currentData.pelaksana.nip}
+                      </span>
                     </div>
                     <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-[#cce5ff]/80 text-[#004b73]">
                       Pelaksana
@@ -187,16 +150,17 @@ export default function StrukturOrganisasiSection() {
 
           {/* LEVEL 3: 3 KASIE CARDS */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
-            {seksiTeknis.map((item, idx) => {
-              const IconComp = item.icon;
+            {currentData.kasie.map((item, idx) => {
+              const IconComp = kasieIcons[idx % kasieIcons.length];
+              const badgeColor = kasieBadgeColors[idx % kasieBadgeColors.length];
               return (
                 <div
-                  key={idx}
+                  key={item.id || idx}
                   className="bg-[#f2f3ff]/70 hover:bg-white rounded-2xl p-5 2xl:p-6 border border-[#dae2fd] shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className={`px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold ${item.badgeColor}`}>
+                      <span className={`px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold ${badgeColor}`}>
                         {item.badge}
                       </span>
                       <div className="w-7 h-7 rounded-lg bg-white/80 text-[#006194] flex items-center justify-center shadow-2xs">
@@ -214,7 +178,7 @@ export default function StrukturOrganisasiSection() {
                   </div>
                   <div className="pt-3 mt-4 border-t border-[#eaedff] flex items-center justify-between text-[11px] 2xl:text-xs text-[#535f70]">
                     <span>Staf:</span>
-                    <span className="font-semibold text-[#131b2e]">{item.pembantu}</span>
+                    <span className="font-semibold text-[#131b2e]">{item.pembantu || '-'}</span>
                   </div>
                 </div>
               );
@@ -241,7 +205,7 @@ export default function StrukturOrganisasiSection() {
 
           {/* LEVEL 4: 5 LINGKUNGAN CARDS */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
-            {unsurKewilayahan.map((lingk, idx) => (
+            {currentData.lingkungan.map((lingk, idx) => (
               <div
                 key={idx}
                 className="bg-[#f2f3ff]/70 hover:bg-white rounded-2xl p-4 2xl:p-5 border border-[#dae2fd] shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between"

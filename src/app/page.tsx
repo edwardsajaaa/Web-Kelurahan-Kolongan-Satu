@@ -13,6 +13,14 @@ import FasilitasPublikSection from '@/components/FasilitasPublikSection';
 import KktTeamSection from '@/components/KktTeamSection';
 import { AvailableYear, CURRENT_ACTIVE_YEAR, DATA_MONOGRAFI_2024, DATA_MONOGRAFI_2025, DATA_SEJARAH_KOLONGAN_SATU } from '@/data';
 import { INITIAL_REPORTS, CitizenReport } from '@/data/reportsData';
+import {
+  LandingContentPayload,
+  INITIAL_FASILITAS,
+  INITIAL_SANITASI_STATS,
+  INITIAL_APARATUR_DATA,
+  INITIAL_ACTIVITY_SLIDES,
+  INITIAL_KONTAK_INFO,
+} from '@/data/landingContentData';
 
 const ModalLetterRequest = dynamic(() => import('@/components/ModalLetterRequest'), { ssr: false });
 const ModalCitizenReport = dynamic(() => import('@/components/ModalCitizenReport'), { ssr: false });
@@ -45,6 +53,15 @@ export default function LandingPage() {
   const [liveMonografiItems, setLiveMonografiItems] = useState<MonografiItem[]>(MONOGRAFI_ITEMS);
   const [availableYears, setAvailableYears] = useState<number[]>([2024, 2025]);
 
+  // Dynamic Landing Page Content from Portal/Database
+  const [landingContent, setLandingContent] = useState<LandingContentPayload>({
+    fasilitas: INITIAL_FASILITAS,
+    sanitasi: INITIAL_SANITASI_STATS,
+    aparatur: INITIAL_APARATUR_DATA,
+    kegiatan: INITIAL_ACTIVITY_SLIDES,
+    kontak: INITIAL_KONTAK_INFO,
+  });
+
   // Citizen letters and reports states
   const [letters, setLetters] = useState<LetterRequest[]>(INITIAL_LETTERS);
   const [reports, setReports] = useState<CitizenReport[]>(INITIAL_REPORTS);
@@ -55,10 +72,11 @@ export default function LandingPage() {
   React.useEffect(() => {
     async function fetchLandingData() {
       try {
-        const [resMonografi, resLetters, resReports] = await Promise.all([
+        const [resMonografi, resLetters, resReports, resLanding] = await Promise.all([
           fetch('/api/monografi', { cache: 'no-store' }),
           fetch('/api/surat', { cache: 'no-store' }),
           fetch('/api/lapor', { cache: 'no-store' }),
+          fetch('/api/landing-content', { cache: 'no-store' }),
         ]);
         if (resMonografi.ok) {
           const json = await resMonografi.json();
@@ -82,6 +100,12 @@ export default function LandingPage() {
           const jsonR = await resReports.json();
           if (jsonR.success && jsonR.data) {
             setReports(jsonR.data);
+          }
+        }
+        if (resLanding && resLanding.ok) {
+          const jsonLand = await resLanding.json();
+          if (jsonLand.success && jsonLand.data) {
+            setLandingContent(jsonLand.data);
           }
         }
       } catch (err) {
@@ -410,7 +434,7 @@ export default function LandingPage() {
               </div>
 
               {/* Slider Dokumentasi Kegiatan */}
-              <ActivitySlider />
+              <ActivitySlider slides={landingContent.kegiatan} />
             </div>
           </section>
 
@@ -826,7 +850,7 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 4. STRUKTUR PEMERINTAHAN & TATA KELOLA                     */}
           {/* ============================================================ */}
-          <StrukturOrganisasiSection />
+          <StrukturOrganisasiSection aparatur={landingContent.aparatur} />
 
           {/* ============================================================ */}
           {/* 5. MONOGRAFI WILAYAH TERPADU                               */}
@@ -842,7 +866,11 @@ export default function LandingPage() {
           {/* ============================================================ */}
           {/* 6. FASILITAS & SARANA PUBLIK KELURAHAN                     */}
           {/* ============================================================ */}
-          <FasilitasPublikSection onDirectToMap={() => setMapMode('3d')} />
+          <FasilitasPublikSection
+            items={landingContent.fasilitas}
+            sanitasiStats={landingContent.sanitasi}
+            onDirectToMap={() => setMapMode('3d')}
+          />
 
           {/* ============================================================ */}
           {/* 8. GEOGRAPHIC 3D MAP & TERRITORY SHOWCASE                     */}
@@ -1130,9 +1158,9 @@ export default function LandingPage() {
             <div className="flex flex-col gap-2.5 2xl:gap-4">
               <h5 className="text-base 2xl:text-xl text-[#131b2e] font-bold">Jam Pelayanan</h5>
               <ul className="space-y-1.5 2xl:space-y-2 text-xs sm:text-sm 2xl:text-base text-[#3f4850]">
-                <li>Senin - Kamis: 08.00 - 16.00 WITA</li>
-                <li>Jumat: 08.00 - 15.30 WITA</li>
-                <li>Sabtu &amp; Minggu: Tutup (Layanan Daring Aktif)</li>
+                <li>{landingContent.kontak.jamSeninKamis}</li>
+                <li>{landingContent.kontak.jamJumat}</li>
+                <li>{landingContent.kontak.jamWeekend}</li>
               </ul>
             </div>
 
@@ -1165,10 +1193,13 @@ export default function LandingPage() {
             <div className="flex flex-col gap-2.5 2xl:gap-4">
               <h5 className="text-base 2xl:text-xl text-[#131b2e] font-bold">Kontak Kantor</h5>
               <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                Jl. Kolongan Raya, Kecamatan Tomohon Tengah, Kota Tomohon, Sulawesi Utara 95438
+                {landingContent.kontak.alamatKantor}
               </p>
               <p className="text-xs sm:text-sm 2xl:text-base text-[#006194] font-medium">
-                Surel: kel.kolongansatu@tomohon.go.id
+                Surel: {landingContent.kontak.email}
+              </p>
+              <p className="text-xs sm:text-sm 2xl:text-base text-emerald-700 font-semibold">
+                Hotline WA: {landingContent.kontak.hotlineWa}
               </p>
             </div>
           </div>

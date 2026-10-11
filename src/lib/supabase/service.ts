@@ -3,11 +3,31 @@ import { createServerClient, isServerSupabaseConfigured } from './server';
 import { LetterRequest, INITIAL_LETTERS } from '@/data/lettersData';
 import { CitizenReport, INITIAL_REPORTS } from '@/data/reportsData';
 import { MONOGRAFI_ITEMS, MonografiItem } from '@/data/monografiData';
+import {
+  FasilitasItem,
+  SanitasiStats,
+  AparaturData,
+  ActivitySlide,
+  KontakInfo,
+  LandingContentPayload,
+  INITIAL_FASILITAS,
+  INITIAL_SANITASI_STATS,
+  INITIAL_APARATUR_DATA,
+  INITIAL_ACTIVITY_SLIDES,
+  INITIAL_KONTAK_INFO,
+} from '@/data/landingContentData';
 
 // In-memory fallback stores for local/offline resilience
 let inMemoryLetters: LetterRequest[] = [...INITIAL_LETTERS];
 let inMemoryReports: CitizenReport[] = [...INITIAL_REPORTS];
 let inMemoryMonografi: MonografiItem[] = [...MONOGRAFI_ITEMS];
+let inMemoryLandingContent: LandingContentPayload = {
+  fasilitas: [...INITIAL_FASILITAS],
+  sanitasi: { ...INITIAL_SANITASI_STATS },
+  aparatur: JSON.parse(JSON.stringify(INITIAL_APARATUR_DATA)),
+  kegiatan: [...INITIAL_ACTIVITY_SLIDES],
+  kontak: { ...INITIAL_KONTAK_INFO },
+};
 
 // ==========================================
 // 1. LAYANAN SURAT (LETTERS)
@@ -956,5 +976,81 @@ export async function authenticateAparatur(
       avatarText: matchedAccount.avatarText,
     },
   };
+}
+
+// ==========================================
+// 6. LANDING PAGE CONTENT MANAGEMENT (FASILITAS, APARATUR, SANITASI, KEGIATAN, KONTAK)
+// ==========================================
+
+export async function fetchLandingContent(): Promise<LandingContentPayload> {
+  if (isServerSupabaseConfigured) {
+    try {
+      const serverClient = createServerClient();
+      const { data, error } = await (serverClient as any)
+        .from('monografi_rekap')
+        .select('*')
+        .eq('kategori', 'landing_content')
+        .limit(1)
+        .maybeSingle();
+
+      if (!error && data && data.rincian_data) {
+        const remote = data.rincian_data as Partial<LandingContentPayload>;
+        inMemoryLandingContent = {
+          fasilitas: remote.fasilitas && Array.isArray(remote.fasilitas) ? remote.fasilitas : inMemoryLandingContent.fasilitas,
+          sanitasi: remote.sanitasi ? { ...inMemoryLandingContent.sanitasi, ...remote.sanitasi } : inMemoryLandingContent.sanitasi,
+          aparatur: remote.aparatur ? { ...inMemoryLandingContent.aparatur, ...remote.aparatur } : inMemoryLandingContent.aparatur,
+          kegiatan: remote.kegiatan && Array.isArray(remote.kegiatan) ? remote.kegiatan : inMemoryLandingContent.kegiatan,
+          kontak: remote.kontak ? { ...inMemoryLandingContent.kontak, ...remote.kontak } : inMemoryLandingContent.kontak,
+        };
+      }
+    } catch (err) {
+      console.warn('[Supabase] Failed to fetch landing content from DB, using memory:', err);
+    }
+  }
+
+  return inMemoryLandingContent;
+}
+
+export async function updateLandingContentSection<K extends keyof LandingContentPayload>(
+  section: K,
+  sectionData: LandingContentPayload[K]
+): Promise<LandingContentPayload> {
+  inMemoryLandingContent[section] = sectionData;
+
+  if (isServerSupabaseConfigured) {
+    try {
+      const serverClient = createServerClient();
+      // Check if landing_content row exists
+      const { data: existing } = await (serverClient as any)
+        .from('monografi_rekap')
+        .select('id')
+        .eq('kategori', 'landing_content')
+        .limit(1)
+        .maybeSingle();
+
+      if (existing && existing.id) {
+        await (serverClient as any)
+          .from('monografi_rekap')
+          .update({
+            rincian_data: inMemoryLandingContent,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existing.id);
+      } else {
+        await (serverClient as any)
+          .from('monografi_rekap')
+          .insert({
+            tahun: 2025,
+            kategori: 'landing_content',
+            status_tahapan: 'disahkan_lurah',
+            rincian_data: inMemoryLandingContent,
+          });
+      }
+    } catch (err) {
+      console.warn('[Supabase] Failed to persist landing content section:', err);
+    }
+  }
+
+  return inMemoryLandingContent;
 }
 

@@ -29,7 +29,7 @@ export interface FasilitasItem {
   category: 'pemerintahan' | 'ibadah' | 'kesehatan' | 'pendidikan' | 'infrastruktur' | 'sanitasi_air';
   categoryLabel: string;
   categoryColor: string;
-  icon: any;
+  icon?: any;
   jaga: string;
   alamat: string;
   deskripsi: string;
@@ -304,26 +304,66 @@ export const FASILITAS_DATA: FasilitasItem[] = [
   },
 ];
 
+import { SanitasiStats } from '@/data/landingContentData';
+
 interface FasilitasPublikSectionProps {
   onDirectToMap?: () => void;
+  items?: FasilitasItem[];
+  sanitasiStats?: SanitasiStats;
 }
 
-export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPublikSectionProps) {
+export default function FasilitasPublikSection({
+  onDirectToMap,
+  items,
+  sanitasiStats,
+}: FasilitasPublikSectionProps) {
   const [activeTab, setActiveTab] = useState<string>('all');
+  const sourceData = items && items.length > 0 ? items : FASILITAS_DATA;
 
   const categories = [
-    { id: 'all', label: 'Semua Fasilitas', icon: Layers, count: FASILITAS_DATA.length },
-    { id: 'pemerintahan', label: 'Pemerintahan', icon: Building2, count: 4 },
-    { id: 'ibadah', label: 'Sarana Ibadah', icon: Church, count: 3 },
-    { id: 'kesehatan', label: 'Kesehatan', icon: HeartPulse, count: 3 },
-    { id: 'pendidikan', label: 'Pendidikan & Sosial', icon: GraduationCap, count: 2 },
-    { id: 'infrastruktur', label: 'Energi & Niaga', icon: Zap, count: 3 },
-    { id: 'sanitasi_air', label: 'Sanitasi & Sumber Air', icon: Droplets, count: 5 },
+    { id: 'all', label: 'Semua Fasilitas', icon: Layers, count: sourceData.length },
+    {
+      id: 'pemerintahan',
+      label: 'Pemerintahan',
+      icon: Building2,
+      count: sourceData.filter((i) => i.category === 'pemerintahan').length,
+    },
+    {
+      id: 'ibadah',
+      label: 'Sarana Ibadah',
+      icon: Church,
+      count: sourceData.filter((i) => i.category === 'ibadah').length,
+    },
+    {
+      id: 'kesehatan',
+      label: 'Kesehatan',
+      icon: HeartPulse,
+      count: sourceData.filter((i) => i.category === 'kesehatan').length,
+    },
+    {
+      id: 'pendidikan',
+      label: 'Pendidikan & Sosial',
+      icon: GraduationCap,
+      count: sourceData.filter((i) => i.category === 'pendidikan').length,
+    },
+    {
+      id: 'infrastruktur',
+      label: 'Energi & Niaga',
+      icon: Zap,
+      count: sourceData.filter((i) => i.category === 'infrastruktur').length,
+    },
+    {
+      id: 'sanitasi_air',
+      label: 'Sanitasi & Sumber Air',
+      icon: Droplets,
+      count: sourceData.filter((i) => i.category === 'sanitasi_air').length,
+    },
   ];
 
-  const filteredData = activeTab === 'all'
-    ? FASILITAS_DATA
-    : FASILITAS_DATA.filter((item) => item.category === activeTab);
+  const filteredData =
+    activeTab === 'all'
+      ? sourceData
+      : sourceData.filter((item) => item.category === activeTab);
 
   const handleGoToMap = () => {
     if (onDirectToMap) {
@@ -460,7 +500,15 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
         {/* ============================================================ */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {filteredData.map((item) => {
-            const IconComp = item.icon;
+            const defaultIcons: Record<string, any> = {
+              pemerintahan: Building2,
+              ibadah: Church,
+              kesehatan: HeartPulse,
+              pendidikan: GraduationCap,
+              infrastruktur: Zap,
+              sanitasi_air: Droplets,
+            };
+            const IconComp = item.icon || defaultIcons[item.category] || Building2;
             return (
               <div
                 key={item.id}
@@ -577,7 +625,7 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
                 </div>
               </div>
               <div className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight mt-3">
-                14 Titik
+                {sanitasiStats?.mataAir || '14 Titik'}
               </div>
               <span className="inline-block mt-2 text-[11px] font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md">
                 Jaga 1 – 5
@@ -595,7 +643,7 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
                 </div>
               </div>
               <div className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight mt-3">
-                380 Unit
+                {sanitasiStats?.sumurWarga || '380 Unit'}
               </div>
               <span className="inline-block mt-2 text-[11px] font-semibold text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded-md">
                 Sumur Mandiri
@@ -613,7 +661,7 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
                 </div>
               </div>
               <div className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight mt-3">
-                160 Rumah
+                {sanitasiStats?.pdam || '160 Rumah'}
               </div>
               <span className="inline-block mt-2 text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
                 Pelanggan Aktif
@@ -631,7 +679,7 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
                 </div>
               </div>
               <div className="text-2xl sm:text-3xl font-extrabold text-[#131b2e] tracking-tight mt-3">
-                3.200 Meter
+                {sanitasiStats?.drainase || '3.200 Meter'}
               </div>
               <span className="inline-block mt-2 text-[11px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded-md">
                 Drainase Pemukiman

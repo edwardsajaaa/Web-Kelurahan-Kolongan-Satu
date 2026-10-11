@@ -59,19 +59,24 @@ export const ACTIVITY_SLIDES: ActivitySlide[] = [
   },
 ];
 
-export default function ActivitySlider() {
+interface ActivitySliderProps {
+  slides?: ActivitySlide[];
+}
+
+export default function ActivitySlider({ slides }: ActivitySliderProps) {
+  const activeSlides = slides && slides.length > 0 ? slides : ACTIVITY_SLIDES;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
   const nextSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % ACTIVITY_SLIDES.length);
-  }, []);
+    setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
+  }, [activeSlides.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + ACTIVITY_SLIDES.length) % ACTIVITY_SLIDES.length);
-  }, []);
+    setCurrentIndex((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
+  }, [activeSlides.length]);
 
   const goToSlide = (index: number) => {
     setCurrentIndex(index);
@@ -107,7 +112,7 @@ export default function ActivitySlider() {
     touchEndX.current = null;
   };
 
-  const currentSlide = ACTIVITY_SLIDES[currentIndex];
+  const currentSlide = activeSlides[currentIndex] || activeSlides[0];
 
   return (
     <div
@@ -120,7 +125,7 @@ export default function ActivitySlider() {
       aria-label="Dokumentasi Kegiatan Kelurahan Kolongan Satu"
     >
       {/* Background Slides with smooth fade transition */}
-      {ACTIVITY_SLIDES.map((slide, index) => {
+      {activeSlides.map((slide, index) => {
         const isActive = index === currentIndex;
         return (
           <div
@@ -182,7 +187,7 @@ export default function ActivitySlider() {
 
         {/* Indicators & Thumbnails */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 bg-black/40 backdrop-blur-md px-3 py-2 rounded-full border border-white/15 self-start md:self-end">
-          {ACTIVITY_SLIDES.map((slide, index) => {
+          {activeSlides.map((slide, index) => {
             const isActive = index === currentIndex;
             return (
               <button

@@ -260,6 +260,114 @@ export default function Sidebar({
             </li>
           </ul>
         </div>
+
+        {/* Section: Kelola Konten Landing Page */}
+        <div>
+          <span className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Kelola Landing Page
+          </span>
+          <ul className="mt-2 space-y-1">
+            {/* 1. Fasilitas & Sanitasi */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('kelola_fasilitas')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'kelola_fasilitas'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <Building
+                    className={`w-4 h-4 ${
+                      activeNav === 'kelola_fasilitas' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Fasilitas &amp; Sanitasi</span>
+                </span>
+                <span className="text-[10px] bg-sky-100 text-brand-700 px-1.5 py-0.5 rounded font-medium">
+                  Publik
+                </span>
+              </button>
+            </li>
+
+            {/* 2. Struktur Aparatur */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('kelola_aparatur')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'kelola_aparatur'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <Users
+                    className={`w-4 h-4 ${
+                      activeNav === 'kelola_aparatur' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Struktur Aparatur</span>
+                </span>
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-medium">
+                  Pejabat
+                </span>
+              </button>
+            </li>
+
+            {/* 3. Berita & Kegiatan */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('kelola_kegiatan')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'kelola_kegiatan'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <ExternalLink
+                    className={`w-4 h-4 ${
+                      activeNav === 'kelola_kegiatan' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Berita &amp; Kegiatan</span>
+                </span>
+                <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium">
+                  Slider
+                </span>
+              </button>
+            </li>
+
+            {/* 4. Kontak & Jam Layanan */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('kelola_kontak')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'kelola_kontak'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <MapPin
+                    className={`w-4 h-4 ${
+                      activeNav === 'kelola_kontak' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Kontak &amp; Layanan</span>
+                </span>
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-medium">
+                  WA
+                </span>
+              </button>
+            </li>
+          </ul>
+        </div>
       </nav>
 
       {/* Sidebar Bottom: Operator Profile & Session */}

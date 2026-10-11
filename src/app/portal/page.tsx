@@ -14,6 +14,23 @@ import ModalWhatsAppSimulator from '@/components/ModalWhatsAppSimulator';
 import ModalOfficialLetterPreview from '@/components/ModalOfficialLetterPreview';
 import ModalMonografiPrint from '@/components/ModalMonografiPrint';
 import ModalEditMonografi from '@/components/ModalEditMonografi';
+import ManageFasilitasView from '@/components/portal/ManageFasilitasView';
+import ManageAparaturView from '@/components/portal/ManageAparaturView';
+import ManageKegiatanView from '@/components/portal/ManageKegiatanView';
+import ManageKontakView from '@/components/portal/ManageKontakView';
+import {
+  LandingContentPayload,
+  FasilitasItem,
+  SanitasiStats,
+  AparaturData,
+  ActivitySlide,
+  KontakInfo,
+  INITIAL_FASILITAS,
+  INITIAL_SANITASI_STATS,
+  INITIAL_APARATUR_DATA,
+  INITIAL_ACTIVITY_SLIDES,
+  INITIAL_KONTAK_INFO,
+} from '@/data/landingContentData';
 
 import {
   Menu,
@@ -35,6 +52,15 @@ export default function PortalPage() {
   const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Landing page editable content state
+  const [landingContent, setLandingContent] = useState<LandingContentPayload>({
+    fasilitas: INITIAL_FASILITAS,
+    sanitasi: INITIAL_SANITASI_STATS,
+    aparatur: INITIAL_APARATUR_DATA,
+    kegiatan: INITIAL_ACTIVITY_SLIDES,
+    kontak: INITIAL_KONTAK_INFO,
+  });
 
   // User Authentication & Role: Dedicated Sekretaris Kelurahan (Febronia L. Pijoh, S.Kom)
   const seklurOfficial = OFFICIALS.find((o) => o.roleCode === 'admin_seklur') || OFFICIALS[1];
@@ -107,10 +133,11 @@ export default function PortalPage() {
 
       // 2. Fetch data
       try {
-        const [resLetters, resReports, resMonografi] = await Promise.all([
+        const [resLetters, resReports, resMonografi, resLanding] = await Promise.all([
           fetch('/api/surat'),
           fetch('/api/lapor'),
           fetch('/api/monografi'),
+          fetch('/api/landing-content'),
         ]);
 
         if (resLetters.ok) {
@@ -134,6 +161,13 @@ export default function PortalPage() {
           }
           if (dataMonografi.availableYears && Array.isArray(dataMonografi.availableYears)) {
             setAvailableYears(dataMonografi.availableYears);
+          }
+        }
+
+        if (resLanding && resLanding.ok) {
+          const dataLanding = await resLanding.json();
+          if (dataLanding.success && dataLanding.data) {
+            setLandingContent(dataLanding.data);
           }
         }
       } catch (err) {
@@ -445,9 +479,79 @@ export default function PortalPage() {
     setIsPrintLetterOpen(true);
   };
 
+  // Handlers for Landing Page Editable Content
+  const handleSaveFasilitas = async (updatedFasilitas: FasilitasItem[]) => {
+    setLandingContent((prev) => ({ ...prev, fasilitas: updatedFasilitas }));
+    try {
+      await fetch('/api/landing-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'fasilitas', data: updatedFasilitas }),
+      });
+    } catch (e) {
+      console.warn('Gagal simpan fasilitas:', e);
+    }
+  };
+
+  const handleSaveSanitasi = async (updatedSanitasi: SanitasiStats) => {
+    setLandingContent((prev) => ({ ...prev, sanitasi: updatedSanitasi }));
+    try {
+      await fetch('/api/landing-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'sanitasi', data: updatedSanitasi }),
+      });
+    } catch (e) {
+      console.warn('Gagal simpan sanitasi:', e);
+    }
+  };
+
+  const handleSaveAparatur = async (updatedAparatur: AparaturData) => {
+    setLandingContent((prev) => ({ ...prev, aparatur: updatedAparatur }));
+    try {
+      await fetch('/api/landing-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'aparatur', data: updatedAparatur }),
+      });
+    } catch (e) {
+      console.warn('Gagal simpan aparatur:', e);
+    }
+  };
+
+  const handleSaveKegiatan = async (updatedKegiatan: ActivitySlide[]) => {
+    setLandingContent((prev) => ({ ...prev, kegiatan: updatedKegiatan }));
+    try {
+      await fetch('/api/landing-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'kegiatan', data: updatedKegiatan }),
+      });
+    } catch (e) {
+      console.warn('Gagal simpan kegiatan:', e);
+    }
+  };
+
+  const handleSaveKontak = async (updatedKontak: KontakInfo) => {
+    setLandingContent((prev) => ({ ...prev, kontak: updatedKontak }));
+    try {
+      await fetch('/api/landing-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'kontak', data: updatedKontak }),
+      });
+    } catch (e) {
+      console.warn('Gagal simpan kontak:', e);
+    }
+  };
+
   const handleNavSelect = (navId: string) => {
     setActiveNav(navId);
     setIsMobileSidebarOpen(false);
+
+    if (navId.startsWith('kelola_')) {
+      return;
+    }
 
     if (navId === 'surat') {
       setIsLetterModalOpen(true);
@@ -589,60 +693,89 @@ export default function PortalPage() {
                 <span className="text-slate-900 font-semibold">Kelurahan Kolongan Satu</span>
                 <span className="text-slate-300">•</span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 text-[10px]">
-                  Tervalidasi Lurah
+                  {activeNav.startsWith('kelola_') ? 'Live Landing Page Sync' : 'Tervalidasi Lurah'}
                 </span>
               </div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900">
-                Modul Pengisian Monografi Komprehensif
+                {activeNav === 'kelola_fasilitas'
+                  ? 'Form Pengelolaan Fasilitas Publik & Metrik Sanitasi'
+                  : activeNav === 'kelola_aparatur'
+                  ? 'Form Pengelolaan Struktur Aparatur & Pimpinan'
+                  : activeNav === 'kelola_kegiatan'
+                  ? 'Form Pengelolaan Dokumentasi & Berita Kegiatan'
+                  : activeNav === 'kelola_kontak'
+                  ? 'Form Pengaturan Kontak Resmi & Jam Pelayanan'
+                  : 'Modul Pengisian Monografi Komprehensif'}
               </h2>
             </div>
           </div>
 
-          {/* Year Selector Tabs & Quick New Year Button */}
-          <div className="flex items-center gap-3">
-            <div className="inline-flex p-1 bg-slate-100/80 rounded-xl border border-slate-200">
-              {availableYears.map((yr) => {
-                const isActiveYear = selectedYear === yr;
-                return (
-                  <button
-                    key={yr}
-                    type="button"
-                    onClick={() => {
-                      setSelectedYear(yr);
-                      const firstInYear = monografiList.find((m) => m.year === yr);
-                      if (firstInYear) setSelectedId(firstInYear.id);
-                    }}
-                    className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                      isActiveYear
-                        ? 'bg-brand-600 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-                    }`}
-                  >
-                    {isActiveYear && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    )}
-                    <span>
-                      {yr} {yr === 2025 ? '(Aktif)' : '(Arsip)'}
-                    </span>
-                  </button>
-                );
-              })}
+          {/* Action on Header */}
+          {activeNav.startsWith('kelola_') ? (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveNav('kependudukan')}
+                className="px-3.5 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+              >
+                ← Kembali ke Monografi
+              </button>
+              <Link
+                href="/"
+                target="_blank"
+                className="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-brand-600 text-white hover:bg-brand-700 transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Lihat di Landing Page</span>
+                <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+              </Link>
             </div>
+          ) : (
+            /* Year Selector Tabs & Quick New Year Button */
+            <div className="flex items-center gap-3">
+              <div className="inline-flex p-1 bg-slate-100/80 rounded-xl border border-slate-200">
+                {availableYears.map((yr) => {
+                  const isActiveYear = selectedYear === yr;
+                  return (
+                    <button
+                      key={yr}
+                      type="button"
+                      onClick={() => {
+                        setSelectedYear(yr);
+                        const firstInYear = monografiList.find((m) => m.year === yr);
+                        if (firstInYear) setSelectedId(firstInYear.id);
+                      }}
+                      className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
+                        isActiveYear
+                          ? 'bg-brand-600 text-white shadow-xs'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                      }`}
+                    >
+                      {isActiveYear && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                      )}
+                      <span>
+                        {yr} {yr === 2025 ? '(Aktif)' : '(Arsip)'}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                const maxYear = Math.max(...availableYears, 2025);
-                setNewYearInput(maxYear + 1);
-                setNewYearError(null);
-                setIsNewYearModalOpen(true);
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed border-slate-300 hover:border-brand-500 hover:text-brand-600 text-xs font-medium text-slate-600 transition-all bg-white hover:bg-brand-50/50 cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>+ Buka Tahun Baru</span>
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const maxYear = Math.max(...availableYears, 2025);
+                  setNewYearInput(maxYear + 1);
+                  setNewYearError(null);
+                  setIsNewYearModalOpen(true);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-dashed border-slate-300 hover:border-brand-500 hover:text-brand-600 text-xs font-medium text-slate-600 transition-all bg-white hover:bg-brand-50/50 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Buka Tahun Baru</span>
+              </button>
+            </div>
+          )}
         </header>
 
         {/* Scrollable Ergonomic Workspace Canvas */}
@@ -650,95 +783,138 @@ export default function PortalPage() {
           className="flex-1 overflow-y-auto px-6 sm:px-8 py-6 space-y-6"
           data-purpose="form-scrollable-container"
         >
-          {/* Horizontal Module Selector Strip */}
-          <div
-            className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs"
-            data-purpose="module-selector-tabs"
-          >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  Kategori Monografi:
-                </span>
-              </div>
+          {/* VIEW A: KELOLA FASILITAS */}
+          {activeNav === 'kelola_fasilitas' && (
+            <ManageFasilitasView
+              fasilitas={landingContent.fasilitas}
+              sanitasi={landingContent.sanitasi}
+              onSaveFasilitas={handleSaveFasilitas}
+              onSaveSanitasi={handleSaveSanitasi}
+              showToast={showToast}
+            />
+          )}
 
-              {/* Live Module Search */}
-              <div className="relative w-full md:w-72">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari bab, indikator, jaga..."
-                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
-                />
-              </div>
-            </div>
+          {/* VIEW B: KELOLA APARATUR */}
+          {activeNav === 'kelola_aparatur' && (
+            <ManageAparaturView
+              aparatur={landingContent.aparatur}
+              onSaveAparatur={handleSaveAparatur}
+              showToast={showToast}
+            />
+          )}
 
-            {/* Module Pill Buttons with Badges */}
-            <div className="flex items-center gap-2 pt-3 overflow-x-auto pb-1 scrollbar-none">
-              {visibleModules.length === 0 ? (
-                <div className="text-xs text-slate-400 italic py-1">
-                  Tidak ada modul yang cocok dengan pencarian "{searchQuery}".
+          {/* VIEW C: KELOLA KEGIATAN */}
+          {activeNav === 'kelola_kegiatan' && (
+            <ManageKegiatanView
+              kegiatan={landingContent.kegiatan}
+              onSaveKegiatan={handleSaveKegiatan}
+              showToast={showToast}
+            />
+          )}
+
+          {/* VIEW D: KELOLA KONTAK */}
+          {activeNav === 'kelola_kontak' && (
+            <ManageKontakView
+              kontak={landingContent.kontak}
+              onSaveKontak={handleSaveKontak}
+              showToast={showToast}
+            />
+          )}
+
+          {/* VIEW E: STANDARD MONOGRAFI MODULES */}
+          {!activeNav.startsWith('kelola_') && (
+            <>
+              {/* Horizontal Module Selector Strip */}
+              <div
+                className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs"
+                data-purpose="module-selector-tabs"
+              >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      Kategori Monografi:
+                    </span>
+                  </div>
+
+                  {/* Live Module Search */}
+                  <div className="relative w-full md:w-72">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Cari bab, indikator, jaga..."
+                      className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    />
+                  </div>
                 </div>
-              ) : (
-                visibleModules.map((mod) => {
-                  const isSelected = activeDetail.id === mod.id;
-                  return (
-                    <button
-                      key={mod.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedId(mod.id);
-                        setSelectedCategory(mod.categoryKey);
-                      }}
-                      className={`px-4 py-2 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer flex items-center gap-2 ${
-                        isSelected
-                          ? 'bg-brand-600 text-white shadow-xs'
-                          : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-medium'
-                      }`}
-                    >
-                      <span>{mod.title}</span>
-                      {mod.metrics.totalWarga ? (
-                        <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
-                            isSelected
-                              ? 'bg-white/20 text-white'
-                              : 'bg-slate-200 text-slate-700'
-                          }`}
-                        >
-                          {mod.metrics.totalWarga.toLocaleString('id-ID')} Jw
-                        </span>
-                      ) : mod.categoryKey === 'wilayah' ? (
-                        <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
-                            isSelected
-                              ? 'bg-white/20 text-white'
-                              : 'bg-emerald-100 text-emerald-800'
-                          }`}
-                        >
-                          Sah
-                        </span>
-                      ) : null}
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          </div>
 
-          {/* Active Module Workspace (Form + Preview Canvas) */}
-          <DetailView
-            item={activeDetail}
-            currentOfficial={currentOfficial}
-            onSaveItem={handleSaveMonografiEdit}
-            onApproveItem={handleApproveByLurah}
-            onVerifySeklur={handleVerifyBySeklur}
-            onOpenLetterModal={() => setIsLetterModalOpen(true)}
-            onOpenReportModal={() => setIsReportModalOpen(true)}
-            onOpenPrintPreview={() => setIsPrintMonografiOpen(true)}
-            onTriggerWhatsApp={() => setIsWhatsAppOpen(true)}
-          />
+                {/* Module Pill Buttons with Badges */}
+                <div className="flex items-center gap-2 pt-3 overflow-x-auto pb-1 scrollbar-none">
+                  {visibleModules.length === 0 ? (
+                    <div className="text-xs text-slate-400 italic py-1">
+                      Tidak ada modul yang cocok dengan pencarian "{searchQuery}".
+                    </div>
+                  ) : (
+                    visibleModules.map((mod) => {
+                      const isSelected = activeDetail.id === mod.id;
+                      return (
+                        <button
+                          key={mod.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedId(mod.id);
+                            setSelectedCategory(mod.categoryKey);
+                          }}
+                          className={`px-4 py-2 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer flex items-center gap-2 ${
+                            isSelected
+                              ? 'bg-brand-600 text-white shadow-xs'
+                              : 'bg-slate-100 hover:bg-slate-200/80 text-slate-700 font-medium'
+                          }`}
+                        >
+                          <span>{mod.title}</span>
+                          {mod.metrics.totalWarga ? (
+                            <span
+                              className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                                isSelected
+                                  ? 'bg-white/20 text-white'
+                                  : 'bg-slate-200 text-slate-700'
+                              }`}
+                            >
+                              {mod.metrics.totalWarga.toLocaleString('id-ID')} Jw
+                            </span>
+                          ) : mod.categoryKey === 'wilayah' ? (
+                            <span
+                              className={`text-[10px] px-1.5 py-0.5 rounded font-bold ${
+                                isSelected
+                                  ? 'bg-white/20 text-white'
+                                  : 'bg-emerald-100 text-emerald-800'
+                              }`}
+                            >
+                              Sah
+                            </span>
+                          ) : null}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* Active Module Workspace (Form + Preview Canvas) */}
+              <DetailView
+                item={activeDetail}
+                currentOfficial={currentOfficial}
+                onSaveItem={handleSaveMonografiEdit}
+                onApproveItem={handleApproveByLurah}
+                onVerifySeklur={handleVerifyBySeklur}
+                onOpenLetterModal={() => setIsLetterModalOpen(true)}
+                onOpenReportModal={() => setIsReportModalOpen(true)}
+                onOpenPrintPreview={() => setIsPrintMonografiOpen(true)}
+                onTriggerWhatsApp={() => setIsWhatsAppOpen(true)}
+              />
+            </>
+          )}
         </div>
       </main>
 
