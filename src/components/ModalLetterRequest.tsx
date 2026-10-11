@@ -24,7 +24,22 @@ import {
   Copy,
   ExternalLink,
   Paperclip,
+  MessageCircle,
 } from 'lucide-react';
+
+export const PALA_WHATSAPP_CONTACTS: Record<number, { nama: string; phone: string; label: string }> = {
+  1: { nama: 'Meky Mario Turangan', phone: '0813-1122-3344', label: 'Kepala Lingkungan I (Jaga 1)' },
+  2: { nama: 'Devid P.N. Tasie', phone: '0813-2233-4455', label: 'Kepala Lingkungan II (Jaga 2)' },
+  3: { nama: 'Agustinus Sapanany', phone: '0813-3344-5566', label: 'Kepala Lingkungan III (Jaga 3)' },
+  4: { nama: 'Petronella Pusung', phone: '0813-4455-6677', label: 'Kepala Lingkungan IV (Jaga 4)' },
+  5: { nama: 'Vifi Timang', phone: '0813-5566-7799', label: 'Kepala Lingkungan V (Jaga 5)' },
+};
+
+export const KELURAHAN_PERSURATAN_WHATSAPP = {
+  nama: 'Kantor Kelurahan Kolongan Satu (Layanan Persuratan)',
+  phone: '0812-4455-8891',
+  label: 'Kantor Kelurahan (Layanan Satu Atap)',
+};
 
 interface ModalLetterRequestProps {
   isOpen: boolean;
@@ -58,6 +73,11 @@ export default function ModalLetterRequest({
   const [keperluan, setKeperluan] = useState('');
   const [berkasName, setBerkasName] = useState('KTP_dan_KK_Pemohon.pdf');
 
+  // WhatsApp Target State
+  const [targetTujuan, setTargetTujuan] = useState<'kelurahan' | 'pala'>('kelurahan');
+  const [lastWaUrl, setLastWaUrl] = useState('');
+  const [lastTargetName, setLastTargetName] = useState('');
+
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -72,7 +92,44 @@ export default function ModalLetterRequest({
 
   if (!isOpen) return null;
 
-  // Handle Form Submission with Real API Call
+  // Format WhatsApp Message Helper
+  const getComposedWhatsAppMessage = (letter: {
+    noRegistrasi: string;
+    namaPemohon: string;
+    nikPemohon: string;
+    nomorWaPemohon: string;
+    jenisSurat: string;
+    lingkunganId: number;
+    pekerjaan?: string;
+    alamatLengkap?: string;
+    tujuanKeperluan: string;
+    berkasName?: string;
+  }) => {
+    const pala = PALA_WHATSAPP_CONTACTS[letter.lingkunganId] || PALA_WHATSAPP_CONTACTS[1];
+    return `*PERMOHONAN SURAT MANDIRI WARGA*
+*KELURAHAN KOLONGAN SATU, TOMOHON TENGAH*
+----------------------------------------
+*No. Registrasi :* ${letter.noRegistrasi}
+*Tanggal        :* ${new Date().toLocaleDateString('id-ID')}
+
+*DATA PEMOHON:*
+*Nama Lengkap   :* ${letter.namaPemohon}
+*NIK            :* ${letter.nikPemohon}
+*No. WhatsApp   :* ${letter.nomorWaPemohon}
+*Wilayah Jaga   :* Lingkungan ${letter.lingkunganId} (${pala.nama})
+*Pekerjaan      :* ${letter.pekerjaan || 'Wiraswasta'}
+*Alamat Lengkap :* ${letter.alamatLengkap || `Lingkungan ${letter.lingkunganId}, Kolongan Satu`}
+
+*DETAIL PERMOHONAN:*
+*Jenis Surat    :* ${letter.jenisSurat}
+*Tujuan/Perlu   :* ${letter.tujuanKeperluan}
+*Lampiran       :* ${letter.berkasName || 'KTP & KK'}
+
+----------------------------------------
+_Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu. Mohon bantuan Bapak/Ibu aparatur kelurahan untuk verifikasi berkas permohonan surat ini. Terima kasih._`;
+  };
+
+  // Handle Form Submission with Real API Call & Instant WhatsApp Redirect
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nik || !nama || !wa || !keperluan) {
@@ -82,6 +139,9 @@ export default function ModalLetterRequest({
 
     setIsSubmitting(true);
     setSubmitError(null);
+
+    const target = targetTujuan === 'pala' ? (PALA_WHATSAPP_CONTACTS[lingkunganId] || PALA_WHATSAPP_CONTACTS[1]) : KELURAHAN_PERSURATAN_WHATSAPP;
+    const cleanPhone = target.phone.replace(/[^0-9]/g, '').replace(/^0/, '62');
 
     try {
       const payload = {
@@ -116,6 +176,17 @@ export default function ModalLetterRequest({
       onAddLetter(newLetter);
       setSubmittedLetter(newLetter);
 
+      // Generate WhatsApp Link & Direct immediately
+      const waMsg = getComposedWhatsAppMessage(newLetter);
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(waMsg)}`;
+      setLastWaUrl(waUrl);
+      setLastTargetName(target.nama);
+
+      // Open WhatsApp in new window/tab
+      if (typeof window !== 'undefined') {
+        window.open(waUrl, '_blank');
+      }
+
       // Reset form fields
       setNik('');
       setNama('');
@@ -146,6 +217,15 @@ export default function ModalLetterRequest({
       };
       onAddLetter(fallbackReq);
       setSubmittedLetter(fallbackReq);
+
+      const waMsg = getComposedWhatsAppMessage(fallbackReq);
+      const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(waMsg)}`;
+      setLastWaUrl(waUrl);
+      setLastTargetName(target.nama);
+
+      if (typeof window !== 'undefined') {
+        window.open(waUrl, '_blank');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -500,34 +580,49 @@ export default function ModalLetterRequest({
                   </div>
 
                   {/* Quick Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
-                    <button
-                      onClick={() => onPrintLetter(submittedLetter)}
-                      className="flex-1 py-3 px-4 bg-sky-700 hover:bg-sky-800 text-white text-xs font-bold rounded-xl shadow-md shadow-sky-700/20 transition flex items-center justify-center space-x-2"
-                    >
-                      <Printer className="w-4 h-4" />
-                      <span>Lihat Draf Surat Resmi</span>
-                    </button>
+                  <div className="flex flex-col gap-3 pt-2">
+                    {lastWaUrl && (
+                      <a
+                        href={lastWaUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center space-x-2"
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                        <span>Kirim / Buka WhatsApp ({lastTargetName})</span>
+                        <ExternalLink className="w-3.5 h-3.5 ml-1" />
+                      </a>
+                    )}
 
-                    <button
-                      onClick={() => {
-                        setTrackQuery(submittedLetter.noRegistrasi);
-                        handleSearchTracking(submittedLetter.noRegistrasi);
-                        setActiveTab('lacak');
-                        setSubmittedLetter(null);
-                      }}
-                      className="py-3 px-4 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold rounded-xl transition flex items-center space-x-2"
-                    >
-                      <Search className="w-4 h-4" />
-                      <span>Lacak Progres Surat</span>
-                    </button>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        onClick={() => onPrintLetter(submittedLetter)}
+                        className="flex-1 py-3 px-4 bg-sky-700 hover:bg-sky-800 text-white text-xs font-bold rounded-xl shadow-md shadow-sky-700/20 transition flex items-center justify-center space-x-2"
+                      >
+                        <Printer className="w-4 h-4" />
+                        <span>Lihat Draf Surat Resmi</span>
+                      </button>
 
-                    <button
-                      onClick={() => setSubmittedLetter(null)}
-                      className="py-3 px-4 text-slate-500 hover:text-slate-800 text-xs font-semibold rounded-xl transition"
-                    >
-                      Ajukan Surat Baru
-                    </button>
+                      <button
+                        onClick={() => {
+                          setTrackQuery(submittedLetter.noRegistrasi);
+                          handleSearchTracking(submittedLetter.noRegistrasi);
+                          setActiveTab('lacak');
+                          setSubmittedLetter(null);
+                        }}
+                        className="py-3 px-4 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold rounded-xl transition flex items-center space-x-2"
+                      >
+                        <Search className="w-4 h-4" />
+                        <span>Lacak Progres Surat</span>
+                      </button>
+
+                      <button
+                        onClick={() => setSubmittedLetter(null)}
+                        className="py-3 px-4 text-slate-500 hover:text-slate-800 text-xs font-semibold rounded-xl transition"
+                      >
+                        Ajukan Surat Baru
+                      </button>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -535,7 +630,7 @@ export default function ModalLetterRequest({
                   <div>
                     <h3 className="text-sm font-bold text-slate-900">Formulir Permohonan Surat Mandiri</h3>
                     <p className="text-xs text-slate-500">
-                      Layanan terpadu satu atap kantor Kelurahan Kolongan Satu terhubung langsung ke database kelurahan.
+                      Layanan terpadu satu atap kantor Kelurahan Kolongan Satu terhubung langsung ke database kelurahan dan WhatsApp petugas.
                     </p>
                   </div>
 
@@ -671,6 +766,70 @@ export default function ModalLetterRequest({
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500"
                       />
                     </div>
+
+                    {/* Target WhatsApp Destination Selector */}
+                    <div className="md:col-span-2 p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          <MessageCircle className="w-4 h-4 text-emerald-600" />
+                          <span>Pilih Nomor / Tujuan Pengiriman WhatsApp:</span>
+                        </label>
+                        <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                          Direct WhatsApp Aktif
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {/* Option 1: Kantor Kelurahan */}
+                        <label
+                          className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+                            targetTujuan === 'kelurahan'
+                              ? 'bg-sky-50/80 border-sky-400 text-sky-950 font-semibold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="targetWa"
+                            checked={targetTujuan === 'kelurahan'}
+                            onChange={() => setTargetTujuan('kelurahan')}
+                            className="mt-0.5 text-sky-600 focus:ring-sky-500"
+                          />
+                          <div className="leading-tight">
+                            <span className="font-bold block text-slate-900">Kantor Kelurahan (Layanan Satu Atap)</span>
+                            <span className="text-[11px] text-sky-700 font-mono font-medium block mt-0.5">{KELURAHAN_PERSURATAN_WHATSAPP.phone}</span>
+                            <span className="text-[10px] text-slate-500 block mt-0.5">Admin & Staf Verifikasi Persuratan</span>
+                          </div>
+                        </label>
+
+                        {/* Option 2: Kepala Lingkungan */}
+                        <label
+                          className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+                            targetTujuan === 'pala'
+                              ? 'bg-emerald-50/80 border-emerald-400 text-emerald-950 font-semibold shadow-2xs'
+                              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="targetWa"
+                            checked={targetTujuan === 'pala'}
+                            onChange={() => setTargetTujuan('pala')}
+                            className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                          />
+                          <div className="leading-tight">
+                            <span className="font-bold block text-slate-900">{PALA_WHATSAPP_CONTACTS[lingkunganId]?.label || `Pala Jaga ${lingkunganId}`}</span>
+                            <span className="text-[11px] text-emerald-700 font-mono font-medium block mt-0.5">{PALA_WHATSAPP_CONTACTS[lingkunganId]?.phone}</span>
+                            <span className="text-[10px] text-slate-500 block mt-0.5">{PALA_WHATSAPP_CONTACTS[lingkunganId]?.nama}</span>
+                          </div>
+                        </label>
+                      </div>
+
+                      <p className="text-[11px] text-slate-500 leading-normal flex items-start gap-1.5 pt-0.5">
+                        <span className="text-emerald-600 font-bold">ℹ</span>
+                        <span>Saat menekan tombol kirim di bawah, permohonan akan otomatis tersimpan di sistem kelurahan dan jendela WhatsApp akan langsung terbuka dengan format surat yang siap dikirim.</span>
+                      </p>
+                    </div>
                   </div>
 
                   <div className="pt-2 flex items-center justify-end space-x-3 border-t border-slate-100">
@@ -678,23 +837,23 @@ export default function ModalLetterRequest({
                       type="button"
                       onClick={() => setActiveTab('daftar')}
                       disabled={isSubmitting}
-                      className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                      className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
                     >
                       Batal
                     </button>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-5 py-2.5 rounded-xl text-xs font-bold bg-sky-700 hover:bg-sky-800 text-white shadow-md shadow-sky-700/20 transition flex items-center space-x-2 disabled:opacity-60"
+                      className="px-5 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md shadow-emerald-600/20 transition flex items-center space-x-2 disabled:opacity-60 cursor-pointer"
                     >
                       {isSubmitting ? (
                         <>
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>Menyimpan ke Database...</span>
+                          <span>Menyimpan &amp; Menyiapkan WhatsApp...</span>
                         </>
                       ) : (
                         <>
-                          <Send className="w-3.5 h-3.5" />
+                          <MessageCircle className="w-3.5 h-3.5" />
                           <span>Kirim Permohonan Surat Sekarang</span>
                         </>
                       )}
