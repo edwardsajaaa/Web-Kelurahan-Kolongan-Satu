@@ -262,9 +262,6 @@ export default function DetailView({
           <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2 tracking-tight">
             {item.title}
           </h3>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
-            {item.description || 'Data monografi resmi Kelurahan Kolongan Satu.'}
-          </p>
         </div>
 
         {/* Top Toolbar Action Buttons */}

@@ -670,7 +670,7 @@ export const MONOGRAFI_ITEMS: MonografiItem[] = [
     badgeLabel: 'Data Mutakhir 2025',
     image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=900&auto=format&fit=crop&q=80',
     kasieName: 'Djonny Maweikere, S.IP (Kasie Pem & Trantib)',
-    description: 'Data resmi Monografi Kelurahan Kolongan Satu Tahun 2025. Total penduduk mencapai 1.512 jiwa dengan hak pilih 1.245 jiwa dan luas wilayah administratif mencapai 208,25 Hektar.',
+    description: '',
     detailedNotes: [
       'Batas Wilayah 2025: Utara (Kelurahan Kolongan), Timur (Kelurahan Walian, Matani Tiga), Selatan (Kelurahan Lansot), Barat (Kelurahan Lansot).',
       'Luas Wilayah Total: 208,25 Ha (Tanah Kering 185,75 Ha, Pemukiman 34,50 Ha, Pertanian/Perkebunan 9,50 Ha, Fasilitas Umum 7,50 Ha, Sawah 5,00 Ha, Pekarangan 4,00 Ha, Rawa 0,50 Ha, Lahan Tidur 0,05 Ha).',
