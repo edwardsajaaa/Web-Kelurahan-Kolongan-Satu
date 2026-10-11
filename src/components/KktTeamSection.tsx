@@ -157,12 +157,11 @@ export default function KktTeamSection() {
             {/* Dosen Pembimbing Lapangan */}
             <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between items-center text-center shadow-2xs hover:shadow-sm transition-all">
               <div className="space-y-3 flex flex-col items-center w-full">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
                     <UserCheck className="w-3.5 h-3.5" />
                     <span>{supervisors.dosenPembimbing.badge}</span>
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 </div>
                 <div className="w-full text-center">
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
@@ -186,12 +185,11 @@ export default function KktTeamSection() {
             {/* Dosen Pengawas Lapangan */}
             <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between items-center text-center shadow-2xs hover:shadow-sm transition-all">
               <div className="space-y-3 flex flex-col items-center w-full">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
                     <ShieldCheck className="w-3.5 h-3.5" />
                     <span>{supervisors.dosenPengawas.badge}</span>
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 </div>
                 <div className="w-full text-center">
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
@@ -215,12 +213,11 @@ export default function KktTeamSection() {
             {/* Koordinator P3KKNT */}
             <div className="bg-[#faf8ff] border border-[#eaedff] hover:border-[#006194]/40 rounded-2xl p-5 2xl:p-6 flex flex-col justify-between items-center text-center shadow-2xs hover:shadow-sm transition-all">
               <div className="space-y-3 flex flex-col items-center w-full">
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] 2xl:text-xs font-bold bg-[#cce5ff]/80 text-[#004b73]">
                     <Award className="w-3.5 h-3.5" />
                     <span>{supervisors.koordinatorP3KKNT.badge}</span>
                   </span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 </div>
                 <div className="w-full text-center">
                   <h4 className="text-base sm:text-lg 2xl:text-xl font-bold text-[#131b2e] leading-snug">
