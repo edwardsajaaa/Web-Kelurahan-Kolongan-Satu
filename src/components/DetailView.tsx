@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MonografiItem } from '@/data/monografiData';
 import { Official } from '@/data/officialsData';
 import {
@@ -13,7 +13,7 @@ import {
   PieChart,
   Send,
   Check,
-  Award,
+  ShieldCheck,
   Save,
   Loader2,
   Plus,
@@ -21,9 +21,9 @@ import {
   Eye,
   AlertCircle,
   Users,
-  ShieldCheck,
-  RefreshCw,
   Sparkles,
+  RotateCcw,
+  CheckCheck,
 } from 'lucide-react';
 
 interface DetailViewProps {
@@ -32,10 +32,10 @@ interface DetailViewProps {
   onSaveItem?: (updatedItem: MonografiItem) => Promise<void> | void;
   onApproveItem?: (id: string) => void;
   onVerifySeklur?: (id: string) => void;
-  onOpenLetterModal: () => void;
-  onOpenReportModal: () => void;
-  onOpenPrintPreview: (item: MonografiItem) => void;
-  onTriggerWhatsApp: (item: MonografiItem) => void;
+  onOpenLetterModal?: () => void;
+  onOpenReportModal?: () => void;
+  onOpenPrintPreview?: (item: MonografiItem) => void;
+  onTriggerWhatsApp?: (item: MonografiItem) => void;
 }
 
 export default function DetailView({
@@ -44,36 +44,32 @@ export default function DetailView({
   onSaveItem,
   onApproveItem,
   onVerifySeklur,
-  onOpenLetterModal,
-  onOpenReportModal,
   onOpenPrintPreview,
   onTriggerWhatsApp,
 }: DetailViewProps) {
   const isLurah = currentOfficial.roleCode === 'superadmin';
   const isSeklur = currentOfficial.roleCode === 'admin_seklur';
 
-  // Mode: 'form' (Form Input Langsung) atau 'preview' (Pratinjau Grafik & Tampilan)
+  // Mode: 'form' (Formulir Input) atau 'preview' (Pratinjau Grafik)
   const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
 
-  // Local form state initialized from selected item
+  // Form local state
   const [title, setTitle] = useState(item.title);
   const [year, setYear] = useState(item.year);
   const [palaName, setPalaName] = useState(item.palaName || '');
   const [kasieName, setKasieName] = useState(item.kasieName || '');
 
-  // Demografi Metrics
+  // Demography Core Numbers
   const [pria, setPria] = useState<number>(item.metrics.pria || 0);
   const [wanita, setWanita] = useState<number>(item.metrics.wanita || 0);
-  const [totalWarga, setTotalWarga] = useState<number>(
-    item.metrics.totalWarga || (item.metrics.pria || 0) + (item.metrics.wanita || 0)
-  );
   const [kepalaKeluarga, setKepalaKeluarga] = useState<number>(item.metrics.kepalaKeluarga || 0);
 
-  // Custom Metrics (Luas Lahan, Ternak, dsb)
-  const [customMetrics, setCustomMetrics] = useState<{ label: string; value: string | number }[]>(
-    item.metrics.customMetrics ? [...item.metrics.customMetrics] : []
-  );
+  // Dynamic Variable Indicators
+  const [customMetrics, setCustomMetrics] = useState<
+    { label: string; value: string | number; note?: string }[]
+  >([]);
 
+  // Narration & Field Notes
   const [description, setDescription] = useState(item.description);
   const [detailedNotesText, setDetailedNotesText] = useState(
     item.detailedNotes ? item.detailedNotes.join('\n') : ''
@@ -85,6 +81,22 @@ export default function DetailView({
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
 
+  // Auto-calculated Total Penduduk
+  const totalWarga = useMemo(() => {
+    return pria + wanita;
+  }, [pria, wanita]);
+
+  // Percentage Calculations
+  const priaPct = useMemo(() => {
+    if (totalWarga <= 0) return '0%';
+    return `${((pria / totalWarga) * 100).toFixed(2).replace('.', ',')}%`;
+  }, [pria, totalWarga]);
+
+  const wanitaPct = useMemo(() => {
+    if (totalWarga <= 0) return '0%';
+    return `${((wanita / totalWarga) * 100).toFixed(2).replace('.', ',')}%`;
+  }, [wanita, totalWarga]);
+
   // Reset form whenever active item changes
   useEffect(() => {
     setTitle(item.title);
@@ -92,39 +104,45 @@ export default function DetailView({
     setPalaName(item.palaName || '');
     setKasieName(item.kasieName || '');
 
-    const initialPria = item.metrics.pria || 0;
-    const initialWanita = item.metrics.wanita || 0;
+    const initialPria = item.metrics.pria ?? 0;
+    const initialWanita = item.metrics.wanita ?? 0;
     setPria(initialPria);
     setWanita(initialWanita);
-    setTotalWarga(item.metrics.totalWarga || initialPria + initialWanita);
-    setKepalaKeluarga(item.metrics.kepalaKeluarga || 0);
+    setKepalaKeluarga(item.metrics.kepalaKeluarga ?? 0);
 
-    setCustomMetrics(item.metrics.customMetrics ? [...item.metrics.customMetrics] : []);
+    // Default indicators matching Stitch if empty
+    if (item.metrics.customMetrics && item.metrics.customMetrics.length > 0) {
+      setCustomMetrics(item.metrics.customMetrics.map((c) => ({ ...c })));
+    } else if (item.id.includes('kependudukan') || item.categoryKey === 'kependudukan') {
+      setCustomMetrics([
+        { label: 'Hak Pilih Pemilu (DPT)', value: '1.245', note: 'Pemilih tetap aktif terdaftar di PPS' },
+        { label: 'Luas Total Wilayah', value: '208,25', note: 'Cakupan teritorial Kelurahan Kolongan Satu' },
+        { label: 'Suhu Udara Rata-rata', value: '23', note: 'Kondisi klimatologi perbukitan Tomohon' },
+        { label: 'Sumber Air Baku / Mata Air Alami', value: '14', note: 'Titik sumber air bersih aktif lingkungan' },
+      ]);
+    } else {
+      setCustomMetrics([]);
+    }
+
     setDescription(item.description);
     setDetailedNotesText(item.detailedNotes ? item.detailedNotes.join('\n') : '');
     setStatusTahapan(item.statusTahapan || 'draft');
     setSaveSuccessMsg(null);
   }, [item]);
 
-  // Auto-calc Total Warga saat Pria / Wanita berubah
-  const handlePriaChange = (val: number) => {
-    const p = Math.max(0, val);
-    setPria(p);
-    setTotalWarga(p + wanita);
-  };
-
-  const handleWanitaChange = (val: number) => {
-    const w = Math.max(0, val);
-    setWanita(w);
-    setTotalWarga(pria + w);
-  };
-
-  // Custom Metric handlers
+  // Add new indicator row
   const handleAddCustomMetric = () => {
-    setCustomMetrics((prev) => [...prev, { label: 'Indikator Baru', value: '0' }]);
+    setCustomMetrics((prev) => [
+      ...prev,
+      { label: 'Indikator Baru', value: '0', note: 'Keterangan parameter' },
+    ]);
   };
 
-  const handleCustomMetricChange = (index: number, field: 'label' | 'value', val: string) => {
+  const handleCustomMetricChange = (
+    index: number,
+    field: 'label' | 'value' | 'note',
+    val: string
+  ) => {
     setCustomMetrics((prev) => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [field]: val };
@@ -136,9 +154,8 @@ export default function DetailView({
     setCustomMetrics((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Submit & Save directly
-  const handleSave = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  // Save handler (Simpan Draf or Simpan & Sinkronisasi)
+  const handleSave = async (isDraft: boolean = false) => {
     if (!onSaveItem) return;
 
     setIsSaving(true);
@@ -149,6 +166,12 @@ export default function DetailView({
       .map((s) => s.trim())
       .filter(Boolean);
 
+    const newStatus = isDraft
+      ? 'draft'
+      : statusTahapan === 'draft'
+      ? 'diverifikasi_seklur'
+      : statusTahapan;
+
     const updatedItem: MonografiItem = {
       ...item,
       title: title.trim() || item.title,
@@ -157,8 +180,8 @@ export default function DetailView({
       kasieName: kasieName.trim() || item.kasieName,
       description: description.trim() || item.description,
       detailedNotes: notesArray.length > 0 ? notesArray : item.detailedNotes,
-      statusTahapan,
-      lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Diperbarui via Portal Staf`,
+      statusTahapan: newStatus,
+      lastUpdated: `${new Date().toLocaleDateString('id-ID')} - Pembaruan Portal e-Monografi`,
       statsValue:
         totalWarga > 0
           ? `${totalWarga.toLocaleString('id-ID')} Jiwa • ${kepalaKeluarga.toLocaleString('id-ID')} KK`
@@ -177,7 +200,12 @@ export default function DetailView({
 
     try {
       await onSaveItem(updatedItem);
-      setSaveSuccessMsg(`Data modul '${updatedItem.title}' berhasil disimpan & langsung tampil di Landing Page!`);
+      setStatusTahapan(newStatus);
+      setSaveSuccessMsg(
+        isDraft
+          ? `Draf data "${updatedItem.title}" berhasil disimpan secara lokal!`
+          : `Data "${updatedItem.title}" berhasil disimpan & disinkronkan ke Landing Page Publik!`
+      );
       setTimeout(() => setSaveSuccessMsg(null), 5000);
     } catch (err) {
       console.error(err);
@@ -186,492 +214,657 @@ export default function DetailView({
     }
   };
 
-  const hasDemographyFields = item.metrics.totalWarga !== undefined || item.categoryKey === 'wilayah' || item.categoryKey === 'kependudukan';
+  // Chapter mapping helper
+  const chapterLabel = useMemo(() => {
+    if (item.categoryKey === 'wilayah') return 'BAB II : TERITORIAL & KEWILAYAHAN JAGA';
+    if (item.categoryKey === 'kependudukan') return 'BAB I : POKOK PEMERINTAHAN & DEMOGRAFI';
+    if (item.categoryKey === 'pendidikan') return 'BAB III : PENDIDIKAN & SUMBER DAYA MANUSIA';
+    if (item.categoryKey === 'ekonomi') return 'BAB IV : PEREKONOMIAN, UMKM & MATA PENCAHARIAN';
+    if (item.categoryKey === 'lingkungan') return 'BAB V : SARANA SANITASI & FASILITAS PUBLIK';
+    return 'BAB VI : TRANSPARANSI & LAPORAN KEUANGAN';
+  }, [item.categoryKey]);
 
   return (
-    <main className="flex-1 bg-[#faf8ff] h-full overflow-y-auto p-4 sm:p-6 md:p-8 flex flex-col justify-between select-text">
-      <div className="space-y-6 max-w-4xl mx-auto w-full pb-12">
+    <section
+      className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden"
+      data-purpose="active-data-form"
+    >
+      {/* 1. Header Banner with Status & Publishing Actions */}
+      <div className="px-6 sm:px-8 py-6 border-b border-slate-100 bg-gradient-to-r from-sky-50/70 via-white to-white flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-brand-100 text-brand-800 tracking-wide uppercase">
+              {chapterLabel}
+            </span>
 
-        {/* 1. HEADER MODUL & AKSI UTAMA */}
-        <div className="bg-white p-5 rounded-3xl border border-[#dae2fd] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2 text-[#535f70] text-xs font-semibold">
-              <MapPin className="w-3.5 h-3.5 text-[#006194] flex-shrink-0" />
-              <span>Kecamatan Tomohon Tengah • Kelurahan Kolongan Satu</span>
-              <span className="text-[#dae2fd]">•</span>
-              <span className="px-2 py-0.5 rounded-full bg-[#f2f3ff] text-[#006194] font-bold text-[11px]">
-                Tahun {item.year}
+            {statusTahapan === 'disahkan_lurah' ? (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
+                <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
+                Terverifikasi Sah (Lurah)
               </span>
-            </div>
-            <h1 className="text-xl sm:text-2xl font-extrabold text-[#131b2e] tracking-tight">
-              {item.title}
-            </h1>
-            <p className="text-xs text-[#535f70]">
-              Area input data resmi untuk ditampilkan langsung ke publik pada Landing Page.
-            </p>
+            ) : statusTahapan === 'diverifikasi_seklur' ? (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-50 text-brand-700 text-xs font-semibold border border-brand-200">
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-600" />
+                Diverifikasi Seklur
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-semibold border border-amber-200">
+                <Clock className="w-3.5 h-3.5 text-amber-600" />
+                Draf Masukan
+              </span>
+            )}
+
+            <span className="text-xs text-slate-400">
+              Pembaruan terakhir: {item.lastUpdated || '24 Mar 2025, 14:20 WITA'}
+            </span>
           </div>
 
-          {/* Tab Switcher & Quick Save */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <div className="inline-flex p-1 bg-[#f2f3ff] rounded-2xl border border-[#dae2fd]">
-              <button
-                type="button"
-                onClick={() => setActiveTab('form')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === 'form'
-                    ? 'bg-[#006194] text-white shadow-xs'
-                    : 'text-[#535f70] hover:text-[#131b2e]'
-                }`}
-              >
-                <FileEdit className="w-3.5 h-3.5" />
-                <span>Formulir Input</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === 'preview'
-                    ? 'bg-[#006194] text-white shadow-xs'
-                    : 'text-[#535f70] hover:text-[#131b2e]'
-                }`}
-              >
-                <Eye className="w-3.5 h-3.5" />
-                <span>Pratinjau Grafik</span>
-              </button>
-            </div>
-
-            <button
-              onClick={() => handleSave()}
-              disabled={isSaving}
-              type="button"
-              className="px-4 py-2 bg-[#006194] hover:bg-[#004f7a] disabled:bg-slate-400 text-white rounded-2xl text-xs font-bold shadow-xs transition flex items-center gap-2 cursor-pointer"
-            >
-              {isSaving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Menyimpan...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  <span>Simpan ke Landing Page</span>
-                </>
-              )}
-            </button>
-          </div>
+          <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-2 tracking-tight">
+            {item.title}
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl leading-relaxed">
+            {item.description ||
+              'Area input data resmi tingkat kelurahan. Parameter angka di bawah ini akan dihitung otomatis serta disajikan langsung ke infografis landing page warga.'}
+          </p>
         </div>
 
-        {/* Success Alert Banner */}
-        {saveSuccessMsg && (
-          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-900 text-xs flex items-center gap-3 animate-in fade-in duration-300">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-            <div className="flex-1 font-semibold">{saveSuccessMsg}</div>
-          </div>
-        )}
+        {/* Top Toolbar Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <button
+            type="button"
+            onClick={() => setActiveTab(activeTab === 'form' ? 'preview' : 'form')}
+            className={`px-4 py-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 shadow-xs transition-all active:scale-98 cursor-pointer ${
+              activeTab === 'preview'
+                ? 'bg-brand-50 border-brand-300 text-brand-700 font-bold'
+                : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
+            }`}
+          >
+            {activeTab === 'preview' ? (
+              <>
+                <FileEdit className="w-4 h-4 text-brand-600" />
+                <span>Kembali ke Formulir</span>
+              </>
+            ) : (
+              <>
+                <Eye className="w-4 h-4 text-slate-500" />
+                <span>Pratinjau Grafik</span>
+              </>
+            )}
+          </button>
 
-        {/* 2. FORMULIR INPUT LANGSUNG (DEFAULT ACTIVE) */}
-        {activeTab === 'form' ? (
-          <form onSubmit={handleSave} className="space-y-6">
-            
-            {/* Bagian A: Data Pokok Angka (Demografi / Wilayah Jaga) */}
-            <div className="bg-white p-6 rounded-3xl border border-[#dae2fd] shadow-xs space-y-5">
-              <div className="flex items-center justify-between border-b border-[#e2e7ff] pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-[#e2e7ff] text-[#006194] flex items-center justify-center">
-                    <Users className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-[#131b2e]">
-                      {hasDemographyFields ? 'Input Data Kependudukan & KK' : 'Indikator & Angka Kunci'}
-                    </h3>
-                    <p className="text-[11px] text-[#535f70]">
-                      Nilai angka ini langsung mengalir ke kalkulasi grafik dan metrik landing page.
-                    </p>
-                  </div>
-                </div>
+          <button
+            type="button"
+            onClick={() => handleSave(true)}
+            disabled={isSaving}
+            className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs flex items-center gap-2 shadow-xs transition-all active:scale-98 cursor-pointer"
+          >
+            <Save className="w-4 h-4 text-slate-500" />
+            <span>Simpan Draf</span>
+          </button>
 
-                <span className="text-[11px] text-[#006194] bg-[#f2f3ff] px-2.5 py-1 rounded-full font-bold">
-                  {statusTahapan === 'disahkan_lurah'
-                    ? 'Disahkan Lurah'
-                    : statusTahapan === 'diverifikasi_seklur'
-                    ? 'Paraf Seklur'
-                    : 'Draf Masukan'}
-                </span>
+          <button
+            type="button"
+            onClick={() => handleSave(false)}
+            disabled={isSaving}
+            className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:bg-slate-400 text-white font-bold text-xs flex items-center gap-2 shadow-xs shadow-brand-500/20 transition-all active:scale-98 cursor-pointer"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Menyinkronkan...</span>
+              </>
+            ) : (
+              <>
+                <Check className="w-4 h-4" />
+                <span>Publikasikan ke Landing Page</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Success Notification Alert */}
+      {saveSuccessMsg && (
+        <div className="mx-6 sm:mx-8 mt-6 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-900 text-xs flex items-center gap-3 animate-in fade-in duration-300">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          <div className="flex-1 font-semibold">{saveSuccessMsg}</div>
+        </div>
+      )}
+
+      {/* 2. TAB CONTENT: FORMULIR INPUT (STITCH LAYOUT) */}
+      {activeTab === 'form' ? (
+        <form
+          className="p-6 sm:p-8 space-y-8"
+          data-purpose="main-monography-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSave(false);
+          }}
+        >
+          {/* SECTION 1: Core Population Metric Cards (4-Column Grid) */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h4 className="text-sm font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                  <span>I. Indikator Kunci Demografi</span>
+                  <span className="text-xs font-normal text-slate-500">
+                    (Buku Induk Kependudukan {year})
+                  </span>
+                </h4>
               </div>
+              <span className="text-xs text-brand-600 bg-brand-50 px-2.5 py-1 rounded-md font-semibold">
+                Kalkulasi Otomatis Aktif
+              </span>
+            </div>
 
-              {hasDemographyFields ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* Total Penduduk */}
-                  <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#e2e7ff] space-y-1">
-                    <label className="text-[11px] font-bold text-[#535f70] block">
-                      Total Penduduk (Jiwa)
-                    </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {/* Total Penduduk Card (Auto-Calculated Readonly) */}
+              <div className="bg-gradient-to-b from-white to-sky-50/40 rounded-2xl border-2 border-brand-200/80 p-5 shadow-xs relative flex flex-col justify-between transition-all">
+                <div className="flex items-center justify-between">
+                  <label
+                    className="text-xs font-bold text-slate-700 uppercase tracking-wide cursor-default"
+                    htmlFor="total-penduduk"
+                  >
+                    Total Penduduk
+                  </label>
+                  <span className="p-1.5 rounded-lg bg-sky-100/70 text-sky-700">
+                    <Users className="w-4 h-4" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-baseline gap-2">
                     <input
+                      className="w-full text-3xl font-extrabold text-slate-900 tracking-tight bg-transparent border-0 p-0 focus:ring-0 cursor-default"
+                      id="total-penduduk"
+                      name="total_penduduk"
+                      readOnly
                       type="number"
                       value={totalWarga}
-                      onChange={(e) => setTotalWarga(Math.max(0, parseInt(e.target.value) || 0))}
-                      className="w-full text-lg font-black text-[#131b2e] bg-white border border-[#dae2fd] rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#006194] focus:outline-none"
                     />
-                    <span className="text-[10px] text-[#71787e] block">Otomatis dihitung (Pria + Wanita)</span>
+                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                      Jiwa
+                    </span>
                   </div>
+                  <div className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-500 bg-white/80 py-1 px-2 rounded-lg border border-slate-200/60">
+                    <Sparkles className="w-3.5 h-3.5 text-brand-500 shrink-0" />
+                    <span>Hasil penjumlahan Laki-laki + Perempuan</span>
+                  </div>
+                </div>
+              </div>
 
-                  {/* Kepala Keluarga */}
-                  <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#e2e7ff] space-y-1">
-                    <label className="text-[11px] font-bold text-[#535f70] block">
-                      Kepala Keluarga (KK)
-                    </label>
+              {/* Kepala Keluarga (KK) */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+                <div className="flex items-center justify-between">
+                  <label
+                    className="text-xs font-bold text-slate-600 uppercase tracking-wide cursor-pointer"
+                    htmlFor="total-kk"
+                  >
+                    Kepala Keluarga (KK)
+                  </label>
+                  <span className="p-1.5 rounded-lg bg-slate-100 text-slate-600">
+                    <Users className="w-4 h-4" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-baseline gap-2 border-b border-slate-200 focus-within:border-brand-500 pb-1">
                     <input
+                      className="w-full text-3xl font-extrabold text-slate-900 tracking-tight bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
+                      id="total-kk"
+                      name="total_kk"
                       type="number"
                       value={kepalaKeluarga}
-                      onChange={(e) => setKepalaKeluarga(Math.max(0, parseInt(e.target.value) || 0))}
-                      className="w-full text-lg font-black text-[#131b2e] bg-white border border-[#dae2fd] rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#006194] focus:outline-none"
+                      onChange={(e) =>
+                        setKepalaKeluarga(Math.max(0, parseInt(e.target.value) || 0))
+                      }
                     />
-                    <span className="text-[10px] text-[#71787e] block">Buku Register Kepala Keluarga</span>
+                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                      KK
+                    </span>
                   </div>
+                  <p className="mt-2 text-[11px] text-slate-500">
+                    Buku Register Kepala Keluarga {year}
+                  </p>
+                </div>
+              </div>
 
-                  {/* Laki-Laki */}
-                  <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#e2e7ff] space-y-1">
-                    <label className="text-[11px] font-bold text-[#535f70] block">
-                      Laki-Laki (Jiwa)
-                    </label>
+              {/* Laki-Laki */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+                <div className="flex items-center justify-between">
+                  <label
+                    className="text-xs font-bold text-blue-700 uppercase tracking-wide cursor-pointer"
+                    htmlFor="total-pria"
+                  >
+                    Laki-Laki
+                  </label>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700">
+                    {priaPct}
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-baseline gap-2 border-b border-blue-200 focus-within:border-brand-500 pb-1">
                     <input
+                      className="w-full text-3xl font-extrabold text-blue-900 tracking-tight bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
+                      id="total-pria"
+                      name="total_pria"
                       type="number"
                       value={pria}
-                      onChange={(e) => handlePriaChange(parseInt(e.target.value) || 0)}
-                      className="w-full text-lg font-black text-[#006194] bg-white border border-[#dae2fd] rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#006194] focus:outline-none"
+                      onChange={(e) => setPria(Math.max(0, parseInt(e.target.value) || 0))}
                     />
-                    <span className="text-[10px] text-[#71787e] block">Warga jenis kelamin pria</span>
+                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                      Jiwa
+                    </span>
                   </div>
+                  <p className="mt-2 text-[11px] text-slate-500">
+                    Warga jenis kelamin laki-laki
+                  </p>
+                </div>
+              </div>
 
-                  {/* Perempuan */}
-                  <div className="p-4 rounded-2xl bg-[#faf8ff] border border-[#e2e7ff] space-y-1">
-                    <label className="text-[11px] font-bold text-[#535f70] block">
-                      Perempuan (Jiwa)
-                    </label>
+              {/* Perempuan */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors">
+                <div className="flex items-center justify-between">
+                  <label
+                    className="text-xs font-bold text-rose-600 uppercase tracking-wide cursor-pointer"
+                    htmlFor="total-wanita"
+                  >
+                    Perempuan
+                  </label>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700">
+                    {wanitaPct}
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-baseline gap-2 border-b border-rose-200 focus-within:border-brand-500 pb-1">
                     <input
+                      className="w-full text-3xl font-extrabold text-rose-600 tracking-tight bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
+                      id="total-wanita"
+                      name="total_wanita"
                       type="number"
                       value={wanita}
-                      onChange={(e) => handleWanitaChange(parseInt(e.target.value) || 0)}
-                      className="w-full text-lg font-black text-rose-600 bg-white border border-[#dae2fd] rounded-xl px-3 py-2 focus:ring-2 focus:ring-rose-500 focus:outline-none"
+                      onChange={(e) =>
+                        setWanita(Math.max(0, parseInt(e.target.value) || 0))
+                      }
                     />
-                    <span className="text-[10px] text-[#71787e] block">Warga jenis kelamin perempuan</span>
+                    <span className="text-xs font-semibold text-slate-500 uppercase">
+                      Jiwa
+                    </span>
                   </div>
-                </div>
-              ) : null}
-
-              {/* Indikator Tambahan / Custom Metrics (Luas Lahan, Ternak, Air, Sarana) */}
-              <div className="pt-2 space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-[#131b2e] flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#006194]" />
-                    <span>Rincian Indikator Variabel (Luas Lahan, Ternak, dsb):</span>
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleAddCustomMetric}
-                    className="text-xs font-bold text-[#006194] hover:text-[#004f7a] bg-[#f2f3ff] hover:bg-[#e2e7ff] px-3 py-1.5 rounded-xl border border-[#dae2fd] flex items-center gap-1 transition cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Tambah Baris Indikator</span>
-                  </button>
-                </div>
-
-                {customMetrics.length === 0 ? (
-                  <p className="text-xs text-[#71787e] italic p-3 bg-[#faf8ff] rounded-2xl border border-dashed border-[#dae2fd]">
-                    Belum ada baris indikator khusus. Klik tombol "Tambah Baris Indikator" di atas untuk menambahkan variabel seperti luas lahan, ternak, dsb.
+                  <p className="mt-2 text-[11px] text-slate-500">
+                    Warga jenis kelamin perempuan
                   </p>
-                ) : (
-                  <div className="space-y-2.5">
-                    {customMetrics.map((cm, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-2.5 p-2.5 bg-[#faf8ff] rounded-2xl border border-[#e2e7ff]"
-                      >
-                        <input
-                          type="text"
-                          value={cm.label}
-                          onChange={(e) => handleCustomMetricChange(idx, 'label', e.target.value)}
-                          placeholder="Nama Variabel (misal: Sawah, Babi, Air PDAM)"
-                          className="flex-1 text-xs font-semibold text-[#131b2e] bg-white border border-[#dae2fd] rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#006194] focus:outline-none"
-                        />
-                        <input
-                          type="text"
-                          value={cm.value}
-                          onChange={(e) => handleCustomMetricChange(idx, 'value', e.target.value)}
-                          placeholder="Nilai (misal: 34,50 Ha, 510 Ekor)"
-                          className="w-36 sm:w-48 text-xs font-bold text-[#006194] bg-white border border-[#dae2fd] rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#006194] focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveCustomMetric(idx)}
-                          className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition cursor-pointer"
-                          title="Hapus baris"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Bagian B: Aparatur Penanggung Jawab Lapangan */}
-            <div className="bg-white p-6 rounded-3xl border border-[#dae2fd] shadow-xs space-y-4">
-              <h3 className="text-sm font-bold text-[#131b2e] border-b border-[#e2e7ff] pb-2">
-                Aparatur &amp; Penanggung Jawab Data
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {item.categoryKey === 'wilayah' || item.palaName !== undefined ? (
-                  <div>
-                    <label className="text-xs font-bold text-[#3f4850] block mb-1">
-                      Kepala Lingkungan (Pala)
-                    </label>
-                    <input
-                      type="text"
-                      value={palaName}
-                      onChange={(e) => setPalaName(e.target.value)}
-                      placeholder="Nama Kepala Lingkungan (Pala)"
-                      className="w-full text-xs font-semibold text-[#131b2e] bg-[#faf8ff] border border-[#dae2fd] rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#006194] focus:outline-none"
-                    />
-                  </div>
-                ) : null}
-
-                <div>
-                  <label className="text-xs font-bold text-[#3f4850] block mb-1">
-                    Kasie / Penanggung Jawab Data Kelurahan
-                  </label>
-                  <input
-                    type="text"
-                    value={kasieName}
-                    onChange={(e) => setKasieName(e.target.value)}
-                    placeholder="Contoh: Djonny Maweikere, S.IP (Kasie Pem & Trantib)"
-                    className="w-full text-xs font-semibold text-[#131b2e] bg-[#faf8ff] border border-[#dae2fd] rounded-xl px-3 py-2 focus:ring-2 focus:ring-[#006194] focus:outline-none"
-                  />
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Bagian C: Deskripsi & Catatan Lapangan */}
-            <div className="bg-white p-6 rounded-3xl border border-[#dae2fd] shadow-xs space-y-4">
-              <h3 className="text-sm font-bold text-[#131b2e] border-b border-[#e2e7ff] pb-2">
-                Deskripsi &amp; Catatan Rinci Monografi
-              </h3>
-
+          {/* SECTION 2: Dynamic Variable Indicators Table */}
+          <div className="pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
               <div>
-                <label className="text-xs font-bold text-[#3f4850] block mb-1">
-                  Ringkasan Narasi Profil
-                </label>
-                <textarea
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Tuliskan uraian ringkasan perkembangan data monografi..."
-                  className="w-full text-xs text-[#131b2e] bg-[#faf8ff] border border-[#dae2fd] rounded-xl p-3 focus:ring-2 focus:ring-[#006194] focus:outline-none leading-relaxed"
-                />
+                <h4 className="text-sm font-bold text-slate-900 tracking-tight">
+                  II. Rincian Indikator Variabel (Luas Lahan, Geografis, Sanitasi &amp; Penunjang)
+                </h4>
+                <p className="text-xs text-slate-500">
+                  Parameter terinci yang disematkan dalam data profil umum Kelurahan Kolongan Satu
+                </p>
               </div>
-
-              <div>
-                <label className="text-xs font-bold text-[#3f4850] block mb-1">
-                  Poin-Poin Rincian Catatan Lapangan (Satu catatan per baris)
-                </label>
-                <textarea
-                  rows={4}
-                  value={detailedNotesText}
-                  onChange={(e) => setDetailedNotesText(e.target.value)}
-                  placeholder="Tuliskan catatan rinci per baris (akan otomatis dijadikan daftar poin)..."
-                  className="w-full text-xs text-[#131b2e] bg-[#faf8ff] border border-[#dae2fd] rounded-xl p-3 focus:ring-2 focus:ring-[#006194] focus:outline-none leading-relaxed font-mono"
-                />
-              </div>
+              <button
+                type="button"
+                onClick={handleAddCustomMetric}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold transition-colors border border-brand-200/80 cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ Tambah Baris Indikator</span>
+              </button>
             </div>
 
-            {/* Bagian D: Tahapan Validasi & Simpan */}
-            <div className="bg-white p-6 rounded-3xl border border-[#dae2fd] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <ShieldCheck className="w-5 h-5 text-[#006194] shrink-0" />
-                <div className="text-xs">
-                  <label className="font-bold text-[#131b2e] block">Status Validasi:</label>
-                  <select
-                    value={statusTahapan}
-                    onChange={(e) => setStatusTahapan(e.target.value as any)}
-                    className="mt-1 text-xs font-bold text-[#006194] bg-[#f2f3ff] border border-[#dae2fd] rounded-xl px-3 py-1.5 focus:outline-none cursor-pointer"
-                  >
-                    <option value="draft">Draf Masukan (Staf/Pala)</option>
-                    <option value="diverifikasi_seklur">Diverifikasi &amp; Paraf Seklur</option>
-                    <option value="disahkan_lurah">Disahkan &amp; Diterbitkan Lurah (Publik)</option>
-                  </select>
+            {/* Dynamic List Container */}
+            <div className="bg-slate-50/70 rounded-2xl border border-slate-200/90 overflow-hidden divide-y divide-slate-200/70">
+              {customMetrics.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400 italic">
+                  Belum ada baris indikator variabel khusus. Klik tombol "+ Tambah Baris Indikator" di atas.
                 </div>
-              </div>
-
-              <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
-                <button
-                  type="button"
-                  onClick={() => {
-                    // Reset to original
-                    setTitle(item.title);
-                    setPria(item.metrics.pria || 0);
-                    setWanita(item.metrics.wanita || 0);
-                    setTotalWarga(item.metrics.totalWarga || 0);
-                    setKepalaKeluarga(item.metrics.kepalaKeluarga || 0);
-                    setDescription(item.description);
-                  }}
-                  className="px-4 py-2 text-xs font-semibold text-[#535f70] hover:text-[#131b2e] bg-[#f2f3ff] rounded-2xl transition cursor-pointer"
-                >
-                  Batal / Reset
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="px-6 py-2.5 bg-[#006194] hover:bg-[#004f7a] disabled:bg-slate-400 text-white rounded-2xl text-xs font-bold shadow-xs transition flex items-center gap-2 cursor-pointer"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Menyimpan ke Sistem...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" />
-                      <span>Simpan &amp; Publikasikan ke Landing Page</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-          </form>
-        ) : (
-          /* 3. PRATINJAU GRAFIK & TAMPILAN RESMI (TAB PREVIEW) */
-          <div className="space-y-6">
-            {/* Metrik Utama (4 Blok Angka) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {item.metrics.totalWarga ? (
-                <>
-                  <div className="p-4 rounded-2xl bg-white border border-[#dae2fd] shadow-xs">
-                    <p className="text-[10px] font-bold text-[#707881] uppercase tracking-wider">Total Penduduk</p>
-                    <p className="text-2xl font-black text-[#131b2e] mt-1">
-                      {item.metrics.totalWarga.toLocaleString()} <span className="text-xs font-semibold text-[#535f70]">Jiwa</span>
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-white border border-[#dae2fd] shadow-xs">
-                    <p className="text-[10px] font-bold text-[#707881] uppercase tracking-wider">Kepala Keluarga</p>
-                    <p className="text-2xl font-black text-[#131b2e] mt-1">
-                      {item.metrics.kepalaKeluarga?.toLocaleString()} <span className="text-xs font-semibold text-[#535f70]">KK</span>
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-white border border-[#dae2fd] shadow-xs">
-                    <p className="text-[10px] font-bold text-[#707881] uppercase tracking-wider">Laki-Laki</p>
-                    <p className="text-2xl font-black text-[#006194] mt-1">
-                      {item.metrics.pria?.toLocaleString()} <span className="text-xs font-semibold text-[#535f70]">Jiwa</span>
-                    </p>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-white border border-[#dae2fd] shadow-xs">
-                    <p className="text-[10px] font-bold text-[#707881] uppercase tracking-wider">Perempuan</p>
-                    <p className="text-2xl font-black text-rose-600 mt-1">
-                      {item.metrics.wanita?.toLocaleString()} <span className="text-xs font-semibold text-[#535f70]">Jiwa</span>
-                    </p>
-                  </div>
-                </>
               ) : (
-                item.metrics.customMetrics?.map((cm, idx) => (
-                  <div key={idx} className="p-4 rounded-2xl bg-white border border-[#dae2fd] shadow-xs">
-                    <p className="text-[10px] font-bold text-[#707881] uppercase tracking-wider">{cm.label}</p>
-                    <p className="text-xl font-black text-[#131b2e] mt-1">{cm.value}</p>
+                customMetrics.map((metric, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 sm:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white transition-colors"
+                  >
+                    <div className="flex items-center gap-3 md:w-1/2">
+                      <span className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center shrink-0">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <div className="flex-1 space-y-1">
+                        <input
+                          type="text"
+                          value={metric.label}
+                          onChange={(e) =>
+                            handleCustomMetricChange(idx, 'label', e.target.value)
+                          }
+                          placeholder="Nama Indikator / Variabel"
+                          className="w-full text-xs font-bold text-slate-900 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
+                        />
+                        <input
+                          type="text"
+                          value={metric.note || ''}
+                          onChange={(e) =>
+                            handleCustomMetricChange(idx, 'note', e.target.value)
+                          }
+                          placeholder="Keterangan singkat parameter..."
+                          className="w-full text-[11px] text-slate-500 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex-1 flex items-center justify-end gap-3">
+                      <div className="w-full sm:w-64 relative rounded-xl border border-slate-200 bg-white shadow-2xs focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500">
+                        <input
+                          className="w-full text-right font-bold text-sm text-slate-900 pr-12 py-2 border-0 bg-transparent focus:ring-0 focus:outline-none"
+                          type="text"
+                          value={metric.value}
+                          onChange={(e) =>
+                            handleCustomMetricChange(idx, 'value', e.target.value)
+                          }
+                          placeholder="Nilai"
+                        />
+                        <span className="absolute right-3 top-2.5 text-xs font-medium text-slate-400 pointer-events-none">
+                          Satuan
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCustomMetric(idx)}
+                        className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+                        title="Hapus Indikator"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 ))
               )}
             </div>
+          </div>
 
-            {/* Visual Interactive Charts */}
-            {item.chartData && (
-              <div className="p-5 rounded-2xl border border-[#dae2fd] bg-white shadow-xs space-y-4">
-                <div className="flex items-center space-x-2.5 border-b border-[#e2e7ff] pb-3">
-                  <div className="p-2 bg-[#f2f3ff] text-[#006194] rounded-xl">
-                    {item.chartData.type === 'donut' ? (
-                      <PieChart className="w-4 h-4" />
-                    ) : (
-                      <BarChart3 className="w-4 h-4" />
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-[#131b2e]">{item.chartData.title}</h4>
-                  </div>
-                </div>
-
-                <div className="space-y-3 pt-1">
-                  {item.chartData.items.map((chartItem, idx) => {
-                    const maxValue = Math.max(...item.chartData!.items.map((i) => i.value));
-                    const percentage = Math.round((chartItem.value / (maxValue || 1)) * 100);
-
-                    return (
-                      <div key={idx} className="space-y-1">
-                        <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-[#3f4850]">{chartItem.label}</span>
-                          <div className="space-x-1.5">
-                            <span className="text-[#131b2e] font-bold">{chartItem.value.toLocaleString()}</span>
-                            {chartItem.note && (
-                              <span className="text-[11px] text-[#707881] font-normal">({chartItem.note})</span>
-                            )}
-                          </div>
-                        </div>
-                        <div className="w-full bg-[#f2f3ff] h-2.5 rounded-full overflow-hidden flex">
-                          <div
-                            className="h-full rounded-full transition-all duration-500"
-                            style={{
-                              width: `${Math.max(percentage, 4)}%`,
-                              backgroundColor: chartItem.color || '#006194',
-                            }}
-                          ></div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+          {/* SECTION 3: Legal Verification & Administrative Sign-off Footer */}
+          <div
+            className="bg-gradient-to-r from-slate-50 via-sky-50/30 to-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-6"
+            data-purpose="verification-sign-off"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-xs flex items-center justify-center text-brand-600 shrink-0">
+                <ShieldCheck className="w-6 h-6" />
               </div>
-            )}
-
-            {/* Deskripsi & Ringkasan */}
-            <div className="bg-white p-5 rounded-2xl border border-[#dae2fd] shadow-xs space-y-3">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-[#006194]">
-                Ringkasan &amp; Profil Faktual
-              </h3>
-              <p className="text-sm text-[#3f4850] leading-relaxed font-normal">
-                {item.description}
-              </p>
-              {item.detailedNotes && item.detailedNotes.length > 0 && (
-                <ul className="pt-1 space-y-1.5">
-                  {item.detailedNotes.map((note, idx) => (
-                    <li key={idx} className="flex items-start text-xs text-[#535f70] space-x-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#006194] mt-1.5 flex-shrink-0"></span>
-                      <span>{note}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  Otoritas Validasi Kelurahan
+                </span>
+                <h5 className="text-sm font-bold text-slate-900">
+                  Theresia J. Kaunang, SE
+                </h5>
+                <p className="text-xs text-slate-600">
+                  Lurah Kolongan Satu • NIP. 19780203 200902 2 002
+                </p>
+              </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="flex items-center justify-between p-4 bg-white rounded-2xl border border-[#dae2fd]">
-              <div className="text-xs text-[#535f70]">
-                Terakhir diperbarui: <strong>{item.lastUpdated}</strong>
+            <div className="flex items-center gap-3 w-full md:w-auto justify-end">
+              <div className="text-right hidden sm:block">
+                <span className="text-[11px] text-emerald-700 font-bold block">
+                  Status Tanda Tangan Elektronik
+                </span>
+                <span className="text-[10px] text-slate-500">
+                  Tersertifikasi Balai Sertifikasi Elektronik (BSrE)
+                </span>
               </div>
+
+              {isLurah || statusTahapan === 'disahkan_lurah' ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onApproveItem) onApproveItem(item.id);
+                  }}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:border-brand-500 text-slate-700 font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                >
+                  <CheckCheck className="w-4 h-4 text-emerald-600" />
+                  <span>
+                    {statusTahapan === 'disahkan_lurah'
+                      ? 'Disahkan Lurah (Sah)'
+                      : 'Sahkan Data (Lurah)'}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onTriggerWhatsApp) {
+                      onTriggerWhatsApp(item);
+                    } else if (onVerifySeklur) {
+                      onVerifySeklur(item.id);
+                    }
+                  }}
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-700 font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                  title="Kirim notifikasi persetujuan ke WhatsApp Lurah"
+                >
+                  <Send className="w-4 h-4 text-brand-600" />
+                  <span>Kirim Notifikasi ke Lurah</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* SECTION 4: Field Apparatus & Notes */}
+          <div className="bg-slate-50/70 rounded-2xl border border-slate-200 p-6 space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600">
+              Aparatur Penanggung Jawab &amp; Catatan Rinci Lapangan
+            </h4>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {item.categoryKey === 'wilayah' || item.palaName ? (
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                    Kepala Lingkungan (Pala)
+                  </label>
+                  <input
+                    type="text"
+                    value={palaName}
+                    onChange={(e) => setPalaName(e.target.value)}
+                    placeholder="Nama Pala..."
+                    className="w-full text-xs font-medium text-slate-900 bg-white border border-slate-200 rounded-xl px-3 py-2 focus:ring-1 focus:ring-brand-500 focus:outline-none"
+                  />
+                </div>
+              ) : null}
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  Kasie / Staf Verifikator
+                </label>
+                <input
+                  type="text"
+                  value={kasieName}
+                  onChange={(e) => setKasieName(e.target.value)}
+                  placeholder="Contoh: Djonny Maweikere, S.IP"
+                  className="w-full text-xs font-medium text-slate-900 bg-white border border-slate-200 rounded-xl px-3 py-2 focus:ring-1 focus:ring-brand-500 focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-semibold text-slate-700 block mb-1">
+                Catatan Rinci / Poin Lapangan (Satu poin per baris)
+              </label>
+              <textarea
+                rows={3}
+                value={detailedNotesText}
+                onChange={(e) => setDetailedNotesText(e.target.value)}
+                placeholder="Poin-poin fakta lapangan..."
+                className="w-full text-xs text-slate-900 bg-white border border-slate-200 rounded-xl p-3 focus:ring-1 focus:ring-brand-500 focus:outline-none leading-relaxed font-mono"
+              />
+            </div>
+          </div>
+
+          {/* SECTION 5: Bottom Floating / Sticky Action Bar */}
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
+            <span className="text-xs text-slate-400">
+              Semua perubahan dicatat dalam Audit Trail Admin Kelurahan Kolongan Satu.
+            </span>
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
               <button
-                onClick={() => onOpenPrintPreview(item)}
-                className="px-3.5 py-1.5 bg-[#f2f3ff] hover:bg-[#e2e7ff] text-[#006194] rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                type="button"
+                onClick={() => {
+                  setTitle(item.title);
+                  setPria(item.metrics.pria || 0);
+                  setWanita(item.metrics.wanita || 0);
+                  setKepalaKeluarga(item.metrics.kepalaKeluarga || 0);
+                  setDescription(item.description);
+                }}
+                className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors cursor-pointer"
               >
-                <Download className="w-3.5 h-3.5" />
-                <span>Cetak Lembar Monografi</span>
+                Batal Perubahan
+              </button>
+
+              <button
+                type="submit"
+                disabled={isSaving}
+                className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:bg-slate-400 text-white font-bold text-xs shadow-xs shadow-brand-500/20 transition-all flex items-center gap-2 cursor-pointer"
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Menyimpan &amp; Sinkronisasi...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Simpan &amp; Sinkronisasi Data</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
-        )}
+        </form>
+      ) : (
+        /* 3. TAB CONTENT: PRATINJAU GRAFIK & TAMPILAN RESMI */
+        <div className="p-6 sm:p-8 space-y-6">
+          {/* Quick Metrics Summary */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                Total Penduduk
+              </p>
+              <p className="text-2xl font-black text-slate-900 mt-1">
+                {totalWarga.toLocaleString('id-ID')}{' '}
+                <span className="text-xs font-semibold text-slate-500">Jiwa</span>
+              </p>
+            </div>
 
-      </div>
-    </main>
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                Kepala Keluarga
+              </p>
+              <p className="text-2xl font-black text-slate-900 mt-1">
+                {kepalaKeluarga.toLocaleString('id-ID')}{' '}
+                <span className="text-xs font-semibold text-slate-500">KK</span>
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">
+                Laki-Laki ({priaPct})
+              </p>
+              <p className="text-2xl font-black text-blue-900 mt-1">
+                {pria.toLocaleString('id-ID')}{' '}
+                <span className="text-xs font-semibold text-slate-500">Jiwa</span>
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+              <p className="text-[10px] font-bold text-rose-600 uppercase tracking-wider">
+                Perempuan ({wanitaPct})
+              </p>
+              <p className="text-2xl font-black text-rose-600 mt-1">
+                {wanita.toLocaleString('id-ID')}{' '}
+                <span className="text-xs font-semibold text-slate-500">Jiwa</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Interactive Chart */}
+          {item.chartData && (
+            <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-xs space-y-4">
+              <div className="flex items-center space-x-2.5 border-b border-slate-100 pb-3">
+                <div className="p-2 bg-brand-50 text-brand-600 rounded-xl">
+                  {item.chartData.type === 'donut' ? (
+                    <PieChart className="w-4 h-4" />
+                  ) : (
+                    <BarChart3 className="w-4 h-4" />
+                  )}
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-900">
+                    {item.chartData.title}
+                  </h4>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-1">
+                {item.chartData.items.map((chartItem, idx) => {
+                  const maxValue = Math.max(
+                    ...item.chartData!.items.map((i) => i.value)
+                  );
+                  const percentage = Math.round(
+                    (chartItem.value / (maxValue || 1)) * 100
+                  );
+
+                  return (
+                    <div key={idx} className="space-y-1">
+                      <div className="flex justify-between text-xs font-semibold">
+                        <span className="text-slate-700">{chartItem.label}</span>
+                        <div className="space-x-1.5">
+                          <span className="text-slate-900 font-bold">
+                            {chartItem.value.toLocaleString('id-ID')}
+                          </span>
+                          {chartItem.note && (
+                            <span className="text-[11px] text-slate-400 font-normal">
+                              ({chartItem.note})
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden flex">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{
+                            width: `${Math.max(percentage, 5)}%`,
+                            backgroundColor: chartItem.color || '#0284c7',
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Print preview & Download action */}
+          <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <span className="text-xs text-slate-500">
+              Format lembar monografi resmi siap cetak untuk pelaporan ke Kecamatan Tomohon Tengah.
+            </span>
+            {onOpenPrintPreview && (
+              <button
+                type="button"
+                onClick={() => onOpenPrintPreview(item)}
+                className="px-4 py-2 bg-white hover:bg-slate-100 text-brand-700 border border-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>Cetak Lembar Monografi</span>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </section>
   );
 }

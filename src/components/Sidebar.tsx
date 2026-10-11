@@ -1,23 +1,23 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { Official } from '@/data/officialsData';
 import {
-  Building2,
+  BarChart3,
+  MapPin,
   Users,
+  Building,
   FileText,
   AlertTriangle,
-  Droplets,
-  MapPin,
-  PlusCircle,
-  FilePlus,
-  AlertCircle,
-  ShieldCheck,
+  Plus,
   LogOut,
+  ExternalLink,
 } from 'lucide-react';
 
 interface SidebarProps {
   currentOfficial: Official;
-  onSelectOfficial: (official: Official) => void;
+  onSelectOfficial?: (official: Official) => void;
   activeNav: string;
   onSelectNav: (nav: string) => void;
   pendingLettersCount: number;
@@ -26,6 +26,7 @@ interface SidebarProps {
   onOpenNewLetter: () => void;
   onOpenNewReport: () => void;
   onLogout?: () => void;
+  selectedYear?: number;
 }
 
 export default function Sidebar({
@@ -39,187 +40,312 @@ export default function Sidebar({
   onOpenNewLetter,
   onOpenNewReport,
   onLogout,
+  selectedYear = 2025,
 }: SidebarProps) {
-  const navItems = [
-    {
-      id: 'monografi',
-      label: 'Semua Monografi',
-      icon: Building2,
-      badge: null,
-    },
-    {
-      id: 'wilayah',
-      label: 'Wilayah Jaga I - V',
-      icon: MapPin,
-      badge: '5 Jaga',
-    },
-    {
-      id: 'kependudukan',
-      label: 'Kependudukan & KK',
-      icon: Users,
-      badge: '1.484 Jiwa',
-    },
-    {
-      id: 'lingkungan',
-      label: 'Sarana & Sanitasi',
-      icon: Droplets,
-      badge: null,
-    },
-    {
-      id: 'surat',
-      label: 'Rekap & Penerbitan Surat',
-      icon: FileText,
-      badge: pendingLettersCount > 0 ? `${pendingLettersCount}` : null,
-      badgeColor: 'bg-amber-100 text-amber-900',
-    },
-    {
-      id: 'lapor',
-      label: 'Kotak Aduan Warga',
-      icon: AlertTriangle,
-      badge: activeReportsCount > 0 ? `${activeReportsCount} Baru` : null,
-      badgeColor: 'bg-rose-100 text-rose-900',
-    },
-  ];
+  // Shortcut Ctrl+N to open new entry
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        onOpenInputMonografi();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onOpenInputMonografi]);
 
   return (
-    <aside className="w-64 bg-white border-r border-[#dae2fd] flex flex-col justify-between h-full select-none shadow-xs z-20">
-      {/* Top Branding Section */}
-      <div className="flex flex-col flex-1 overflow-y-auto">
-        <div className="p-4 border-b border-[#e2e7ff]">
-          <div className="flex items-center space-x-3">
-            <div className="h-10 w-10 bg-primary text-white rounded-xl flex items-center justify-center font-black text-base shadow-sm">
-              K1
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center space-x-1.5">
-                <span className="text-xs font-black tracking-wide text-[#131b2e]">KOLONGAN SATU</span>
-                <span className="inline-block w-2 h-2 rounded-full bg-[#006c49]" title="Sistem Aktif"></span>
-              </div>
-              <p className="text-[11px] text-[#535f70] font-medium truncate">Tomohon Tengah, Tomohon</p>
-            </div>
-          </div>
+    <aside
+      className="w-72 bg-white border-r border-slate-200/80 flex flex-col shrink-0 h-full select-none z-20"
+      data-purpose="app-sidebar"
+    >
+      {/* Brand & Institution Header */}
+      <div className="p-5 border-b border-slate-100 flex items-center gap-3.5">
+        <div className="relative w-12 h-12 rounded-xl bg-slate-50 p-1 shadow-xs border border-slate-200 shrink-0 overflow-hidden flex items-center justify-center">
+          <img
+            alt="Logo Kelurahan Kolongan Satu"
+            className="w-full h-full object-contain"
+            src="/images/logo-tomohon.png"
+            onError={(e) => {
+              // fallback if needed
+              (e.target as HTMLImageElement).src =
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuAFgSm2KbqeeiG5Ig0Gy-vrz3syWeppE-OfnfqKrBFCq-lyifRke8j1hSeGABKt83sxvHuRJGukfrU5m67owmp2dmkJ-uyfWFaC7z9mENrLJrr4kEfRxWYHAcNKYctSKYEhaep6O8n8P4L8_KjnbpBJfs3TMJM5jRt14rNSdanvLEzzHFwfxH1P39Ny6GRvj6YQXetS63W0LBntoqiRFDaf6xuJ1BJLFttdxlBSRsTbCVPbWkV0av7x1KvbDy1zWNpEACM';
+            }}
+          />
         </div>
-
-        {/* Form Input Data - Quick Action Buttons */}
-        <div className="p-3 border-b border-[#e2e7ff] bg-[#faf8ff] space-y-2">
-          <p className="px-1 text-[10px] font-black text-primary uppercase tracking-wider flex items-center gap-1.5">
-            <PlusCircle className="w-3.5 h-3.5 text-primary" />
-            <span>Form Input Data</span>
-          </p>
-
-          {/* 1. Main Action: Input / Edit Monografi */}
-          <button
-            onClick={onOpenInputMonografi}
-            className="w-full flex items-center justify-between px-3 py-2 bg-primary hover:bg-[#004d77] text-white rounded-xl text-xs font-bold shadow-xs transition cursor-pointer"
-            title="Buka form isian data monografi"
-          >
-            <div className="flex items-center space-x-2">
-              <PlusCircle className="w-3.5 h-3.5" />
-              <span>+ Input Data Monografi</span>
-            </div>
-            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">Form</span>
-          </button>
-
-          {/* 2 & 3. Secondary Actions: Buat Surat & Catat Laporan */}
-          <div className="grid grid-cols-2 gap-1.5">
-            <button
-              onClick={onOpenNewLetter}
-              className="flex items-center justify-center space-x-1 px-2 py-1.5 bg-white hover:bg-[#f2f3ff] text-[#131b2e] hover:text-primary border border-[#dae2fd] rounded-xl text-[11px] font-bold transition shadow-2xs cursor-pointer"
-              title="Formulir buat permohonan surat warga baru"
-            >
-              <FilePlus className="w-3.5 h-3.5 text-primary" />
-              <span className="truncate">+ Buat Surat</span>
-            </button>
-            <button
-              onClick={onOpenNewReport}
-              className="flex items-center justify-center space-x-1 px-2 py-1.5 bg-white hover:bg-rose-50 text-[#131b2e] hover:text-rose-700 border border-[#dae2fd] rounded-xl text-[11px] font-bold transition shadow-2xs cursor-pointer"
-              title="Formulir catat aduan/masalah warga baru"
-            >
-              <AlertCircle className="w-3.5 h-3.5 text-rose-600" />
-              <span className="truncate">+ Catat Lapor</span>
-            </button>
+        <div className="overflow-hidden min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs uppercase tracking-wider font-extrabold text-brand-600">
+              e-Monografi
+            </span>
+            <span
+              className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+              title="Sistem Aktif Online"
+            ></span>
           </div>
-        </div>
-
-        {/* Navigation Items */}
-        <div className="p-3 space-y-1">
-          <p className="px-3 pt-1 pb-1 text-[10px] font-bold text-[#707881] uppercase tracking-wider">
-            Menu Modul
+          <h1 className="text-sm font-bold text-slate-900 truncate tracking-tight">
+            KOLONGAN SATU
+          </h1>
+          <p className="text-[11px] text-slate-500 truncate">
+            Tomohon Tengah, Kota Tomohon
           </p>
-          {navItems.map((item) => {
-            const isActive = activeNav === item.id;
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectNav(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl font-semibold text-xs transition group cursor-pointer ${
-                  isActive
-                    ? 'bg-primary text-white shadow-xs'
-                    : 'text-[#3f4850] hover:bg-[#f2f3ff] hover:text-primary'
-                }`}
-              >
-                <div className="flex items-center space-x-2.5 min-w-0">
-                  <Icon className={`w-4 h-4 flex-shrink-0 transition ${
-                    isActive ? 'text-white' : 'text-[#707881] group-hover:text-primary'
-                  }`} />
-                  <span className="truncate">{item.label}</span>
-                </div>
-                {item.badge && (
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold flex-shrink-0 ml-1.5 ${
-                    isActive ? 'bg-white/20 text-white' : item.badgeColor || 'bg-[#e2e7ff] text-primary'
-                  }`}>
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
         </div>
       </div>
 
-      {/* Bottom Profile Section: Dedicated Sekretaris Kelurahan (Admin Tunggal) */}
-      <div className="p-3 border-t border-[#dae2fd] bg-[#faf8ff] space-y-2">
-        <div className="flex items-center justify-between px-1">
-          <span className="text-[10px] font-bold text-[#535f70] uppercase tracking-wider flex items-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Admin Tunggal</span>
+      {/* Quick Action / Primary Add Action */}
+      <div className="px-4 pt-4 pb-2">
+        <button
+          onClick={onOpenInputMonografi}
+          className="w-full py-2.5 px-3.5 bg-gradient-to-r from-brand-600 to-sky-600 hover:from-brand-700 hover:to-sky-700 text-white rounded-xl shadow-xs shadow-brand-500/20 font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer"
+          data-purpose="quick-new-entry"
+          title="Tambah / Entri Data Monografi Baru (Ctrl+N)"
+        >
+          <Plus className="w-4 h-4" />
+          <span>+ Entri Data Baru</span>
+          <span className="ml-auto text-[10px] px-1.5 py-0.5 bg-white/20 rounded font-mono">
+            Ctrl+N
           </span>
-          <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
-            Sesi Aktif
+        </button>
+      </div>
+
+      {/* Main Navigation Menu */}
+      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-6" data-purpose="sidebar-nav">
+        {/* Section: Master Data Wilayah */}
+        <div>
+          <span className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Master Data Wilayah
           </span>
+          <ul className="mt-2 space-y-1">
+            {/* 1. Monografi Pokok */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('monografi')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'monografi'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <BarChart3
+                    className={`w-4 h-4 ${
+                      activeNav === 'monografi' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Monografi Pokok</span>
+                </span>
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                    activeNav === 'monografi'
+                      ? 'bg-brand-200/70 text-brand-800'
+                      : 'bg-slate-100 text-slate-600'
+                  }`}
+                >
+                  {selectedYear}
+                </span>
+              </button>
+            </li>
+
+            {/* 2. Wilayah Jaga I - V */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('wilayah')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'wilayah'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <MapPin
+                    className={`w-4 h-4 ${
+                      activeNav === 'wilayah' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Wilayah Jaga I – V</span>
+                </span>
+                <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono">
+                  5 Jaga
+                </span>
+              </button>
+            </li>
+
+            {/* 3. Kependudukan & KK */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('kependudukan')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'kependudukan'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <Users
+                    className={`w-4 h-4 ${
+                      activeNav === 'kependudukan' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Kependudukan &amp; KK</span>
+                </span>
+                <span className="text-[10px] bg-sky-100 text-brand-700 px-1.5 py-0.5 rounded font-medium">
+                  1.512
+                </span>
+              </button>
+            </li>
+
+            {/* 4. Sarana & Sanitasi */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('lingkungan')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'lingkungan'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <Building
+                    className={`w-4 h-4 ${
+                      activeNav === 'lingkungan' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Sarana &amp; Sanitasi</span>
+                </span>
+              </button>
+            </li>
+          </ul>
         </div>
 
-        <div className="p-2.5 rounded-xl bg-white border border-[#dae2fd] shadow-xs">
-          <div className="flex items-center space-x-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[#006194] text-white flex items-center justify-center font-bold text-xs shadow-xs flex-shrink-0">
-              FP
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-[#131b2e] truncate">
-                Febronia L. Pijoh, S.Kom
-              </p>
-              <p className="text-[10px] text-[#006194] font-semibold truncate">
-                Sekretaris Kelurahan
-              </p>
-              <p className="text-[9px] text-[#707881] font-mono truncate">
-                NIP: 19780203 200902 2 002
-              </p>
+        {/* Section: Pelayanan & Administrasi Warga */}
+        <div>
+          <span className="px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            Administrasi Warga
+          </span>
+          <ul className="mt-2 space-y-1">
+            {/* Rekap & Penerbitan Surat */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('surat')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'surat'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <FileText
+                    className={`w-4 h-4 ${
+                      activeNav === 'surat' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Rekap &amp; Penerbitan Surat</span>
+                </span>
+                {pendingLettersCount > 0 ? (
+                  <span className="text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 py-0.5 rounded-full">
+                    {pendingLettersCount} Baru
+                  </span>
+                ) : (
+                  <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">
+                    Tertib
+                  </span>
+                )}
+              </button>
+            </li>
+
+            {/* Kotak Aduan Warga */}
+            <li>
+              <button
+                type="button"
+                onClick={() => onSelectNav('lapor')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
+                  activeNav === 'lapor'
+                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
+                }`}
+              >
+                <span className="flex items-center gap-2.5">
+                  <AlertTriangle
+                    className={`w-4 h-4 ${
+                      activeNav === 'lapor' ? 'text-brand-600' : 'text-slate-400'
+                    }`}
+                  />
+                  <span>Kotak Aduan Warga</span>
+                </span>
+                {activeReportsCount > 0 ? (
+                  <span className="text-[10px] bg-rose-100 text-rose-700 font-bold px-1.5 py-0.5 rounded-full">
+                    {activeReportsCount} Aduan
+                  </span>
+                ) : (
+                  <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">
+                    0 Baru
+                  </span>
+                )}
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      {/* Sidebar Bottom: Operator Profile & Session */}
+      <div
+        className="p-3 border-t border-slate-200/80 bg-slate-50/50"
+        data-purpose="operator-profile"
+      >
+        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-xs flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-sky-700 text-white flex items-center justify-center font-bold text-xs tracking-wider shrink-0 shadow-inner">
+            FP
+          </div>
+          <div className="overflow-hidden min-w-0 flex-1">
+            <p className="text-xs font-bold text-slate-900 truncate">
+              Febronia L. Pijoh, S.Kom
+            </p>
+            <p className="text-[10px] text-slate-500 truncate">
+              Sekretaris Kelurahan
+            </p>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span className="text-[9px] font-semibold text-emerald-700">
+                Sesi Admin Tunggal
+              </span>
             </div>
           </div>
         </div>
 
-        {onLogout && (
-          <button
-            type="button"
-            onClick={onLogout}
-            className="w-full flex items-center justify-center space-x-1.5 py-1.5 px-3 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition cursor-pointer"
-            title="Keluar dari sesi portal"
+        {/* Return / Exit links */}
+        <div className="mt-2.5 flex items-center justify-between px-1 text-[11px]">
+          {onLogout ? (
+            <button
+              type="button"
+              onClick={onLogout}
+              className="text-slate-500 hover:text-rose-600 flex items-center gap-1.5 transition-colors font-medium cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Keluar Sesi</span>
+            </button>
+          ) : (
+            <Link
+              href="/portal/login"
+              className="text-slate-500 hover:text-rose-600 flex items-center gap-1.5 transition-colors font-medium"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Keluar Sesi</span>
+            </Link>
+          )}
+
+          <Link
+            href="/"
+            className="text-brand-600 hover:underline flex items-center gap-1 font-semibold"
           >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Keluar Portal</span>
-          </button>
-        )}
+            <span>Portal Publik</span>
+            <ExternalLink className="w-3 h-3" />
+          </Link>
+        </div>
       </div>
     </aside>
   );
