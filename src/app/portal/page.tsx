@@ -45,7 +45,7 @@ export default function PortalPage() {
   const [reports, setReports] = useState<CitizenReport[]>(INITIAL_REPORTS);
 
   // Active navigation tab
-  const [activeNav, setActiveNav] = useState<string>('monografi');
+  const [activeNav, setActiveNav] = useState<string>('kependudukan');
 
   // Modals state
   const [isLetterModalOpen, setIsLetterModalOpen] = useState(false);
@@ -455,9 +455,7 @@ export default function PortalPage() {
       return;
     }
 
-    if (navId === 'monografi') {
-      setSelectedCategory('all');
-    } else if (navId === 'wilayah') {
+    if (navId === 'wilayah') {
       setSelectedCategory('wilayah');
       const found = monografiList.find((m) => m.year === selectedYear && m.categoryKey === 'wilayah');
       if (found) setSelectedId(found.id);

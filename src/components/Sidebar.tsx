@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Official } from '@/data/officialsData';
 import {
-  BarChart3,
   MapPin,
   Users,
   Building,
@@ -116,36 +115,7 @@ export default function Sidebar({
             Master Data Wilayah
           </span>
           <ul className="mt-2 space-y-1">
-            {/* 1. Monografi Pokok */}
-            <li>
-              <button
-                type="button"
-                onClick={() => onSelectNav('monografi')}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs transition-colors cursor-pointer ${
-                  activeNav === 'monografi'
-                    ? 'bg-brand-50/90 text-brand-700 font-bold border border-brand-200/70 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium'
-                }`}
-              >
-                <span className="flex items-center gap-2.5">
-                  <BarChart3
-                    className={`w-4 h-4 ${
-                      activeNav === 'monografi' ? 'text-brand-600' : 'text-slate-400'
-                    }`}
-                  />
-                  <span>Monografi Pokok</span>
-                </span>
-                <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
-                    activeNav === 'monografi'
-                      ? 'bg-brand-200/70 text-brand-800'
-                      : 'bg-slate-100 text-slate-600'
-                  }`}
-                >
-                  {selectedYear}
-                </span>
-              </button>
-            </li>
+
 
             {/* 2. Wilayah Jaga I - V */}
             <li>
