@@ -6,7 +6,6 @@ import {
   GraduationCap,
   Sparkles,
   ExternalLink,
-  Download,
   BookOpen,
   Users,
   Leaf,
@@ -122,25 +121,14 @@ export default function ModalFilosofiLogo({ isOpen, onClose }: ModalFilosofiLogo
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <a
-              href="/images/logo-kkt-149.png"
-              download="Lambang_KKT149_Kolongan_Satu.png"
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#006194] hover:bg-[#004f7a] text-white text-xs font-semibold shadow-2xs transition cursor-pointer"
-              title="Unduh Berkas Lambang"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Unduh Berkas</span>
-            </a>
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-9 h-9 rounded-full bg-[#f2f3ff] hover:bg-[#eaedff] text-[#535f70] hover:text-[#131b2e] border border-[#dae2fd] flex items-center justify-center transition cursor-pointer shrink-0"
-              title="Tutup (Esc)"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-9 h-9 rounded-full bg-[#f2f3ff] hover:bg-[#eaedff] text-[#535f70] hover:text-[#131b2e] border border-[#dae2fd] flex items-center justify-center transition cursor-pointer shrink-0"
+            title="Tutup (Esc)"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Modal Body */}
@@ -338,23 +326,13 @@ export default function ModalFilosofiLogo({ isOpen, onClose }: ModalFilosofiLogo
           <p className="text-xs text-[#535f70] font-medium">
             KKT 149 UNSRAT &bull; Kelurahan Kolongan Satu, Kota Tomohon
           </p>
-          <div className="flex items-center gap-2">
-            <a
-              href="/images/logo-kkt-149.png"
-              download="Lambang_KKT149_Kolongan_Satu.png"
-              className="inline-flex sm:hidden items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-[#eaedff] text-[#006194] transition cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Unduh</span>
-            </a>
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2.5 rounded-full text-xs font-bold bg-[#006194] hover:bg-[#004f7a] text-white transition shadow-sm hover:shadow-md cursor-pointer"
-            >
-              Tutup Informasi
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-6 py-2.5 rounded-full text-xs font-bold bg-[#006194] hover:bg-[#004f7a] text-white transition shadow-sm hover:shadow-md cursor-pointer"
+          >
+            Tutup Informasi
+          </button>
         </div>
       </div>
     </div>
