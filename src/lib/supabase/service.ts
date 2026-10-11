@@ -387,6 +387,40 @@ export interface AnnualMonografiSummary {
 }
 
 let inMemorySummaries: Record<number, AnnualMonografiSummary> = {
+  2024: {
+    tahun: 2024,
+    totalJiwa: 1484,
+    totalKK: 540,
+    lakiLaki: 725,
+    perempuan: 759,
+    luasTotalHa: 48.05,
+    keagamaan: {
+      katolik: 931,
+      protestan: 504,
+      islam: 49,
+    },
+    kelompokUsia: {
+      balita: 109,
+      usiaSekolah: 222,
+      produktif: 876,
+      lansia: 277,
+    },
+    tataGunaLahan: {
+      pemukimanHa: 34.50,
+      pertanianHa: 9.50,
+      pekaranganHa: 4.05,
+      totalHa: 48.05,
+    },
+    jagaList: [
+      { id: 'jaga-1', nama: 'Lingkungan I (Jaga 1)', kk: 105, lakiLaki: 150, perempuan: 160, populasi: 310, pala: 'Jilly Turambi' },
+      { id: 'jaga-2', nama: 'Lingkungan II (Jaga 2)', kk: 108, lakiLaki: 140, perempuan: 145, populasi: 285, pala: 'Robert Goni' },
+      { id: 'jaga-3', nama: 'Lingkungan III (Jaga 3)', kk: 112, lakiLaki: 145, perempuan: 150, populasi: 295, pala: 'Meidy Supit' },
+      { id: 'jaga-4', nama: 'Lingkungan IV (Jaga 4)', kk: 107, lakiLaki: 148, perempuan: 156, populasi: 304, pala: 'Frits Pangalila' },
+      { id: 'jaga-5', nama: 'Lingkungan V (Jaga 5)', kk: 108, lakiLaki: 142, perempuan: 148, populasi: 290, pala: 'Steven Wowor' },
+    ],
+    statusTahapan: 'disahkan_lurah',
+    lastUpdated: '15 Maret 2024 - Pengesahan Buku Induk Faktual',
+  },
   2025: {
     tahun: 2025,
     totalJiwa: 1512,
