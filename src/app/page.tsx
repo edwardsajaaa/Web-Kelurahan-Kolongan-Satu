@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { MONOGRAFI_ITEMS } from '@/data/monografiData';
+import { MONOGRAFI_ITEMS, MonografiItem } from '@/data/monografiData';
 import { OFFICIALS } from '@/data/officialsData';
 import { INITIAL_LETTERS, LetterRequest } from '@/data/lettersData';
 
@@ -42,6 +42,7 @@ export default function LandingPage() {
   const [activeHistoryTab, setActiveHistoryTab] = useState<'cagarBudaya' | 'garisWaktu' | 'tokoh'>('cagarBudaya');
   const [isReferencesOpen, setIsReferencesOpen] = useState(false);
   const [liveSummaries, setLiveSummaries] = useState<Record<number, any>>({});
+  const [liveMonografiItems, setLiveMonografiItems] = useState<MonografiItem[]>(MONOGRAFI_ITEMS);
   const [availableYears, setAvailableYears] = useState<number[]>([2024, 2025]);
 
   // Citizen letters and reports states
@@ -63,6 +64,9 @@ export default function LandingPage() {
           const json = await resMonografi.json();
           if (json.summaries) {
             setLiveSummaries(json.summaries);
+          }
+          if (json.data && Array.isArray(json.data)) {
+            setLiveMonografiItems(json.data);
           }
           if (json.availableYears && Array.isArray(json.availableYears)) {
             setAvailableYears(json.availableYears);
@@ -832,6 +836,7 @@ export default function LandingPage() {
             onYearChange={setSelectedYear}
             liveSummary={activeSummary}
             availableYears={availableYears}
+            liveMonografiItems={liveMonografiItems}
           />
 
           {/* ============================================================ */}

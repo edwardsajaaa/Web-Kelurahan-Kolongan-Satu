@@ -1,15 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { DATA_MONOGRAFI_2024 } from '@/data/monografi2024';
 import { DATA_MONOGRAFI_2025 } from '@/data/monografi2025';
 import { AvailableYear, CURRENT_ACTIVE_YEAR } from '@/data';
+import { MonografiItem, MONOGRAFI_ITEMS } from '@/data/monografiData';
 
 interface IntegratedMonografiSectionProps {
   selectedYear?: AvailableYear | number;
   onYearChange?: (year: AvailableYear | number) => void;
   liveSummary?: any;
   availableYears?: number[];
+  liveMonografiItems?: MonografiItem[];
 }
 
 export default function IntegratedMonografiSection({
@@ -17,11 +19,28 @@ export default function IntegratedMonografiSection({
   onYearChange: externalOnYearChange,
   liveSummary,
   availableYears,
+  liveMonografiItems = MONOGRAFI_ITEMS,
 }: IntegratedMonografiSectionProps) {
   const [internalYear, setInternalYear] = useState<number>(CURRENT_ACTIVE_YEAR);
   const activeYear = (externalYear ?? internalYear) as number;
 
   const availableYearsList = availableYears && availableYears.length > 0 ? availableYears : [2024, 2025];
+
+  // Dynamic custom indicators created/updated by Lurah or Seklur
+  const activeCustomMetrics = useMemo(() => {
+    const yearItems = liveMonografiItems?.filter((m) => m.year === activeYear) || [];
+    const metrics: { label: string; value: string | number; note?: string; color?: string }[] = [];
+    yearItems.forEach((item) => {
+      if (item.metrics?.customMetrics) {
+        item.metrics.customMetrics.forEach((cm) => {
+          if (!metrics.some((m) => m.label.toLowerCase() === cm.label.toLowerCase())) {
+            metrics.push(cm);
+          }
+        });
+      }
+    });
+    return metrics;
+  }, [liveMonografiItems, activeYear]);
 
   const handleYearToggle = (year: number) => {
     setInternalYear(year);
@@ -231,6 +250,44 @@ export default function IntegratedMonografiSection({
                     </span>
                   </div>
                 </div>
+
+                {/* Indikator Tambahan & Pemutakhiran Lapangan (Dinamis dari Portal) */}
+                {activeCustomMetrics.length > 0 && (
+                  <div className="p-4 sm:p-5 bg-gradient-to-r from-sky-50/70 via-white to-sky-50/40 rounded-2xl border border-[#dae2fd] shadow-2xs space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="font-bold text-xs sm:text-sm text-[#131b2e]">
+                          Indikator Tambahan &amp; Variabel Lapangan ({activeYear})
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        Sinkronisasi Terverifikasi
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {activeCustomMetrics.map((metric, idx) => (
+                        <div
+                          key={idx}
+                          className="bg-white p-3 rounded-xl border border-slate-200/90 shadow-2xs hover:border-[#006194]/40 transition-colors"
+                        >
+                          <span className="text-[11px] font-semibold text-slate-500 block truncate" title={metric.label}>
+                            {metric.label}
+                          </span>
+                          <span className="text-base sm:text-lg font-extrabold text-[#131b2e] block mt-1">
+                            {metric.value}
+                          </span>
+                          {metric.note && (
+                            <span className="text-[10px] text-slate-400 block mt-0.5 truncate" title={metric.note}>
+                              {metric.note}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* Batas Wilayah Card (Terbaru 2025 vs 2024) */}
                 <div className="p-4 bg-[#faf8ff] rounded-2xl border border-[#e2e7ff]">
