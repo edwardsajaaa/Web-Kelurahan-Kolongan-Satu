@@ -275,17 +275,10 @@ export default function FasilitasPublikSection({ onDirectToMap }: FasilitasPubli
         {/* SECTION HEADER                                               */}
         {/* ============================================================ */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 pb-6 border-b border-[#eaedff]">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#cce5ff]/80 text-[#006194] text-xs font-bold">
-              <Building2 className="w-3.5 h-3.5" />
-              <span>Fasilitas &amp; Infrastruktur Wilayah</span>
-            </div>
+          <div className="max-w-2xl">
             <h2 className="text-2xl sm:text-3xl 2xl:text-4xl text-[#131b2e] font-bold tracking-tight">
               Fasilitas &amp; Sarana Publik Kelurahan
             </h2>
-            <p className="text-xs sm:text-sm 2xl:text-base text-[#535f70] leading-relaxed">
-              Direktori sarana pemerintahan, peribadatan, kesehatan, pendidikan, sosial, dan infrastruktur strategis yang menopang kehidupan warga Kelurahan Kolongan Satu.
-            </p>
           </div>
 
           <a
