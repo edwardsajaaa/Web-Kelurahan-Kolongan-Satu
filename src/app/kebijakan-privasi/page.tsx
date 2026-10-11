@@ -76,7 +76,7 @@ function KebijakanPrivasiContent() {
           </Link>
 
           {/* Center Nav Links */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-6 2xl:gap-8">
             <Link href="/" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
               Beranda
             </Link>
@@ -86,10 +86,19 @@ function KebijakanPrivasiContent() {
             <Link href="/#sejarah" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
               Sejarah
             </Link>
+            <Link href="/#struktur-organisasi" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
+              Struktur Pemerintahan
+            </Link>
             <Link href="/#monografi-wilayah" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
               Monografi
             </Link>
-            <Link href="/#layanan-publik" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
+            <Link href="/#fasilitas-wilayah" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
+              Fasilitas
+            </Link>
+            <Link href="/#peta-wilayah" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
+              Peta Wilayah
+            </Link>
+            <Link href="/#layanan-cepat" className="text-sm text-[#3f4850] hover:text-[#006194] font-medium transition-colors">
               Layanan Publik
             </Link>
           </nav>

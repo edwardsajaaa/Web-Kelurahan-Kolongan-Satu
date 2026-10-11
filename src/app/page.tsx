@@ -211,16 +211,16 @@ export default function LandingPage() {
               Profil
             </a>
             <a
-              href="#struktur-organisasi"
-              className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
-            >
-              Struktur Pemerintahan
-            </a>
-            <a
               href="#sejarah"
               className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
             >
               Sejarah
+            </a>
+            <a
+              href="#struktur-organisasi"
+              className="text-[14px] 2xl:text-[16px] text-[#3f4850] hover:text-[#006194] font-medium transition-colors"
+            >
+              Struktur Pemerintahan
             </a>
             <a
               href="#monografi-wilayah"
@@ -295,13 +295,6 @@ export default function LandingPage() {
               Profil
             </a>
             <a
-              href="#struktur-organisasi"
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-[14px] text-[#3f4850] font-medium py-1.5"
-            >
-              Struktur Pemerintahan
-            </a>
-            <a
               href="#sejarah"
               onClick={() => setMobileMenuOpen(false)}
               className="text-[14px] text-[#3f4850] font-medium py-1.5"
@@ -309,11 +302,25 @@ export default function LandingPage() {
               Sejarah
             </a>
             <a
+              href="#struktur-organisasi"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[14px] text-[#3f4850] font-medium py-1.5"
+            >
+              Struktur Pemerintahan
+            </a>
+            <a
               href="#monografi-wilayah"
               onClick={() => setMobileMenuOpen(false)}
               className="text-[14px] text-[#3f4850] font-medium py-1.5"
             >
               Monografi
+            </a>
+            <a
+              href="#fasilitas-wilayah"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-[14px] text-[#3f4850] font-medium py-1.5"
+            >
+              Fasilitas
             </a>
             <a
               href="#peta-wilayah"
@@ -502,17 +509,7 @@ export default function LandingPage() {
           </section>
 
           {/* ============================================================ */}
-          {/* 3.5. INTEGRATED MONOGRAFI SECTION (Seluruh Variabel Lengkap) */}
-          {/* ============================================================ */}
-          <IntegratedMonografiSection
-            selectedYear={selectedYear}
-            onYearChange={setSelectedYear}
-            liveSummary={activeSummary}
-            availableYears={availableYears}
-          />
-
-          {/* ============================================================ */}
-          {/* 4. VISI & MISI KELURAHAN (Dipimpin Lurah)                    */}
+          {/* 2. VISI & MISI KELURAHAN (Dipimpin Lurah)                    */}
           {/* ============================================================ */}
           <section
             id="profil"
@@ -608,12 +605,7 @@ export default function LandingPage() {
           </section>
 
           {/* ============================================================ */}
-          {/* 4.5. STRUKTUR PEMERINTAHAN & TATA KELOLA                     */}
-          {/* ============================================================ */}
-          <StrukturOrganisasiSection />
-
-          {/* ============================================================ */}
-          {/* 5. SEJARAH & ASAL-USUL (NIMAWANUA & CAGAR BUDAYA)            */}
+          {/* 3. SEJARAH & ASAL-USUL (NIMAWANUA & CAGAR BUDAYA)            */}
           {/* ============================================================ */}
           <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print scroll-mt-24" id="sejarah">
             <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 sm:p-10 2xl:p-14 shadow-sm border border-[#e2e7ff] space-y-8">
@@ -828,122 +820,22 @@ export default function LandingPage() {
           </section>
 
           {/* ============================================================ */}
-          {/* 6. PUSAT LAYANAN WARGA (Fluid Grid)                          */}
+          {/* 4. STRUKTUR PEMERINTAHAN & TATA KELOLA                     */}
           {/* ============================================================ */}
-          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print" id="layanan-cepat">
-            <div className="mb-8">
-              <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold">
-                Pusat Layanan Warga
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 2xl:gap-8">
-              {/* Card 1: Monografi Kependudukan */}
-              <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#e2e7ff]">
-                <div className="space-y-4 2xl:space-y-6">
-                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#cce5ff] flex items-center justify-center text-[#006194]">
-                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">analytics</span>
-                  </div>
-                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#006194] transition-colors font-bold">
-                    Monografi Kependudukan
-                  </h3>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                    Statistik {currentTotalPenduduk.toLocaleString('id-ID')} jiwa ({selectedYear}), kelompok umur produktif, dan data pendidikan warga terverifikasi.
-                  </p>
-                </div>
-                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
-                  <a
-                    href="#monografi-wilayah"
-                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all"
-                  >
-                    <span>Buka Monografi</span>
-                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* Card 2: Peta & 5 Wilayah Jaga */}
-              <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#e2e7ff]">
-                <div className="space-y-4 2xl:space-y-6">
-                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#6ffbbe]/40 flex items-center justify-center text-[#006c49]">
-                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">map</span>
-                  </div>
-                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#006194] transition-colors font-bold">
-                    Peta &amp; 5 Wilayah Jaga
-                  </h3>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                    Batas administratif wilayah lingkungan dan kontak aparatur Kepala Jaga (Pala I - V).
-                  </p>
-                </div>
-                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
-                  <a
-                    href="#peta-wilayah"
-                    onClick={() => setMapMode('3d')}
-                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all"
-                  >
-                    <span>Lihat Wilayah</span>
-                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* Card 3: Layanan Persuratan Online */}
-              <div
-                className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#e2e7ff]"
-                id="layanan-cepat"
-              >
-                <div className="space-y-4 2xl:space-y-6">
-                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#cce5ff] flex items-center justify-center text-[#006194]">
-                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">description</span>
-                  </div>
-                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#006194] transition-colors font-bold">
-                    Layanan Persuratan Online
-                  </h3>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                    Pengurusan surat keterangan domisili, SKU, pengantar SKCK mandiri dan cepat.
-                  </p>
-                </div>
-                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
-                  <button
-                    onClick={() => setIsLetterModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all cursor-pointer"
-                  >
-                    <span>Buat Surat</span>
-                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Card 4: Lapor Masalah Warga */}
-              <div
-                className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#ffd8b8]/80 hover:border-[#ff9838]"
-              >
-                <div className="space-y-4 2xl:space-y-6">
-                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#ffeed9] flex items-center justify-center text-[#b84e00]">
-                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">campaign</span>
-                  </div>
-                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#b84e00] transition-colors font-bold">
-                    Lapor Masalah Warga
-                  </h3>
-                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
-                    Pengaduan cepat masalah lampu jalan padam, air bersih, sampah, saluran drainase, atau ketertiban.
-                  </p>
-                </div>
-                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#f0e4d8]">
-                  <button
-                    onClick={() => setIsReportModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#b84e00] hover:text-[#8f3c00] font-bold group-hover:translate-x-1 transition-all cursor-pointer"
-                  >
-                    <span>Lapor Masalah</span>
-                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
+          <StrukturOrganisasiSection />
 
           {/* ============================================================ */}
-          {/* 7.5. FASILITAS & SARANA PUBLIK KELURAHAN                     */}
+          {/* 5. MONOGRAFI WILAYAH TERPADU                               */}
+          {/* ============================================================ */}
+          <IntegratedMonografiSection
+            selectedYear={selectedYear}
+            onYearChange={setSelectedYear}
+            liveSummary={activeSummary}
+            availableYears={availableYears}
+          />
+
+          {/* ============================================================ */}
+          {/* 6. FASILITAS & SARANA PUBLIK KELURAHAN                     */}
           {/* ============================================================ */}
           <FasilitasPublikSection onDirectToMap={() => setMapMode('3d')} />
 
@@ -1096,7 +988,117 @@ export default function LandingPage() {
           </section>
 
           {/* ============================================================ */}
-          {/* 8.5. STRUKTUR TIM KKT (PENGABDIAN MAHASISWA)                 */}
+          {/* 8. PUSAT LAYANAN WARGA (Fluid Grid)                          */}
+          {/* ============================================================ */}
+          <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print scroll-mt-24" id="layanan-cepat">
+            <div className="mb-8">
+              <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold">
+                Pusat Layanan Warga
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 2xl:gap-8">
+              {/* Card 1: Monografi Kependudukan */}
+              <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#e2e7ff]">
+                <div className="space-y-4 2xl:space-y-6">
+                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#cce5ff] flex items-center justify-center text-[#006194]">
+                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">analytics</span>
+                  </div>
+                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#006194] transition-colors font-bold">
+                    Monografi Kependudukan
+                  </h3>
+                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
+                    Statistik {currentTotalPenduduk.toLocaleString('id-ID')} jiwa ({selectedYear}), kelompok umur produktif, dan data pendidikan warga terverifikasi.
+                  </p>
+                </div>
+                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
+                  <a
+                    href="#monografi-wilayah"
+                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all"
+                  >
+                    <span>Buka Monografi</span>
+                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Card 2: Peta & 5 Wilayah Jaga */}
+              <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#e2e7ff]">
+                <div className="space-y-4 2xl:space-y-6">
+                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#6ffbbe]/40 flex items-center justify-center text-[#006c49]">
+                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">map</span>
+                  </div>
+                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#006194] transition-colors font-bold">
+                    Peta &amp; 5 Wilayah Jaga
+                  </h3>
+                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
+                    Batas administratif wilayah lingkungan dan kontak aparatur Kepala Jaga (Pala I - V).
+                  </p>
+                </div>
+                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
+                  <a
+                    href="#peta-wilayah"
+                    onClick={() => setMapMode('3d')}
+                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all"
+                  >
+                    <span>Lihat Wilayah</span>
+                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Card 3: Layanan Persuratan Online */}
+              <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#e2e7ff]">
+                <div className="space-y-4 2xl:space-y-6">
+                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#cce5ff] flex items-center justify-center text-[#006194]">
+                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">description</span>
+                  </div>
+                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#006194] transition-colors font-bold">
+                    Layanan Persuratan Online
+                  </h3>
+                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
+                    Pengurusan surat keterangan domisili, SKU, pengantar SKCK mandiri dan cepat.
+                  </p>
+                </div>
+                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#e2e7ff]">
+                  <button
+                    onClick={() => setIsLetterModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#006194] font-semibold group-hover:translate-x-1 transition-all cursor-pointer"
+                  >
+                    <span>Buat Surat</span>
+                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Card 4: Lapor Masalah Warga */}
+              <div className="bg-white rounded-2xl 2xl:rounded-3xl p-6 2xl:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group border border-[#ffd8b8]/80 hover:border-[#ff9838]">
+                <div className="space-y-4 2xl:space-y-6">
+                  <div className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-xl 2xl:rounded-2xl bg-[#ffeed9] flex items-center justify-center text-[#b84e00]">
+                    <span className="material-symbols-outlined text-[24px] 2xl:text-[32px]">campaign</span>
+                  </div>
+                  <h3 className="text-lg 2xl:text-2xl text-[#131b2e] group-hover:text-[#b84e00] transition-colors font-bold">
+                    Lapor Masalah Warga
+                  </h3>
+                  <p className="text-xs sm:text-sm 2xl:text-base text-[#3f4850] leading-relaxed">
+                    Pengaduan cepat masalah lampu jalan padam, air bersih, sampah, saluran drainase, atau ketertiban.
+                  </p>
+                </div>
+                <div className="pt-5 2xl:pt-6 mt-6 2xl:mt-8 border-t border-[#f0e4d8]">
+                  <button
+                    onClick={() => setIsReportModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 2xl:gap-2 text-sm 2xl:text-base text-[#b84e00] hover:text-[#8f3c00] font-bold group-hover:translate-x-1 transition-all cursor-pointer"
+                  >
+                    <span>Lapor Masalah</span>
+                    <span className="material-symbols-outlined text-[18px] 2xl:text-[20px]">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* 9. STRUKTUR TIM KKT (PENGABDIAN MAHASISWA)                 */}
           {/* ============================================================ */}
           <KktTeamSection />
         </div>
