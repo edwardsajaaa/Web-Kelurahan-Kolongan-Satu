@@ -813,9 +813,6 @@ export default function LandingPage() {
           {/* ============================================================ */}
           <section className="w-full max-w-7xl xl:max-w-[85rem] 2xl:max-w-[96rem] 3xl:max-w-[107.5rem] mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12 mb-12 2xl:mb-16 no-print" id="layanan-cepat">
             <div className="mb-8">
-              <span className="text-xs 2xl:text-sm text-[#006194] font-bold tracking-wider uppercase block mb-1">
-                Layanan &amp; Informasi Terpadu
-              </span>
               <h2 className="text-2xl sm:text-3xl 2xl:text-4xl 3xl:text-5xl text-[#131b2e] font-bold">
                 Pusat Layanan Warga
               </h2>
