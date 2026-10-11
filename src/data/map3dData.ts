@@ -400,7 +400,7 @@ export const KOLONGAN_SATU_POIS: MapPoiPoint[] = [
     coordinates: [124.8298, 1.3125],
     alamat: 'Jl. Wariki, Kawasan Pemukiman Tengah',
     jaga: 'Jaga 3 (Pala Agustinus Sapanany)',
-    deskripsi: 'Pos ronda aktif pengawasan kawasan Jl. Wariki 1 & Wariki 2 serta mata air swadaya.',
+    deskripsi: '',
     gmapsUrl: 'https://www.google.com/maps?q=1.3125,124.8298',
   },
   {

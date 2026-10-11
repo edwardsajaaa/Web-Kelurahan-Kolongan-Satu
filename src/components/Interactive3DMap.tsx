@@ -535,7 +535,9 @@ export default function Interactive3DMap({ className = '', onSelectPoi }: Intera
                 {selectedPoi.name}
               </h5>
               <p className="text-xs text-[#535f70] mt-0.5">{selectedPoi.alamat}</p>
-              <p className="text-xs text-[#3f4850] mt-1 italic">{selectedPoi.deskripsi}</p>
+              {selectedPoi.deskripsi ? (
+                <p className="text-xs text-[#3f4850] mt-1 italic">{selectedPoi.deskripsi}</p>
+              ) : null}
             </div>
           </div>
 
