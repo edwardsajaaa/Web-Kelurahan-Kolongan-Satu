@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LetterRequest, JENIS_SURAT_OPTIONS } from '@/data/lettersData';
 import { Official } from '@/data/officialsData';
 import {
@@ -186,6 +186,7 @@ interface ModalLetterRequestProps {
   onUpdateStatus: (id: string, newStatus: LetterRequest['statusSurat'], note?: string) => void;
   currentOfficial: Official;
   onPrintLetter: (letter: LetterRequest) => void;
+  isPortalView?: boolean;
 }
 
 export default function ModalLetterRequest({
@@ -196,8 +197,16 @@ export default function ModalLetterRequest({
   onUpdateStatus,
   currentOfficial,
   onPrintLetter,
+  isPortalView = false,
 }: ModalLetterRequestProps) {
   const [activeTab, setActiveTab] = useState<'daftar' | 'katalog' | 'ajukan' | 'lacak'>('daftar');
+  const [portalFilter, setPortalFilter] = useState<'semua' | 'diajukan' | 'diverifikasi_staf' | 'diparaf_seklur' | 'selesai_disahkan'>('semua');
+
+  useEffect(() => {
+    if (isPortalView && activeTab !== 'daftar') {
+      setActiveTab('daftar');
+    }
+  }, [isPortalView, activeTab]);
 
   // Form states
   const [nik, setNik] = useState('');
@@ -210,10 +219,33 @@ export default function ModalLetterRequest({
   const [keperluan, setKeperluan] = useState('');
   const [berkasName, setBerkasName] = useState('KTP_dan_KK_Pemohon.pdf');
 
-  // WhatsApp Target State
-  const [targetTujuan, setTargetTujuan] = useState<'kelurahan' | 'pala'>('kelurahan');
+  // WhatsApp Target State (Kelurahan, Pala, atau Nomor Uji Coba Kustom)
+  const [targetTujuan, setTargetTujuan] = useState<'kelurahan' | 'pala' | 'custom'>('kelurahan');
+  const [customWaNumber, setCustomWaNumber] = useState('');
   const [lastWaUrl, setLastWaUrl] = useState('');
   const [lastTargetName, setLastTargetName] = useState('');
+
+  // Uji coba nomor lain di layar sukses permohonan
+  const [testOtherWaNumber, setTestOtherWaNumber] = useState('');
+
+  // Dialog interaktif pengiriman WhatsApp (Kirim Status & Berkas PDF)
+  const [waModal, setWaModal] = useState<{
+    isOpen: boolean;
+    letter: LetterRequest | null;
+    type: 'status' | 'pdf';
+    targetPhone: string;
+    customPhone: string;
+    useCustomPhone: boolean;
+    copied: boolean;
+  }>({
+    isOpen: false,
+    letter: null,
+    type: 'status',
+    targetPhone: '',
+    customPhone: '',
+    useCustomPhone: false,
+    copied: false,
+  });
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -228,6 +260,11 @@ export default function ModalLetterRequest({
   const [trackError, setTrackError] = useState<string | null>(null);
 
   if (!isOpen) return null;
+
+  // Helper normalisasi nomor telepon ke 62xxxx
+  const cleanPhoneTo62 = (phone: string) => {
+    return phone.replace(/[^0-9]/g, '').replace(/^0/, '62');
+  };
 
   // Format WhatsApp Message Helper
   const getComposedWhatsAppMessage = (letter: {
@@ -266,19 +303,88 @@ export default function ModalLetterRequest({
 _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu. Mohon bantuan Bapak/Ibu aparatur kelurahan untuk verifikasi berkas permohonan surat ini. Terima kasih._`;
   };
 
-  // Handle Form Submission with Real API Call & Instant WhatsApp Redirect
+  // Format Pesan Pemberitahuan Status Pelayanan
+  const getComposedStatusMessage = (letter: LetterRequest) => {
+    let statusText = 'Diajukan Warga (Menunggu Verifikasi Berkas)';
+    if (letter.statusSurat === 'diverifikasi_staf') {
+      statusText = 'Diverifikasi Staf Pelayanan & Menunggu Paraf Seklur';
+    } else if (letter.statusSurat === 'diparaf_seklur') {
+      statusText = 'Telah Diparaf Seklur & Menunggu TTD Elektronik Lurah';
+    } else if (letter.statusSurat === 'selesai_disahkan') {
+      statusText = 'SELESAI & DISAHKAN LURAH (Siap Diambil / Diunduh)';
+    }
+
+    return `*PEMBERITAHUAN STATUS PELAYANAN SURAT*
+*PEMERINTAH KELURAHAN KOLONGAN SATU*
+----------------------------------------
+Yth. Bpk/Ibu *${letter.namaPemohon}*,
+Berikut status perkembangan berkas permohonan surat Anda di Kantor Kelurahan:
+
+• *No. Registrasi :* ${letter.noRegistrasi}
+• *Jenis Surat    :* ${letter.jenisSurat}
+• *Tanggal Masuk  :* ${letter.tanggalDiajukan}
+• *Status Terkini :* ${statusText}
+${letter.catatanPetugas ? `• *Catatan Petugas:* ${letter.catatanPetugas}\n` : ''}
+${
+  letter.statusSurat === 'selesai_disahkan'
+    ? 'Dokumen surat resmi Anda telah disahkan dan siap diambil di Kantor Kelurahan atau dicetak mandiri.'
+    : 'Berkas Anda sedang diproses sesuai tahapan SOP pelayanan kelurahan.'
+}
+
+Terima kasih atas kerja samanya.
+_Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
+  };
+
+  // Format Pesan Penerbitan Dokumen PDF Resmi
+  const getComposedPdfMessage = (letter: LetterRequest) => {
+    return `*DOKUMEN SURAT RESMI TELAH TERBIT (FORMAT PDF)*
+*PEMERINTAH KELURAHAN KOLONGAN SATU, TOMOHON TENGAH*
+--------------------------------------------------
+Yth. Bpk/Ibu *${letter.namaPemohon}*,
+
+Permohonan surat keterangan Anda telah selesai diproses dan disahkan oleh Lurah Kolongan Satu. Dokumen resmi telah diterbitkan dalam format PDF resmi:
+
+• *No. Registrasi :* ${letter.noRegistrasi}
+• *Jenis Surat    :* ${letter.jenisSurat}
+• *Tanggal Terbit :* ${letter.tanggalDiajukan}
+• *Pengesahan     :* Lurah Theresia J. Kaunang, SE
+• *Format Berkas  :* Dokumen Resmi PDF Ber-Kop & QR Code
+
+Berikut dokumen resmi PDF permohonan surat Anda telah diterbitkan. Berkas PDF ini sah dan dapat disimpan/dicetak langsung untuk keperluan administrasi resmi Anda.
+
+Terima kasih atas kerja samanya.
+_Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
+  };
+
+  // Handle Form Submission with Real API Call & WhatsApp Target Options
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nik || !nama || !wa || !keperluan) {
       setSubmitError('Mohon lengkapi NIK, Nama Pemohon, Nomor WhatsApp, dan Keperluan permohonan!');
       return;
     }
+    if (targetTujuan === 'custom' && !customWaNumber.trim()) {
+      setSubmitError('Mohon masukkan nomor WhatsApp tujuan uji coba kustom!');
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitError(null);
 
-    const target = targetTujuan === 'pala' ? (PALA_WHATSAPP_CONTACTS[lingkunganId] || PALA_WHATSAPP_CONTACTS[1]) : KELURAHAN_PERSURATAN_WHATSAPP;
-    const cleanPhone = target.phone.replace(/[^0-9]/g, '').replace(/^0/, '62');
+    let cleanPhone = '6289529175850';
+    let targetLabel = KELURAHAN_PERSURATAN_WHATSAPP.nama;
+
+    if (targetTujuan === 'custom') {
+      cleanPhone = cleanPhoneTo62(customWaNumber);
+      targetLabel = `Nomor Uji Coba (${customWaNumber})`;
+    } else if (targetTujuan === 'pala') {
+      const pala = PALA_WHATSAPP_CONTACTS[lingkunganId] || PALA_WHATSAPP_CONTACTS[1];
+      cleanPhone = cleanPhoneTo62(pala.phone);
+      targetLabel = pala.label;
+    } else {
+      cleanPhone = cleanPhoneTo62(KELURAHAN_PERSURATAN_WHATSAPP.phone);
+      targetLabel = KELURAHAN_PERSURATAN_WHATSAPP.nama;
+    }
 
     try {
       const payload = {
@@ -317,7 +423,7 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
       const waMsg = getComposedWhatsAppMessage(newLetter);
       const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(waMsg)}`;
       setLastWaUrl(waUrl);
-      setLastTargetName(target.nama);
+      setLastTargetName(targetLabel);
 
       // Open WhatsApp in new window/tab
       if (typeof window !== 'undefined') {
@@ -358,7 +464,7 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
       const waMsg = getComposedWhatsAppMessage(fallbackReq);
       const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(waMsg)}`;
       setLastWaUrl(waUrl);
-      setLastTargetName(target.nama);
+      setLastTargetName(targetLabel);
 
       if (typeof window !== 'undefined') {
         window.open(waUrl, '_blank');
@@ -368,44 +474,60 @@ _Permohonan ini telah tercatat resmi di database sistem Kelurahan Kolongan Satu.
     }
   };
 
-  // Kirim Update Status ke WA Pemohon (Fitur Sekretariat / Admin)
-  const handleSendStatusToCitizenWa = (letter: LetterRequest) => {
-    const rawPhone = letter.nomorWaPemohon || '';
-    const cleanPhone = rawPhone.replace(/[^0-9]/g, '').replace(/^0/, '62');
-    const targetPhone = cleanPhone || '6289529175850';
+  // Buka Modal Dialog Pengiriman WhatsApp (Kirim Status ke Pemohon / Coba Nomor Lain)
+  const handleOpenSendStatusWaModal = (letter: LetterRequest) => {
+    setWaModal({
+      isOpen: true,
+      letter,
+      type: 'status',
+      targetPhone: letter.nomorWaPemohon,
+      customPhone: '',
+      useCustomPhone: false,
+      copied: false,
+    });
+  };
 
-    let statusText = 'Diajukan Warga (Menunggu Verifikasi Berkas)';
-    if (letter.statusSurat === 'diverifikasi_staf') {
-      statusText = 'Diverifikasi Staf Pelayanan & Menunggu Paraf Seklur';
-    } else if (letter.statusSurat === 'diparaf_seklur') {
-      statusText = 'Telah Diparaf Seklur & Menunggu TTD Elektronik Lurah';
-    } else if (letter.statusSurat === 'selesai_disahkan') {
-      statusText = 'SELESAI & DISAHKAN LURAH (Siap Diambil / Diunduh)';
-    }
+  // Buka Modal Dialog Pengiriman WhatsApp (Kirim PDF ke Pemohon / Coba Nomor Lain)
+  const handleOpenSendPdfWaModal = (letter: LetterRequest) => {
+    setWaModal({
+      isOpen: true,
+      letter,
+      type: 'pdf',
+      targetPhone: letter.nomorWaPemohon,
+      customPhone: '',
+      useCustomPhone: false,
+      copied: false,
+    });
+  };
 
-    const message = `*PEMBERITAHUAN STATUS PELAYANAN SURAT*
-*PEMERINTAH KELURAHAN KOLONGAN SATU*
-----------------------------------------
-Yth. Bpk/Ibu *${letter.namaPemohon}*,
-Berikut status perkembangan berkas permohonan surat Anda di Kantor Kelurahan:
+  // Eksekusi buka WhatsApp dari modal dialog pengiriman
+  const handleExecuteDispatchWa = () => {
+    if (!waModal.letter) return;
+    const phoneToUse = waModal.useCustomPhone
+      ? waModal.customPhone
+      : (waModal.targetPhone || waModal.letter.nomorWaPemohon);
+    const cleanPhone = cleanPhoneTo62(phoneToUse) || '6289529175850';
 
-• *No. Registrasi :* ${letter.noRegistrasi}
-• *Jenis Surat    :* ${letter.jenisSurat}
-• *Tanggal Masuk  :* ${letter.tanggalDiajukan}
-• *Status Terkini :* ${statusText}
-${letter.catatanPetugas ? `• *Catatan Petugas:* ${letter.catatanPetugas}\n` : ''}
-${
-  letter.statusSurat === 'selesai_disahkan'
-    ? 'Dokumen surat resmi Anda telah disahkan dan siap diambil di Kantor Kelurahan atau dicetak mandiri.'
-    : 'Berkas Anda sedang diproses sesuai tahapan SOP pelayanan kelurahan.'
-}
+    const message =
+      waModal.type === 'pdf'
+        ? getComposedPdfMessage(waModal.letter)
+        : getComposedStatusMessage(waModal.letter);
 
-Terima kasih atas kerja samanya.
-_Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
-
-    const waUrl = `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(message)}`;
+    const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
     if (typeof window !== 'undefined') {
       window.open(waUrl, '_blank');
+    }
+    setWaModal((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  // Helper untuk testing nomor lain pada saat surat baru diajukan
+  const handleTestOtherPhoneOnSubmittedLetter = (phoneInput: string) => {
+    if (!phoneInput.trim() || !submittedLetter) return;
+    const clean = cleanPhoneTo62(phoneInput);
+    const message = getComposedWhatsAppMessage(submittedLetter);
+    const url = `https://api.whatsapp.com/send?phone=${clean}&text=${encodeURIComponent(message)}`;
+    if (typeof window !== 'undefined') {
+      window.open(url, '_blank');
     }
   };
 
@@ -486,305 +608,614 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-4xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white w-full max-w-5xl max-h-[92vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-[#dae2fd]">
         {/* Modal Header */}
-        <div className="p-5 border-b border-slate-200 bg-gradient-to-r from-sky-900 to-slate-900 text-white flex items-center justify-between">
+        <div className="p-4 sm:p-5 border-b border-[#dae2fd] bg-gradient-to-r from-primary via-[#00527c] to-[#004266] text-white flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300">
+            <div className="w-10 h-10 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center text-white shrink-0">
               <FileSpreadsheet className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white">Pusat Rekapitulasi & Pelayanan Persuratan</h2>
-              <p className="text-xs text-slate-300">
-                Pemerintah Kelurahan Kolongan Satu, Kecamatan Tomohon Tengah
+              <h2 className="text-base font-bold text-white leading-tight">
+                {isPortalView ? 'Alur & Proses Penerbitan Dokumen Surat Resmi (PDF)' : 'Pusat Rekapitulasi & Pelayanan Persuratan'}
+              </h2>
+              <p className="text-xs text-sky-100 mt-0.5">
+                {isPortalView
+                  ? 'Verifikasi Berkas, Paraf Seklur, Pengesahan TTD Lurah & Pengiriman Berkas PDF Resmi'
+                  : 'Pemerintah Kelurahan Kolongan Satu, Kecamatan Tomohon Tengah'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 bg-slate-50 px-5 pt-3 gap-2 overflow-x-auto">
-          <button
-            onClick={() => {
-              setActiveTab('daftar');
-              setSubmittedLetter(null);
-            }}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 shrink-0 ${
-              activeTab === 'daftar'
-                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <FileSpreadsheet className="w-3.5 h-3.5" />
-            <span>Rekap & Antrean Surat</span>
-            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-sky-100 text-sky-800 font-bold">
-              {letters.length}
-            </span>
-          </button>
+        <div className="p-3 bg-slate-50/90 border-b border-[#dae2fd] overflow-x-auto">
+          {!isPortalView ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setActiveTab('daftar');
+                  setSubmittedLetter(null);
+                }}
+                className={`px-4 py-2 font-bold text-xs rounded-xl transition flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  activeTab === 'daftar'
+                    ? 'bg-white border border-[#dae2fd] text-primary shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span>Rekap &amp; Antrean Surat</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-primary/10 text-primary font-bold">
+                  {letters.length}
+                </span>
+              </button>
 
-          <button
-            onClick={() => {
-              setActiveTab('katalog');
-              setSubmittedLetter(null);
-            }}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 shrink-0 ${
-              activeTab === 'katalog'
-                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5 text-sky-600" />
-            <span>Katalog & Syarat Berkas</span>
-            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">
-              {KATALOG_SURAT_GUIDE.length} Jenis
-            </span>
-          </button>
+              <button
+                onClick={() => {
+                  setActiveTab('katalog');
+                  setSubmittedLetter(null);
+                }}
+                className={`px-4 py-2 font-bold text-xs rounded-xl transition flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  activeTab === 'katalog'
+                    ? 'bg-white border border-[#dae2fd] text-primary shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-primary" />
+                <span>Katalog &amp; Syarat Berkas</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">
+                  {KATALOG_SURAT_GUIDE.length} Jenis
+                </span>
+              </button>
 
-          <button
-            onClick={() => setActiveTab('ajukan')}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 shrink-0 ${
-              activeTab === 'ajukan'
-                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-sky-600" />
-            <span>Ajukan Surat Mandiri</span>
-          </button>
+              <button
+                onClick={() => setActiveTab('ajukan')}
+                className={`px-4 py-2 font-bold text-xs rounded-xl transition flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  activeTab === 'ajukan'
+                    ? 'bg-white border border-[#dae2fd] text-primary shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                <span>Ajukan Surat Mandiri</span>
+              </button>
 
-          <button
-            onClick={() => {
-              setActiveTab('lacak');
-              setSubmittedLetter(null);
-            }}
-            className={`px-4 py-2.5 font-bold text-xs rounded-t-xl transition border-b-2 flex items-center space-x-2 shrink-0 ${
-              activeTab === 'lacak'
-                ? 'bg-white border-sky-600 text-sky-800 shadow-xs'
-                : 'border-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <Search className="w-3.5 h-3.5 text-slate-500" />
-            <span>Lacak Resi Permohonan</span>
-          </button>
+              <button
+                onClick={() => {
+                  setActiveTab('lacak');
+                  setSubmittedLetter(null);
+                }}
+                className={`px-4 py-2 font-bold text-xs rounded-xl transition flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  activeTab === 'lacak'
+                    ? 'bg-white border border-[#dae2fd] text-primary shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <Search className="w-3.5 h-3.5 text-slate-500" />
+                <span>Lacak Resi Permohonan</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              {/* PORTAL PIPELINE STAGES FILTER */}
+              <button
+                onClick={() => setPortalFilter('semua')}
+                className={`px-3.5 py-2 font-bold text-xs rounded-xl transition-all flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  portalFilter === 'semua'
+                    ? 'bg-white border border-[#dae2fd] text-primary shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-primary" />
+                <span>Semua Berkas</span>
+                <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
+                  portalFilter === 'semua' ? 'bg-primary/10 text-primary' : 'bg-slate-200/80 text-slate-700'
+                }`}>
+                  {letters.length}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setPortalFilter('diajukan')}
+                className={`px-3.5 py-2 font-bold text-xs rounded-xl transition-all flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  portalFilter === 'diajukan'
+                    ? 'bg-white border border-amber-300 text-amber-900 shadow-xs ring-1 ring-amber-400/30'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <Clock className="w-3.5 h-3.5 text-amber-600" />
+                <span>1. Menunggu Verifikasi Staf</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-100 text-amber-800 font-bold">
+                  {letters.filter((l) => l.statusSurat === 'diajukan').length}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setPortalFilter('diverifikasi_staf')}
+                className={`px-3.5 py-2 font-bold text-xs rounded-xl transition-all flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  portalFilter === 'diverifikasi_staf'
+                    ? 'bg-white border border-sky-300 text-primary shadow-xs ring-1 ring-primary/30'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <BadgeCheck className="w-3.5 h-3.5 text-primary" />
+                <span>2. Menunggu Paraf Seklur</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-primary/10 text-primary font-bold">
+                  {letters.filter((l) => l.statusSurat === 'diverifikasi_staf').length}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setPortalFilter('diparaf_seklur')}
+                className={`px-3.5 py-2 font-bold text-xs rounded-xl transition-all flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  portalFilter === 'diparaf_seklur'
+                    ? 'bg-white border border-sky-300 text-primary shadow-xs ring-1 ring-primary/30'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                <span>3. Menunggu Pengesahan Lurah</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-sky-100 text-sky-800 font-bold">
+                  {letters.filter((l) => l.statusSurat === 'diparaf_seklur').length}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setPortalFilter('selesai_disahkan')}
+                className={`px-3.5 py-2 font-bold text-xs rounded-xl transition-all flex items-center space-x-2 shrink-0 cursor-pointer ${
+                  portalFilter === 'selesai_disahkan'
+                    ? 'bg-white border border-emerald-300 text-emerald-900 shadow-xs ring-1 ring-emerald-400/30'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                <span>4. Selesai &amp; Terbit PDF</span>
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-800 font-bold">
+                  {letters.filter((l) => l.statusSurat === 'selesai_disahkan').length}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Tab Body */}
-        <div className="flex-1 overflow-y-auto p-5 md:p-6 bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-[#faf8ff]">
           {/* TAB 1: DAFTAR BERKAS */}
           {activeTab === 'daftar' && (
             <div className="space-y-4">
               {/* Rekap 4 Metrik Statistik Pelayanan Surat */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-2xs">
-                  <div className="flex items-center justify-between text-slate-400">
-                    <span className="text-[10px] uppercase font-bold tracking-wider">Total Surat Masuk</span>
-                    <FileText className="w-4 h-4 text-sky-600" />
+                <div className="bg-white p-4 rounded-2xl border border-[#dae2fd] shadow-xs hover:border-primary/40 transition-all">
+                  <div className="flex items-center justify-between text-slate-500">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">Total Surat Masuk</span>
+                    <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                      <FileText className="w-4 h-4" />
+                    </div>
                   </div>
-                  <div className="text-2xl font-black text-slate-900 mt-1">{letters.length}</div>
-                  <p className="text-[10px] text-slate-500 mt-0.5">Semua permohonan aktif</p>
+                  <div className="text-2xl font-black text-slate-900 mt-1.5">{letters.length}</div>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Semua permohonan aktif</p>
                 </div>
 
-                <div className="bg-white p-3.5 rounded-2xl border border-amber-200 shadow-2xs">
-                  <div className="flex items-center justify-between text-amber-500">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-amber-800">Menunggu Verifikasi</span>
-                    <Clock className="w-4 h-4 text-amber-600" />
+                <div className="bg-white p-4 rounded-2xl border border-[#dae2fd] shadow-xs hover:border-amber-300 transition-all">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-amber-700">Menunggu Verifikasi</span>
+                    <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                      <Clock className="w-4 h-4" />
+                    </div>
                   </div>
-                  <div className="text-2xl font-black text-amber-900 mt-1">
+                  <div className="text-2xl font-black text-slate-900 mt-1.5">
                     {letters.filter((l) => l.statusSurat === 'diajukan').length}
                   </div>
-                  <p className="text-[10px] text-amber-700 mt-0.5">Antrean staf kelurahan</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Antrean staf kelurahan</p>
                 </div>
 
-                <div className="bg-white p-3.5 rounded-2xl border border-sky-200 shadow-2xs">
-                  <div className="flex items-center justify-between text-sky-500">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-sky-800">Proses / Paraf Seklur</span>
-                    <BadgeCheck className="w-4 h-4 text-sky-600" />
+                <div className="bg-white p-4 rounded-2xl border border-[#dae2fd] shadow-xs hover:border-primary/40 transition-all">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-primary">Proses / Paraf Seklur</span>
+                    <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                      <BadgeCheck className="w-4 h-4" />
+                    </div>
                   </div>
-                  <div className="text-2xl font-black text-sky-900 mt-1">
+                  <div className="text-2xl font-black text-slate-900 mt-1.5">
                     {letters.filter((l) => l.statusSurat === 'diverifikasi_staf' || l.statusSurat === 'diparaf_seklur').length}
                   </div>
-                  <p className="text-[10px] text-sky-700 mt-0.5">Verifikasi & paraf Seklur</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Verifikasi &amp; paraf Seklur</p>
                 </div>
 
-                <div className="bg-white p-3.5 rounded-2xl border border-emerald-200 shadow-2xs">
-                  <div className="flex items-center justify-between text-emerald-500">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-800">Selesai & Sah</span>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="bg-white p-4 rounded-2xl border border-[#dae2fd] shadow-xs hover:border-emerald-300 transition-all">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-700">Selesai &amp; Sah</span>
+                    <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </div>
                   </div>
-                  <div className="text-2xl font-black text-emerald-900 mt-1">
+                  <div className="text-2xl font-black text-slate-900 mt-1.5">
                     {letters.filter((l) => l.statusSurat === 'selesai_disahkan').length}
                   </div>
-                  <p className="text-[10px] text-emerald-700 mt-0.5">Disahkan Lurah Theresia</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">Disahkan Lurah Theresia</p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-slate-600 bg-white p-3.5 rounded-2xl border border-slate-200">
-                <div className="flex items-center space-x-2">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>
-                    Masuk Sebagai: <strong className="text-slate-900">{currentOfficial.name}</strong> ({currentOfficial.roleTitle})
-                  </span>
+              {/* Status Session & Workflow Ribbon */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs bg-white p-3.5 rounded-2xl border border-[#dae2fd] shadow-xs">
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Masuk Sebagai: </span>
+                    <strong className="text-slate-900">{currentOfficial.name}</strong>{' '}
+                    <span className="text-slate-500 text-[11px]">({currentOfficial.roleTitle})</span>
+                  </div>
                 </div>
-                <span className="text-[11px] text-slate-500 hidden sm:inline">
-                  Alur: Warga &rarr; Staf Karlin &rarr; Seklur Febronia &rarr; TTD Lurah Theresia
-                </span>
+                <div className="flex items-center gap-1.5 text-[11px] text-slate-600 bg-[#faf8ff] px-3 py-1.5 rounded-xl border border-[#dae2fd]/70">
+                  <span className="font-semibold text-slate-700">Alur:</span>
+                  <span className="px-1.5 py-0.5 bg-white rounded border border-slate-200 font-medium">Warga</span>
+                  <span>&rarr;</span>
+                  <span className="px-1.5 py-0.5 bg-white rounded border border-slate-200 font-medium">Staf Karlin</span>
+                  <span>&rarr;</span>
+                  <span className="px-1.5 py-0.5 bg-white rounded border border-slate-200 font-medium">Seklur Febronia</span>
+                  <span>&rarr;</span>
+                  <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-800 rounded border border-emerald-200 font-bold">TTD Lurah Theresia</span>
+                </div>
               </div>
 
-              <div className="space-y-3">
-                {letters.map((letter) => {
-                  const isDone = letter.statusSurat === 'selesai_disahkan';
-                  const isStafVerified = letter.statusSurat === 'diverifikasi_staf';
-                  const isSeklurParaf = letter.statusSurat === 'diparaf_seklur';
-                  const isNew = letter.statusSurat === 'diajukan';
+              <div className="space-y-3.5">
+                {(() => {
+                  const displayedLetters =
+                    isPortalView && portalFilter !== 'semua'
+                      ? letters.filter((l) => l.statusSurat === portalFilter)
+                      : letters;
 
-                  return (
-                    <div
-                      key={letter.id}
-                      className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs hover:border-slate-300 transition space-y-3"
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                        <div>
-                          <div className="flex items-center space-x-2">
-                            <span className="font-mono text-xs font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200">
-                              {letter.noRegistrasi}
-                            </span>
-                            <span className="text-xs text-slate-400">•</span>
-                            <span className="text-xs text-slate-500">{letter.tanggalDiajukan}</span>
+                  if (displayedLetters.length === 0) {
+                    return (
+                      <div className="bg-white rounded-2xl border border-dashed border-[#dae2fd] p-8 text-center space-y-2">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 mx-auto flex items-center justify-center">
+                          <CheckCircle2 className="w-6 h-6 text-slate-300" />
+                        </div>
+                        <p className="text-xs font-bold text-slate-700">Tidak ada surat dalam tahapan ini</p>
+                        <p className="text-[11px] text-slate-400">
+                          Semua permohonan telah selesai diproses atau berada di tahapan alur pelayanan lainnya.
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return displayedLetters.map((letter) => {
+                    const isDone = letter.statusSurat === 'selesai_disahkan';
+                    const isStafVerified = letter.statusSurat === 'diverifikasi_staf';
+                    const isSeklurParaf = letter.statusSurat === 'diparaf_seklur';
+                    const isNew = letter.statusSurat === 'diajukan';
+
+                    return (
+                      <div
+                        key={letter.id}
+                        className="bg-white rounded-2xl border border-[#dae2fd] p-5 shadow-xs hover:border-primary/40 hover:shadow-sm transition-all space-y-3.5"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <span className="font-mono text-xs font-bold text-primary bg-primary/10 px-2.5 py-0.5 rounded-lg border border-primary/20">
+                                {letter.noRegistrasi}
+                              </span>
+                              <span className="text-xs text-slate-400">•</span>
+                              <span className="text-xs text-slate-500">{letter.tanggalDiajukan}</span>
+                            </div>
+                            <h3 className="text-sm sm:text-base font-bold text-slate-900 mt-1">
+                              {letter.jenisSurat}
+                            </h3>
                           </div>
-                          <h3 className="text-sm font-bold text-slate-900 mt-1">
-                            {letter.jenisSurat}
-                          </h3>
+
+                          {/* Status badge */}
+                          <div>
+                            {isDone ? (
+                              <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-xs font-bold shadow-2xs">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                <span>Selesai &amp; Terbit PDF</span>
+                              </span>
+                            ) : isSeklurParaf ? (
+                              <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-sky-50 text-primary border border-primary/30 rounded-full text-xs font-bold">
+                                <Clock className="w-3.5 h-3.5 text-primary" />
+                                <span>Paraf Seklur (Siap TTD Lurah)</span>
+                              </span>
+                            ) : isStafVerified ? (
+                              <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded-full text-xs font-bold">
+                                <Clock className="w-3.5 h-3.5 text-blue-600" />
+                                <span>Diverifikasi Staf Karlin</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 rounded-full text-xs font-bold">
+                                <Clock className="w-3.5 h-3.5 text-amber-600" />
+                                <span>Diajukan Warga</span>
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        {/* Status badge */}
-                        <div>
-                          {isDone ? (
-                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-full text-xs font-bold">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                              <span>Selesai & Disahkan</span>
-                            </span>
-                          ) : isSeklurParaf ? (
-                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-300 rounded-full text-xs font-bold">
-                              <Clock className="w-3.5 h-3.5 text-amber-600" />
-                              <span>Paraf Seklur (Siap TTD Lurah)</span>
-                            </span>
-                          ) : isStafVerified ? (
-                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 border border-indigo-300 rounded-full text-xs font-bold">
-                              <Clock className="w-3.5 h-3.5 text-indigo-600" />
-                              <span>Diverifikasi Staf Karlin</span>
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center space-x-1.5 px-3 py-1 bg-sky-50 text-sky-700 border border-sky-300 rounded-full text-xs font-bold">
-                              <Clock className="w-3.5 h-3.5 text-sky-600" />
-                              <span>Diajukan Warga</span>
-                            </span>
-                          )}
+                        {/* Visual Workflow Stepper for Issuing the Letter in Portal */}
+                        {isPortalView && (
+                          <div className="bg-[#faf8ff] rounded-2xl p-3.5 border border-[#dae2fd]">
+                            <div className="flex items-center justify-between text-[11px] font-bold text-slate-700 mb-2.5">
+                              <span className="flex items-center gap-1.5 text-slate-900">
+                                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                                Alur &amp; Tahapan Penerbitan Dokumen Resmi:
+                              </span>
+                              <span className="text-[10px] text-emerald-800 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-lg border border-emerald-200">
+                                Output: Dokumen PDF Resmi
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                              {/* 1. Berkas Masuk */}
+                              <div
+                                className={`p-2.5 rounded-xl border flex items-center gap-2 transition-all ${
+                                  letter.statusSurat !== 'diajukan'
+                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-950 font-medium'
+                                    : 'bg-white border-amber-300 text-amber-950 font-bold ring-2 ring-amber-400/20 shadow-2xs'
+                                }`}
+                              >
+                                <span
+                                  className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold shrink-0 ${
+                                    letter.statusSurat !== 'diajukan'
+                                      ? 'bg-emerald-600 text-white'
+                                      : 'bg-amber-600 text-white'
+                                  }`}
+                                >
+                                  1
+                                </span>
+                                <div>
+                                  <p className="font-bold text-[11px] leading-tight">Berkas Masuk</p>
+                                  <p className="text-[9px] text-slate-500">Diajukan warga</p>
+                                </div>
+                              </div>
+
+                              {/* 2. Verifikasi Staf */}
+                              <div
+                                className={`p-2.5 rounded-xl border flex items-center gap-2 transition-all ${
+                                  letter.statusSurat === 'diparaf_seklur' ||
+                                  letter.statusSurat === 'selesai_disahkan'
+                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-950 font-medium'
+                                    : letter.statusSurat === 'diverifikasi_staf'
+                                    ? 'bg-white border-primary text-slate-900 font-bold ring-2 ring-primary/20 shadow-2xs'
+                                    : 'bg-white/60 border-slate-200 text-slate-400'
+                                }`}
+                              >
+                                <span
+                                  className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold shrink-0 ${
+                                    letter.statusSurat === 'diparaf_seklur' ||
+                                    letter.statusSurat === 'selesai_disahkan'
+                                      ? 'bg-emerald-600 text-white'
+                                      : letter.statusSurat === 'diverifikasi_staf'
+                                      ? 'bg-primary text-white'
+                                      : 'bg-slate-200 text-slate-500'
+                                  }`}
+                                >
+                                  2
+                                </span>
+                                <div>
+                                  <p className="font-bold text-[11px] leading-tight">Verifikasi Berkas</p>
+                                  <p className="text-[9px] text-slate-500">
+                                    {letter.diparafOleh || 'Staf Karlin'}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* 3. Paraf Seklur */}
+                              <div
+                                className={`p-2.5 rounded-xl border flex items-center gap-2 transition-all ${
+                                  letter.statusSurat === 'selesai_disahkan'
+                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-950 font-medium'
+                                    : letter.statusSurat === 'diparaf_seklur'
+                                    ? 'bg-white border-primary text-slate-900 font-bold ring-2 ring-primary/20 shadow-2xs'
+                                    : 'bg-white/60 border-slate-200 text-slate-400'
+                                }`}
+                              >
+                                <span
+                                  className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold shrink-0 ${
+                                    letter.statusSurat === 'selesai_disahkan'
+                                      ? 'bg-emerald-600 text-white'
+                                      : letter.statusSurat === 'diparaf_seklur'
+                                      ? 'bg-primary text-white'
+                                      : 'bg-slate-200 text-slate-500'
+                                  }`}
+                                >
+                                  3
+                                </span>
+                                <div>
+                                  <p className="font-bold text-[11px] leading-tight">Paraf Seklur</p>
+                                  <p className="text-[9px] text-slate-500">Seklur Febronia</p>
+                                </div>
+                              </div>
+
+                              {/* 4. Pengesahan Lurah & Terbit PDF */}
+                              <div
+                                className={`p-2.5 rounded-xl border flex items-center gap-2 transition-all ${
+                                  letter.statusSurat === 'selesai_disahkan'
+                                    ? 'bg-white border-emerald-400 text-emerald-950 font-bold ring-2 ring-emerald-500/20 shadow-2xs'
+                                    : 'bg-white/60 border-slate-200 text-slate-400'
+                                }`}
+                              >
+                                <span
+                                  className={`w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold shrink-0 ${
+                                    letter.statusSurat === 'selesai_disahkan'
+                                      ? 'bg-emerald-600 text-white'
+                                      : 'bg-slate-200 text-slate-500'
+                                  }`}
+                                >
+                                  4
+                                </span>
+                                <div>
+                                  <p className="font-bold text-[11px] leading-tight">TTD &amp; Terbit PDF</p>
+                                  <p className="text-[9px] text-slate-500">Lurah Theresia</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Applicant Information */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs bg-[#faf8ff] p-3.5 rounded-2xl border border-[#dae2fd]/70">
+                          <div className="space-y-0.5">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                              <User className="w-3 h-3 text-primary" />
+                              Pemohon
+                            </p>
+                            <p className="font-bold text-slate-900 text-sm">{letter.namaPemohon}</p>
+                            <p className="text-[11px] text-slate-500 font-mono">NIK: {letter.nikPemohon}</p>
+                          </div>
+                          <div className="space-y-0.5">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                              <MapPin className="w-3 h-3 text-primary" />
+                              Lingkungan &amp; WA
+                            </p>
+                            <p className="font-semibold text-slate-800">
+                              Lingkungan {letter.lingkunganId} (Jaga {letter.lingkunganId})
+                            </p>
+                            <p className="text-[11px] text-slate-500 font-mono">{letter.nomorWaPemohon}</p>
+                          </div>
+                          <div className="space-y-0.5">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1">
+                              <FileText className="w-3 h-3 text-primary" />
+                              Keperluan Surat
+                            </p>
+                            <p className="text-slate-800 line-clamp-2 leading-relaxed">{letter.tujuanKeperluan}</p>
+                          </div>
+                        </div>
+
+                        {/* Workflow Action Buttons */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                          <div className="flex items-center space-x-2 text-[11px] text-slate-500">
+                            {letter.berkasName && (
+                              <span className="bg-slate-100 px-2.5 py-1 rounded-lg text-slate-700 border border-slate-200 flex items-center gap-1.5 font-medium">
+                                <Paperclip className="w-3 h-3 text-slate-500" />
+                                <span>{letter.berkasName}</span>
+                              </span>
+                            )}
+                            {letter.diparafOleh && (
+                              <span className="text-primary font-medium flex items-center gap-1 bg-primary/5 px-2.5 py-1 rounded-lg border border-primary/10">
+                                <CheckCircle2 className="w-3 h-3 text-primary" />
+                                <span>Diparaf: {letter.diparafOleh}</span>
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-2">
+                            {/* Role Action: Staf Karlin verifies */}
+                            {(currentOfficial.roleCode === 'pelaksana_adm' ||
+                              currentOfficial.roleCode === 'superadmin' ||
+                              currentOfficial.roleCode === 'admin_seklur') &&
+                              isNew && (
+                                <button
+                                  onClick={() =>
+                                    onUpdateStatus(
+                                      letter.id,
+                                      'diverifikasi_staf',
+                                      'Berkas KTP/KK telah diverifikasi oleh Staf Karlin'
+                                    )
+                                  }
+                                  className="px-3.5 py-2 bg-primary hover:bg-[#004d77] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center space-x-1.5 cursor-pointer"
+                                >
+                                  <BadgeCheck className="w-3.5 h-3.5" />
+                                  <span>Verifikasi Berkas Staf</span>
+                                </button>
+                              )}
+
+                            {/* Role Action: Seklur Febronia paraf */}
+                            {(currentOfficial.roleCode === 'admin_seklur' ||
+                              currentOfficial.roleCode === 'superadmin') &&
+                              (isStafVerified || isNew) && (
+                                <button
+                                  onClick={() =>
+                                    onUpdateStatus(
+                                      letter.id,
+                                      'diparaf_seklur',
+                                      'Paraf verifikasi administratif oleh Seklur Febronia L. Pijoh, S.Kom'
+                                    )
+                                  }
+                                  className="px-3.5 py-2 bg-primary hover:bg-[#004d77] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center space-x-1.5 cursor-pointer"
+                                >
+                                  <BadgeCheck className="w-3.5 h-3.5" />
+                                  <span>Beri Paraf Seklur</span>
+                                </button>
+                              )}
+
+                            {/* Role Action: Lurah Theresia approves & digital signs */}
+                            {currentOfficial.roleCode === 'superadmin' && isSeklurParaf && (
+                              <button
+                                onClick={() =>
+                                  onUpdateStatus(
+                                    letter.id,
+                                    'selesai_disahkan',
+                                    'Disahkan dan ditandatangani elektronik oleh Lurah Theresia J. Kaunang, SE'
+                                  )
+                                }
+                                className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Sahkan &amp; Terbitkan PDF</span>
+                              </button>
+                            )}
+
+                            {/* Pengiriman Surat via PDF Resmi */}
+                            {isDone ? (
+                              <>
+                                <button
+                                  onClick={() => handleOpenSendPdfWaModal(letter)}
+                                  className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                                  title="Kirim notifikasi penerbitan berkas surat resmi PDF ke WhatsApp pemohon atau coba nomor lain"
+                                >
+                                  <Send className="w-3.5 h-3.5" />
+                                  <span>Kirim Berkas PDF ke Pemohon</span>
+                                </button>
+
+                                <button
+                                  onClick={() => onPrintLetter(letter)}
+                                  className="px-3.5 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                                  title="Cetak atau Unduh Dokumen Resmi Format PDF"
+                                >
+                                  <Printer className="w-3.5 h-3.5 text-sky-400" />
+                                  <span>Unduh / Cetak Dokumen PDF</span>
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => handleOpenSendStatusWaModal(letter)}
+                                  className="px-3.5 py-2 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold rounded-xl transition flex items-center space-x-1.5 shadow-2xs cursor-pointer"
+                                  title="Kirim perkembangan status surat ke nomor WhatsApp pemohon atau coba nomor lain"
+                                >
+                                  <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                                  <span>Kirim Status ke WA</span>
+                                </button>
+
+                                <button
+                                  onClick={() => onPrintLetter(letter)}
+                                  className="px-3.5 py-2 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 text-xs font-bold rounded-xl transition flex items-center space-x-1.5 cursor-pointer"
+                                  title="Pratinjau draf surat sebelum pengesahan"
+                                >
+                                  <Printer className="w-3.5 h-3.5 text-slate-500" />
+                                  <span>Pratinjau Draf PDF</span>
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
-
-                      {/* Applicant Information */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl">
-                        <div>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase">Pemohon</p>
-                          <p className="font-bold text-slate-900">{letter.namaPemohon}</p>
-                          <p className="text-[11px] text-slate-500 font-mono">NIK: {letter.nikPemohon}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase">Lingkungan & WA</p>
-                          <p className="font-semibold text-slate-800">Lingkungan {letter.lingkunganId} (Jaga {letter.lingkunganId})</p>
-                          <p className="text-[11px] text-slate-500">{letter.nomorWaPemohon}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase">Keperluan Surat</p>
-                          <p className="text-slate-800 line-clamp-2">{letter.tujuanKeperluan}</p>
-                        </div>
-                      </div>
-
-                      {/* Workflow Action Buttons */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                        <div className="flex items-center space-x-2 text-[11px] text-slate-500">
-                          {letter.berkasName && (
-                            <span className="bg-slate-100 px-2 py-0.5 rounded text-slate-600 border border-slate-200 flex items-center gap-1">
-                              <Paperclip className="w-3 h-3 text-slate-500" />
-                              <span>{letter.berkasName}</span>
-                            </span>
-                          )}
-                          {letter.diparafOleh && (
-                            <span className="text-indigo-600 font-medium flex items-center gap-1">
-                              <CheckCircle2 className="w-3 h-3 text-indigo-600" />
-                              <span>Diparaf: {letter.diparafOleh}</span>
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          {/* Role Action: Staf Karlin verifies */}
-                          {(currentOfficial.roleCode === 'pelaksana_adm' || currentOfficial.roleCode === 'superadmin' || currentOfficial.roleCode === 'admin_seklur') && isNew && (
-                            <button
-                              onClick={() => onUpdateStatus(letter.id, 'diverifikasi_staf', 'Berkas KTP/KK telah diverifikasi oleh Staf Karlin')}
-                              className="px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-xl hover:bg-indigo-700 transition"
-                            >
-                              Verifikasi Berkas Staf
-                            </button>
-                          )}
-
-                          {/* Role Action: Seklur Febronia paraf */}
-                          {(currentOfficial.roleCode === 'admin_seklur' || currentOfficial.roleCode === 'superadmin') && (isStafVerified || isNew) && (
-                            <button
-                              onClick={() => onUpdateStatus(letter.id, 'diparaf_seklur', 'Paraf verifikasi administratif oleh Seklur Febronia L. Pijoh, S.Kom')}
-                              className="px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-xl hover:bg-amber-700 transition flex items-center space-x-1"
-                            >
-                              <span>Beri Paraf Seklur</span>
-                            </button>
-                          )}
-
-                          {/* Role Action: Lurah Theresia approves & digital signs */}
-                          {currentOfficial.roleCode === 'superadmin' && isSeklurParaf && (
-                            <button
-                              onClick={() => onUpdateStatus(letter.id, 'selesai_disahkan', 'Disahkan dan ditandatangani elektronik oleh Lurah Theresia J. Kaunang, SE')}
-                              className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition flex items-center space-x-1 shadow-sm"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                              <span>Sahkan TTD Lurah</span>
-                            </button>
-                          )}
-
-                          {/* Kirim Update Status ke WA Pemohon */}
-                          <button
-                            onClick={() => handleSendStatusToCitizenWa(letter)}
-                            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-300 text-xs font-bold rounded-xl transition flex items-center space-x-1.5 shadow-2xs"
-                            title="Kirim perkembangan status surat langsung ke nomor WhatsApp warga pemohon"
-                          >
-                            <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                            <span>Kirim ke WA Warga</span>
-                          </button>
-
-                          {/* Print / Preview Button */}
-                          <button
-                            onClick={() => onPrintLetter(letter)}
-                            className="px-3.5 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition flex items-center space-x-1.5 shadow-sm"
-                          >
-                            <Printer className="w-3.5 h-3.5" />
-                            <span>{isDone ? 'Cetak Surat PDF Resmi' : 'Lihat Draf Surat'}</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  });
+                })()}
               </div>
             </div>
           )}
 
           {/* TAB 2: KATALOG & PERSYARATAN BERKAS RESMI */}
-          {activeTab === 'katalog' && (
+          {!isPortalView && activeTab === 'katalog' && (
             <div className="space-y-4">
               <div className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs">
                 <div>
@@ -869,7 +1300,7 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
           )}
 
           {/* TAB 3: AJUKAN SURAT MANDIRI */}
-          {activeTab === 'ajukan' && (
+          {!isPortalView && activeTab === 'ajukan' && (
             <div className="space-y-4">
               {/* SUCCESS MODAL CARD IF RECENTLY SUBMITTED */}
               {submittedLetter ? (
@@ -929,10 +1360,41 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
                         className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center space-x-2"
                       >
                         <MessageCircle className="w-4 h-4" />
-                        <span>Kirim / Buka WhatsApp ({lastTargetName})</span>
+                        <span>Kirim / Buka WhatsApp Resmi ({lastTargetName})</span>
                         <ExternalLink className="w-3.5 h-3.5 ml-1" />
                       </a>
                     )}
+
+                    {/* Fitur Uji Coba Kirim ke Nomor WhatsApp Lainnya */}
+                    <div className="p-3.5 bg-[#f0f9ff] rounded-2xl border border-[#bae6fd] space-y-2">
+                      <div className="flex items-center gap-2">
+                        <MessageCircle className="w-4 h-4 text-[#006194]" />
+                        <span className="text-xs font-bold text-[#006194]">
+                          Uji Coba Kirim ke Nomor WhatsApp Lainnya:
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-600">
+                        Ingin menguji coba pengiriman pesan permohonan ini ke nomor WhatsApp Anda sendiri atau nomor lain?
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <input
+                          type="tel"
+                          value={testOtherWaNumber}
+                          onChange={(e) => setTestOtherWaNumber(e.target.value)}
+                          placeholder="Masukkan nomor WA (Contoh: 0812-4411-9988)..."
+                          className="flex-1 bg-white border border-[#bae6fd] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#006194]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleTestOtherPhoneOnSubmittedLetter(testOtherWaNumber)}
+                          disabled={!testOtherWaNumber.trim()}
+                          className="px-4 py-2 bg-[#006194] hover:bg-[#004e77] text-white text-xs font-bold rounded-xl transition flex items-center justify-center space-x-1.5 disabled:opacity-50 cursor-pointer"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Tes Kirim ke Nomor Ini</span>
+                        </button>
+                      </div>
+                    </div>
 
                     <div className="flex flex-wrap items-center gap-3">
                       <button
@@ -1119,12 +1581,12 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         {/* Option 1: Kantor Kelurahan */}
                         <label
                           className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
                             targetTujuan === 'kelurahan'
-                              ? 'bg-sky-50/80 border-sky-400 text-sky-950 font-semibold shadow-2xs'
+                              ? 'bg-sky-50/80 border-sky-400 text-sky-950 font-semibold shadow-2xs ring-1 ring-sky-300'
                               : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                           }`}
                         >
@@ -1136,9 +1598,9 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
                             className="mt-0.5 text-sky-600 focus:ring-sky-500"
                           />
                           <div className="leading-tight">
-                            <span className="font-bold block text-slate-900">Kantor Kelurahan (Layanan Satu Atap)</span>
+                            <span className="font-bold block text-slate-900">Kantor Kelurahan</span>
                             <span className="text-[11px] text-sky-700 font-mono font-medium block mt-0.5">{KELURAHAN_PERSURATAN_WHATSAPP.phone}</span>
-                            <span className="text-[10px] text-slate-500 block mt-0.5">Admin & Staf Verifikasi Persuratan</span>
+                            <span className="text-[10px] text-slate-500 block mt-0.5">Layanan Satu Atap</span>
                           </div>
                         </label>
 
@@ -1146,7 +1608,7 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
                         <label
                           className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
                             targetTujuan === 'pala'
-                              ? 'bg-emerald-50/80 border-emerald-400 text-emerald-950 font-semibold shadow-2xs'
+                              ? 'bg-emerald-50/80 border-emerald-400 text-emerald-950 font-semibold shadow-2xs ring-1 ring-emerald-300'
                               : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                           }`}
                         >
@@ -1163,7 +1625,49 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
                             <span className="text-[10px] text-slate-500 block mt-0.5">{PALA_WHATSAPP_CONTACTS[lingkunganId]?.nama}</span>
                           </div>
                         </label>
+
+                        {/* Option 3: Uji Coba Nomor Lain */}
+                        <label
+                          className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+                            targetTujuan === 'custom'
+                              ? 'bg-amber-50/80 border-amber-400 text-amber-950 font-semibold shadow-2xs ring-1 ring-amber-300'
+                              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="targetWa"
+                            checked={targetTujuan === 'custom'}
+                            onChange={() => setTargetTujuan('custom')}
+                            className="mt-0.5 text-amber-600 focus:ring-amber-500"
+                          />
+                          <div className="leading-tight">
+                            <span className="font-bold block text-slate-900">Uji Coba Nomor Lain</span>
+                            <span className="text-[11px] text-amber-800 font-semibold block mt-0.5">Kirim ke Nomor Sendiri</span>
+                            <span className="text-[10px] text-slate-500 block mt-0.5">Ketik nomor uji coba</span>
+                          </div>
+                        </label>
                       </div>
+
+                      {/* Input Nomor Kustom jika memilih opsi 3 */}
+                      {targetTujuan === 'custom' && (
+                        <div className="p-3 bg-white rounded-xl border border-amber-300 animate-in fade-in space-y-1">
+                          <label className="block text-xs font-bold text-amber-900">
+                            Masukkan Nomor WhatsApp Tujuan Pengujian:
+                          </label>
+                          <input
+                            type="tel"
+                            required={targetTujuan === 'custom'}
+                            value={customWaNumber}
+                            onChange={(e) => setCustomWaNumber(e.target.value)}
+                            placeholder="Contoh: 0812-4411-9988..."
+                            className="w-full bg-slate-50 border border-amber-200 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                          />
+                          <span className="text-[10px] text-slate-500 block">
+                            Pesan permohonan surat akan dikirim ke nomor WhatsApp ini untuk tujuan testing simulasi.
+                          </span>
+                        </div>
+                      )}
 
                       <p className="text-[11px] text-slate-500 leading-normal flex items-start gap-1.5 pt-0.5">
                         <span className="text-emerald-600 font-bold">ℹ</span>
@@ -1204,8 +1708,8 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
             </div>
           )}
 
-          {/* TAB 3: LACAK STATUS REGISTRASI */}
-          {activeTab === 'lacak' && (
+          {/* TAB 4: LACAK STATUS REGISTRASI */}
+          {!isPortalView && activeTab === 'lacak' && (
             <div className="space-y-4">
               <div className="bg-white p-5 md:p-6 rounded-2xl border border-slate-200">
                 <h3 className="text-sm font-bold text-slate-900 mb-1">Pelacakan Berkas Mandiri</h3>
@@ -1384,6 +1888,168 @@ _Sekretariat Kelurahan Kolongan Satu, Tomohon Tengah_`;
           )}
         </div>
       </div>
+
+      {/* MODAL DIALOG PENGIRIMAN WHATSAPP (Kirim Status / PDF dengan Pilihan Nomor Bebas) */}
+      {waModal.isOpen && waModal.letter && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-[#dae2fd] animate-in zoom-in-95 duration-150">
+            {/* Header Dialog */}
+            <div className="p-4 bg-gradient-to-r from-emerald-700 to-teal-800 text-white flex items-center justify-between">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center text-white shrink-0">
+                  <MessageCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold leading-tight">
+                    {waModal.type === 'pdf' ? 'Kirim Dokumen PDF Resmi via WhatsApp' : 'Kirim Status Progres Surat via WhatsApp'}
+                  </h3>
+                  <p className="text-[11px] text-emerald-100">
+                    {waModal.letter.noRegistrasi} • {waModal.letter.namaPemohon}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setWaModal((prev) => ({ ...prev, isOpen: false }))}
+                className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Body Dialog */}
+            <div className="p-5 space-y-4 text-xs">
+              {/* Pilihan Nomor Tujuan */}
+              <div className="space-y-2 bg-[#faf8ff] p-3.5 rounded-2xl border border-[#dae2fd]">
+                <label className="block text-xs font-bold text-slate-800">
+                  Pilih Nomor WhatsApp Tujuan:
+                </label>
+
+                {/* Option A: Nomor Pemohon Terdaftar */}
+                <label
+                  className={`flex items-start gap-2.5 p-2.5 rounded-xl border cursor-pointer transition ${
+                    !waModal.useCustomPhone
+                      ? 'bg-white border-emerald-500 ring-2 ring-emerald-500/15 shadow-2xs'
+                      : 'bg-white/60 border-slate-200 hover:bg-white'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="waDispatchOption"
+                    checked={!waModal.useCustomPhone}
+                    onChange={() => setWaModal((prev) => ({ ...prev, useCustomPhone: false }))}
+                    className="mt-0.5 text-emerald-600 focus:ring-emerald-500"
+                  />
+                  <div>
+                    <span className="font-bold text-slate-900 block">
+                      Nomor Pemohon Terdaftar
+                    </span>
+                    <span className="text-[11px] font-mono font-semibold text-emerald-700 block mt-0.5">
+                      {waModal.targetPhone || waModal.letter.nomorWaPemohon || '-'}
+                    </span>
+                    <span className="text-[10px] text-slate-500 block">
+                      Kirim langsung ke kontak warga yang terdaftar pada form permohonan.
+                    </span>
+                  </div>
+                </label>
+
+                {/* Option B: Uji Coba dengan Nomor Lain */}
+                <label
+                  className={`flex items-start gap-2.5 p-2.5 rounded-xl border cursor-pointer transition ${
+                    waModal.useCustomPhone
+                      ? 'bg-white border-[#006194] ring-2 ring-[#006194]/15 shadow-2xs'
+                      : 'bg-white/60 border-slate-200 hover:bg-white'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="waDispatchOption"
+                    checked={waModal.useCustomPhone}
+                    onChange={() => setWaModal((prev) => ({ ...prev, useCustomPhone: true }))}
+                    className="mt-0.5 text-[#006194] focus:ring-[#006194]"
+                  />
+                  <div className="flex-1">
+                    <span className="font-bold text-slate-900 block">
+                      Uji Coba dengan Nomor WhatsApp Lain
+                    </span>
+                    <span className="text-[10px] text-slate-500 block mt-0.5">
+                      Gunakan nomor HP Anda sendiri atau nomor lain untuk mencoba pengiriman langsung dari web.
+                    </span>
+                  </div>
+                </label>
+
+                {/* Input Nomor Kustom */}
+                {waModal.useCustomPhone && (
+                  <div className="pt-2 animate-in fade-in space-y-1">
+                    <input
+                      type="tel"
+                      value={waModal.customPhone}
+                      onChange={(e) =>
+                        setWaModal((prev) => ({ ...prev, customPhone: e.target.value }))
+                      }
+                      placeholder="Masukkan nomor WA (Contoh: 0812-4411-9988)..."
+                      className="w-full bg-white border border-[#006194] rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#006194]"
+                      autoFocus
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Pratinjau Pesan yang Akan Dikirim */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-700 text-[11px]">
+                    Pratinjau Pesan Resmi:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const msg =
+                        waModal.type === 'pdf'
+                          ? getComposedPdfMessage(waModal.letter!)
+                          : getComposedStatusMessage(waModal.letter!);
+                      if (navigator?.clipboard) {
+                        navigator.clipboard.writeText(msg);
+                        setWaModal((prev) => ({ ...prev, copied: true }));
+                        setTimeout(() => setWaModal((prev) => ({ ...prev, copied: false })), 2000);
+                      }
+                    }}
+                    className="text-[10px] font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200 cursor-pointer"
+                  >
+                    {waModal.copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    <span>{waModal.copied ? 'Tersalin' : 'Salin Teks'}</span>
+                  </button>
+                </div>
+                <div className="bg-[#e7fce3] p-3 rounded-xl border border-[#bbf7a0] text-[#0f2a1d] max-h-36 overflow-y-auto whitespace-pre-line text-[11px] leading-relaxed">
+                  {waModal.type === 'pdf'
+                    ? getComposedPdfMessage(waModal.letter)
+                    : getComposedStatusMessage(waModal.letter)}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setWaModal((prev) => ({ ...prev, isOpen: false }))}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExecuteDispatchWa}
+                  disabled={waModal.useCustomPhone && !waModal.customPhone.trim()}
+                  className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#006c49] hover:bg-[#005237] text-white shadow-md shadow-[#006c49]/20 transition flex items-center space-x-2 disabled:opacity-50 cursor-pointer"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Buka WhatsApp &amp; Kirim Sekarang</span>
+                  <ExternalLink className="w-3 h-3 text-emerald-200" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

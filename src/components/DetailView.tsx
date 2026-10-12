@@ -24,6 +24,7 @@ import {
   Sparkles,
   RotateCcw,
   CheckCheck,
+  Lock,
 } from 'lucide-react';
 
 interface DetailViewProps {
@@ -60,9 +61,9 @@ export default function DetailView({
   const [kasieName, setKasieName] = useState(item.kasieName || '');
 
   // Demography Core Numbers
-  const [pria, setPria] = useState<number>(item.metrics.pria || 0);
-  const [wanita, setWanita] = useState<number>(item.metrics.wanita || 0);
-  const [kepalaKeluarga, setKepalaKeluarga] = useState<number>(item.metrics.kepalaKeluarga || 0);
+  const [pria, setPria] = useState<number>(item.metrics?.pria || 0);
+  const [wanita, setWanita] = useState<number>(item.metrics?.wanita || 0);
+  const [kepalaKeluarga, setKepalaKeluarga] = useState<number>(item.metrics?.kepalaKeluarga || 0);
 
   // Dynamic Variable Indicators
   const [customMetrics, setCustomMetrics] = useState<
@@ -104,14 +105,14 @@ export default function DetailView({
     setPalaName(item.palaName || '');
     setKasieName(item.kasieName || '');
 
-    const initialPria = item.metrics.pria ?? 0;
-    const initialWanita = item.metrics.wanita ?? 0;
+    const initialPria = item.metrics?.pria ?? 0;
+    const initialWanita = item.metrics?.wanita ?? 0;
     setPria(initialPria);
     setWanita(initialWanita);
-    setKepalaKeluarga(item.metrics.kepalaKeluarga ?? 0);
+    setKepalaKeluarga(item.metrics?.kepalaKeluarga ?? 0);
 
     // Default indicators matching Stitch if empty
-    if (item.metrics.customMetrics && item.metrics.customMetrics.length > 0) {
+    if (item.metrics?.customMetrics && item.metrics.customMetrics.length > 0) {
       setCustomMetrics(item.metrics.customMetrics.map((c) => ({ ...c })));
     } else if (item.id.includes('kependudukan') || item.categoryKey === 'kependudukan') {
       setCustomMetrics([
@@ -613,37 +614,68 @@ export default function DetailView({
                 </span>
               </div>
 
-              {isLurah || statusTahapan === 'disahkan_lurah' ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onApproveItem) onApproveItem(item.id);
-                  }}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white border border-slate-300 hover:border-brand-500 text-slate-700 font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-                >
-                  <CheckCheck className="w-4 h-4 text-emerald-600" />
-                  <span>
-                    {statusTahapan === 'disahkan_lurah'
-                      ? 'Disahkan Lurah (Sah)'
-                      : 'Sahkan Data (Lurah)'}
-                  </span>
-                </button>
+              {isLurah ? (
+                /* HANYA LURAH YANG MEMILIKI OTORITAS PENGESAHAN */
+                statusTahapan === 'disahkan_lurah' ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onApproveItem) onApproveItem(item.id);
+                    }}
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white border border-emerald-300 hover:border-emerald-500 text-emerald-800 font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                    title="Klik untuk memperbarui / sahkan kembali data ini"
+                  >
+                    <CheckCheck className="w-4 h-4 text-emerald-600" />
+                    <span>Disahkan Lurah (Sah)</span>
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onApproveItem) onApproveItem(item.id);
+                    }}
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                  >
+                    <CheckCheck className="w-4 h-4 text-white" />
+                    <span>Sahkan Data (Lurah)</span>
+                  </button>
+                )
               ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onTriggerWhatsApp) {
-                      onTriggerWhatsApp(item);
-                    } else if (onVerifySeklur) {
-                      onVerifySeklur(item.id);
-                    }
-                  }}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-700 font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-                  title="Kirim notifikasi persetujuan ke WhatsApp Lurah"
-                >
-                  <Send className="w-4 h-4 text-brand-600" />
-                  <span>Kirim Notifikasi ke Lurah</span>
-                </button>
+                /* SEKRETARIS & STAF TIDAK MEMILIKI AKSES INI */
+                statusTahapan === 'disahkan_lurah' ? (
+                  <div
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-50 border border-emerald-200 text-emerald-800 font-semibold text-xs flex items-center justify-center gap-2 shadow-2xs select-none"
+                    title="Data telah disahkan secara resmi oleh Lurah Theresia J. Kaunang, SE. Sekretaris tidak memiliki hak akses mengubah pengesahan."
+                  >
+                    <CheckCheck className="w-4 h-4 text-emerald-600" />
+                    <span className="font-bold">Disahkan Lurah (Sah)</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                    <div
+                      className="px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-semibold flex items-center justify-center gap-1.5 select-none"
+                      title="Otoritas pengesahan data monografi mutlak berada pada Lurah Theresia J. Kaunang, SE"
+                    >
+                      <Lock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                      <span>Khusus Otoritas Lurah</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (onTriggerWhatsApp) {
+                          onTriggerWhatsApp(item);
+                        } else if (onVerifySeklur) {
+                          onVerifySeklur(item.id);
+                        }
+                      }}
+                      className="w-full sm:w-auto px-4 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 border border-brand-200 text-brand-700 font-semibold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+                      title="Kirim notifikasi draf permohonan pengesahan ke WhatsApp Lurah Theresia"
+                    >
+                      <Send className="w-3.5 h-3.5 text-brand-600" />
+                      <span>Kirim ke WhatsApp Lurah</span>
+                    </button>
+                  </div>
+                )
               )}
             </div>
           </div>
@@ -708,9 +740,9 @@ export default function DetailView({
                 type="button"
                 onClick={() => {
                   setTitle(item.title);
-                  setPria(item.metrics.pria || 0);
-                  setWanita(item.metrics.wanita || 0);
-                  setKepalaKeluarga(item.metrics.kepalaKeluarga || 0);
+                  setPria(item.metrics?.pria || 0);
+                  setWanita(item.metrics?.wanita || 0);
+                  setKepalaKeluarga(item.metrics?.kepalaKeluarga || 0);
                   setDescription(item.description);
                 }}
                 className="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold transition-colors cursor-pointer"

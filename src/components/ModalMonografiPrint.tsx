@@ -87,27 +87,27 @@ export default function ModalMonografiPrint({
 
           {/* Quick Metrics */}
           <div className="grid grid-cols-4 gap-3 mb-6 font-sans text-center">
-            {item.metrics.totalWarga ? (
+            {item.metrics?.totalWarga ? (
               <>
                 <div className="p-3 border border-slate-300 rounded-lg">
                   <span className="text-[10px] font-bold text-slate-500 uppercase">Total Penduduk</span>
-                  <p className="text-base font-extrabold text-slate-900">{item.metrics.totalWarga} Jiwa</p>
+                  <p className="text-base font-extrabold text-slate-900">{item.metrics?.totalWarga} Jiwa</p>
                 </div>
                 <div className="p-3 border border-slate-300 rounded-lg">
                   <span className="text-[10px] font-bold text-slate-500 uppercase">Kepala Keluarga</span>
-                  <p className="text-base font-extrabold text-slate-900">{item.metrics.kepalaKeluarga} KK</p>
+                  <p className="text-base font-extrabold text-slate-900">{item.metrics?.kepalaKeluarga} KK</p>
                 </div>
                 <div className="p-3 border border-slate-300 rounded-lg">
                   <span className="text-[10px] font-bold text-slate-500 uppercase">Laki-Laki</span>
-                  <p className="text-base font-extrabold text-slate-900">{item.metrics.pria} Jiwa</p>
+                  <p className="text-base font-extrabold text-slate-900">{item.metrics?.pria} Jiwa</p>
                 </div>
                 <div className="p-3 border border-slate-300 rounded-lg">
                   <span className="text-[10px] font-bold text-slate-500 uppercase">Perempuan</span>
-                  <p className="text-base font-extrabold text-slate-900">{item.metrics.wanita} Jiwa</p>
+                  <p className="text-base font-extrabold text-slate-900">{item.metrics?.wanita} Jiwa</p>
                 </div>
               </>
             ) : (
-              item.metrics.customMetrics?.map((m, idx) => (
+              item.metrics?.customMetrics?.map((m, idx) => (
                 <div key={idx} className="p-3 border border-slate-300 rounded-lg">
                   <span className="text-[10px] font-bold text-slate-500 uppercase">{m.label}</span>
                   <p className="text-base font-extrabold text-slate-900">{m.value}</p>

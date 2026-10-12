@@ -490,17 +490,24 @@ export async function fetchMonografiItems(): Promise<MonografiItem[]> {
         .order('tahun', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        const dbItems: MonografiItem[] = data.map((row: any) => {
+        const seenIds = new Set<string>();
+        const dbItems: MonografiItem[] = [];
+        for (const row of data) {
           const rincian = row.rincian_data || {};
-          return {
-            ...rincian,
-            year: row.tahun || rincian.year,
-            statusTahapan: row.status_tahapan || rincian.statusTahapan,
-            lastUpdated: row.updated_at
-              ? `${new Date(row.updated_at).toLocaleDateString('id-ID')} - Database Supabase`
-              : rincian.lastUpdated,
-          };
-        });
+          const itemId = rincian.id || row.id;
+          if (itemId && !seenIds.has(itemId)) {
+            seenIds.add(itemId);
+            dbItems.push({
+              ...rincian,
+              id: itemId,
+              year: row.tahun || rincian.year,
+              statusTahapan: row.status_tahapan || rincian.statusTahapan,
+              lastUpdated: row.updated_at
+                ? `${new Date(row.updated_at).toLocaleDateString('id-ID')} - Database Supabase`
+                : rincian.lastUpdated,
+            });
+          }
+        }
 
         inMemoryMonografi = dbItems;
         const availableYears = Array.from(new Set(dbItems.map((it) => it.year)));
@@ -538,10 +545,10 @@ function syncSummaryFromItems(year: number) {
       if (match) {
         return {
           ...j,
-          kk: match.metrics.kepalaKeluarga || j.kk,
-          lakiLaki: match.metrics.pria || j.lakiLaki,
-          perempuan: match.metrics.wanita || j.perempuan,
-          populasi: match.metrics.totalWarga || j.populasi,
+          kk: match.metrics?.kepalaKeluarga || j.kk,
+          lakiLaki: match.metrics?.pria || j.lakiLaki,
+          perempuan: match.metrics?.wanita || j.perempuan,
+          populasi: match.metrics?.totalWarga || j.populasi,
           pala: match.palaName || j.pala,
         };
       }
@@ -564,7 +571,7 @@ function syncSummaryFromItems(year: number) {
 
   // Check general kependudukan item
   const generalKependudukan = yearItems.find((m) => m.id.startsWith('kependudukan-'));
-  if (generalKependudukan && generalKependudukan.metrics.totalWarga) {
+  if (generalKependudukan && generalKependudukan.metrics?.totalWarga) {
     summary.totalJiwa = generalKependudukan.metrics.totalWarga;
     if (generalKependudukan.metrics.kepalaKeluarga) summary.totalKK = generalKependudukan.metrics.kepalaKeluarga;
     if (generalKependudukan.metrics.pria) summary.lakiLaki = generalKependudukan.metrics.pria;

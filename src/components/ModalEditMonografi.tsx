@@ -38,17 +38,17 @@ export default function ModalEditMonografi({
   const [kasieName, setKasieName] = useState(item.kasieName || '');
   
   // Demografi & Gender auto-calc
-  const [pria, setPria] = useState<number>(item.metrics.pria || 0);
-  const [wanita, setWanita] = useState<number>(item.metrics.wanita || 0);
+  const [pria, setPria] = useState<number>(item.metrics?.pria || 0);
+  const [wanita, setWanita] = useState<number>(item.metrics?.wanita || 0);
   const [totalWarga, setTotalWarga] = useState<number>(
-    item.metrics.totalWarga || (item.metrics.pria || 0) + (item.metrics.wanita || 0)
+    item.metrics?.totalWarga || (item.metrics?.pria || 0) + (item.metrics?.wanita || 0)
   );
-  const [kepalaKeluarga, setKepalaKeluarga] = useState<number>(item.metrics.kepalaKeluarga || 0);
+  const [kepalaKeluarga, setKepalaKeluarga] = useState<number>(item.metrics?.kepalaKeluarga || 0);
 
   // Custom metrics for specific modules (Lahan, Ternak, dsb)
   const [customMetrics, setCustomMetrics] = useState<
     { label: string; value: string | number }[]
-  >(item.metrics.customMetrics || []);
+  >(item.metrics?.customMetrics || []);
 
   const [description, setDescription] = useState(item.description);
   const [detailedNotesText, setDetailedNotesText] = useState(
@@ -69,14 +69,14 @@ export default function ModalEditMonografi({
     setPalaName(item.palaName || '');
     setKasieName(item.kasieName || '');
     
-    const initialPria = item.metrics.pria || 0;
-    const initialWanita = item.metrics.wanita || 0;
+    const initialPria = item.metrics?.pria || 0;
+    const initialWanita = item.metrics?.wanita || 0;
     setPria(initialPria);
     setWanita(initialWanita);
-    setTotalWarga(item.metrics.totalWarga || initialPria + initialWanita);
-    setKepalaKeluarga(item.metrics.kepalaKeluarga || 0);
+    setTotalWarga(item.metrics?.totalWarga || initialPria + initialWanita);
+    setKepalaKeluarga(item.metrics?.kepalaKeluarga || 0);
 
-    setCustomMetrics(item.metrics.customMetrics ? [...item.metrics.customMetrics] : []);
+    setCustomMetrics(item.metrics?.customMetrics ? [...item.metrics.customMetrics] : []);
     setDescription(item.description);
     setDetailedNotesText(item.detailedNotes ? item.detailedNotes.join('\n') : '');
     setStatusTahapan(item.statusTahapan || 'draft');

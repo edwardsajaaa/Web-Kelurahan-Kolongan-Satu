@@ -18,6 +18,8 @@ import ManageFasilitasView from '@/components/portal/ManageFasilitasView';
 import ManageAparaturView from '@/components/portal/ManageAparaturView';
 import ManageKegiatanView from '@/components/portal/ManageKegiatanView';
 import ManageKontakView from '@/components/portal/ManageKontakView';
+import ManageLaporanWargaView from '@/components/portal/ManageLaporanWargaView';
+import ManagePersuratanView from '@/components/portal/ManagePersuratanView';
 import {
   LandingContentPayload,
   FasilitasItem,
@@ -157,7 +159,10 @@ export default function PortalPage() {
         if (resMonografi.ok) {
           const dataMonografi = await resMonografi.json();
           if (dataMonografi.success && dataMonografi.data) {
-            setMonografiList(dataMonografi.data);
+            const unique = Array.from(
+              new Map(dataMonografi.data.map((m: any) => [m.id, m])).values()
+            ) as MonografiItem[];
+            setMonografiList(unique);
           }
           if (dataMonografi.availableYears && Array.isArray(dataMonografi.availableYears)) {
             setAvailableYears(dataMonografi.availableYears);
@@ -193,7 +198,15 @@ export default function PortalPage() {
   };
 
   // Actions
-  const handleApproveByLurah = async (itemId: string) => {
+  const handleApproveByLurah = async (itemId: string, isFromWhatsAppLurah: boolean = false) => {
+    // Validasi mutlak: hanya Lurah (superadmin) atau persetujuan via tautan dinas HP Lurah yang memiliki hak otoritas pengesahan
+    if (currentOfficial.roleCode !== 'superadmin' && !isFromWhatsAppLurah) {
+      showToast(
+        'Akses Ditolak: Otoritas validasi kelurahan ini hanya dapat disahkan oleh Lurah. Sekretaris tidak memiliki akses ini.'
+      );
+      return;
+    }
+
     const previousList = [...monografiList];
     const targetItem = monografiList.find((i) => i.id === itemId);
     const itemTitle = targetItem ? targetItem.title : 'Data Monografi';
@@ -549,16 +562,7 @@ export default function PortalPage() {
     setActiveNav(navId);
     setIsMobileSidebarOpen(false);
 
-    if (navId.startsWith('kelola_')) {
-      return;
-    }
-
-    if (navId === 'surat') {
-      setIsLetterModalOpen(true);
-      return;
-    }
-    if (navId === 'lapor') {
-      setIsReportModalOpen(true);
+    if (navId.startsWith('kelola_') || navId === 'lapor' || navId === 'surat') {
       return;
     }
 
@@ -579,7 +583,9 @@ export default function PortalPage() {
 
   // Filter modules for horizontal selector strip
   const visibleModules = useMemo(() => {
+    const seen = new Set<string>();
     return monografiList.filter((item) => {
+      if (!item || !item.id || seen.has(item.id)) return false;
       const matchYear = item.year === selectedYear;
       const matchCategory =
         selectedCategory === 'all' || item.categoryKey === selectedCategory;
@@ -589,7 +595,9 @@ export default function PortalPage() {
         item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.statsValue.toLowerCase().includes(searchQuery.toLowerCase());
 
-      return matchYear && (matchCategory || searchQuery.trim() !== '') && matchSearch;
+      const keep = matchYear && (matchCategory || searchQuery.trim() !== '') && matchSearch;
+      if (keep) seen.add(item.id);
+      return keep;
     });
   }, [monografiList, selectedYear, selectedCategory, searchQuery]);
 
@@ -693,11 +701,21 @@ export default function PortalPage() {
                 <span className="text-slate-900 font-semibold">Kelurahan Kolongan Satu</span>
                 <span className="text-slate-300">•</span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 text-[10px]">
-                  {activeNav.startsWith('kelola_') ? 'Live Landing Page Sync' : 'Tervalidasi Lurah'}
+                  {activeNav === 'surat'
+                    ? 'Alur Penerbitan PDF Resmi'
+                    : activeNav === 'lapor'
+                    ? 'Siaga Pengaduan 5 Jaga'
+                    : activeNav.startsWith('kelola_')
+                    ? 'Live Landing Page Sync'
+                    : 'Tervalidasi Lurah'}
                 </span>
               </div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900">
-                {activeNav === 'kelola_fasilitas'
+                {activeNav === 'surat'
+                  ? 'Pusat Rekapitulasi & Alur Penerbitan Dokumen Surat Resmi (PDF)'
+                  : activeNav === 'lapor'
+                  ? 'Kotak Pengaduan & Tindak Lanjut Aspirasi Warga'
+                  : activeNav === 'kelola_fasilitas'
                   ? 'Form Pengelolaan Fasilitas Publik & Metrik Sanitasi'
                   : activeNav === 'kelola_aparatur'
                   ? 'Form Pengelolaan Struktur Aparatur & Pimpinan'
@@ -711,7 +729,43 @@ export default function PortalPage() {
           </div>
 
           {/* Action on Header */}
-          {activeNav.startsWith('kelola_') ? (
+          {activeNav === 'surat' ? (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveNav('kependudukan')}
+                className="px-3.5 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+              >
+                ← Kembali ke Monografi
+              </button>
+              <Link
+                href="/"
+                target="_blank"
+                className="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-primary text-white hover:bg-[#004d77] transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Lihat di Landing Page</span>
+                <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+              </Link>
+            </div>
+          ) : activeNav === 'lapor' ? (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveNav('kependudukan')}
+                className="px-3.5 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer"
+              >
+                ← Kembali ke Monografi
+              </button>
+              <Link
+                href="/lapor"
+                target="_blank"
+                className="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-[#006c49] text-white hover:bg-[#005237] transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Lihat Form Warga</span>
+                <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+              </Link>
+            </div>
+          ) : activeNav.startsWith('kelola_') ? (
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -812,17 +866,29 @@ export default function PortalPage() {
             />
           )}
 
-          {/* VIEW D: KELOLA KONTAK */}
-          {activeNav === 'kelola_kontak' && (
-            <ManageKontakView
-              kontak={landingContent.kontak}
-              onSaveKontak={handleSaveKontak}
+          {/* VIEW D: KELOLA PERSURATAN RESMI APARATUR */}
+          {activeNav === 'surat' && (
+            <ManagePersuratanView
+              letters={letters}
+              onUpdateStatus={handleUpdateLetterStatus}
+              currentOfficial={currentOfficial}
+              onPrintLetter={handlePrintLetter}
               showToast={showToast}
             />
           )}
 
-          {/* VIEW E: STANDARD MONOGRAFI MODULES */}
-          {!activeNav.startsWith('kelola_') && (
+          {/* VIEW E: KELOLA KOTAK ADUAN WARGA RESMI APARATUR */}
+          {activeNav === 'lapor' && (
+            <ManageLaporanWargaView
+              reports={reports}
+              onUpdateReportStatus={handleUpdateReportStatus}
+              currentOfficial={currentOfficial}
+              showToast={showToast}
+            />
+          )}
+
+          {/* VIEW F: STANDARD MONOGRAFI MODULES */}
+          {!activeNav.startsWith('kelola_') && activeNav !== 'lapor' && activeNav !== 'surat' && (
             <>
               {/* Horizontal Module Selector Strip */}
               <div
@@ -873,7 +939,7 @@ export default function PortalPage() {
                           }`}
                         >
                           <span>{mod.title}</span>
-                          {mod.metrics.totalWarga ? (
+                          {mod.metrics?.totalWarga ? (
                             <span
                               className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
                                 isSelected
@@ -927,6 +993,7 @@ export default function PortalPage() {
         onUpdateStatus={handleUpdateLetterStatus}
         currentOfficial={currentOfficial}
         onPrintLetter={handlePrintLetter}
+        isPortalView={true}
       />
 
       {/* MODAL 2: LAPOR MASALAH LINGKUNGAN */}
@@ -937,6 +1004,7 @@ export default function PortalPage() {
         onAddReport={handleAddReport}
         onUpdateReportStatus={handleUpdateReportStatus}
         currentOfficial={currentOfficial}
+        defaultTab="list"
       />
 
       {/* MODAL 3: SIMULATOR WHATSAPP NOTIFIKASI PEJABAT */}
@@ -944,7 +1012,7 @@ export default function PortalPage() {
         isOpen={isWhatsAppOpen}
         onClose={() => setIsWhatsAppOpen(false)}
         activeItem={activeDetail}
-        onApproveViaMagicLink={handleApproveByLurah}
+        onApproveViaMagicLink={(id) => handleApproveByLurah(id, true)}
         currentOfficial={currentOfficial}
       />
 

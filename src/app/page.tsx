@@ -84,7 +84,10 @@ export default function LandingPage() {
             setLiveSummaries(json.summaries);
           }
           if (json.data && Array.isArray(json.data)) {
-            setLiveMonografiItems(json.data);
+            const unique = Array.from(
+              new Map(json.data.map((m: any) => [m.id, m])).values()
+            ) as MonografiItem[];
+            setLiveMonografiItems(unique);
           }
           if (json.availableYears && Array.isArray(json.availableYears)) {
             setAvailableYears(json.availableYears);
@@ -1237,6 +1240,7 @@ export default function LandingPage() {
         onUpdateStatus={handleUpdateLetterStatus}
         currentOfficial={currentOfficial}
         onPrintLetter={handlePrintLetter}
+        isPortalView={false}
       />
 
       <ModalMonografiPrint

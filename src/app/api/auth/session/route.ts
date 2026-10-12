@@ -1,44 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { INITIAL_APARATUR_ACCOUNTS } from '@/lib/supabase/service';
 
 export async function GET(request: NextRequest) {
   const authCookie = request.cookies.get('kkt_portal_auth');
   const roleCookie = request.cookies.get('kkt_user_role');
+  const nameCookie = request.cookies.get('kkt_user_name');
+  const nipCookie = request.cookies.get('kkt_user_nip');
+  const emailCookie = request.cookies.get('kkt_user_email');
+  const userIdCookie = request.cookies.get('kkt_session_user_id');
 
-  if (authCookie) {
-    if (authCookie.value === 'lurah_authenticated' || roleCookie?.value === 'superadmin') {
-      const lurahAcc = INITIAL_APARATUR_ACCOUNTS[0];
-      return NextResponse.json({
-        authenticated: true,
-        user: {
-          id: lurahAcc.id,
-          name: lurahAcc.name,
-          roleCode: lurahAcc.roleCode,
-          roleTitle: lurahAcc.roleTitle,
-          jabatan: lurahAcc.jabatan,
-          nip: lurahAcc.nip,
-          phone: lurahAcc.phone,
-          avatarText: lurahAcc.avatarText,
-        },
-      });
-    }
+  const isValid =
+    authCookie &&
+    (authCookie.value === 'lurah_authenticated' ||
+      authCookie.value === 'seklur_authenticated' ||
+      authCookie.value === 'aparatur_authenticated');
 
-    if (authCookie.value === 'seklur_authenticated' || roleCookie?.value === 'admin_seklur') {
-      const seklurAcc = INITIAL_APARATUR_ACCOUNTS[1];
-      return NextResponse.json({
-        authenticated: true,
-        user: {
-          id: seklurAcc.id,
-          name: seklurAcc.name,
-          roleCode: seklurAcc.roleCode,
-          roleTitle: seklurAcc.roleTitle,
-          jabatan: seklurAcc.jabatan,
-          nip: seklurAcc.nip,
-          phone: seklurAcc.phone,
-          avatarText: seklurAcc.avatarText,
-        },
-      });
-    }
+  if (isValid) {
+    const isLurah =
+      authCookie.value === 'lurah_authenticated' || roleCookie?.value === 'superadmin';
+
+    const defaultName = isLurah ? 'Theresia J. Kaunang, SE' : 'Febronia L. Pijoh, S.Kom';
+    const defaultNip = isLurah ? '19731206 200312 2 007' : '19780203 200902 2 002';
+    const defaultEmail = isLurah
+      ? 'lurah@kolongansatu.tomohon.go.id'
+      : 'seklur@kolongansatu.tomohon.go.id';
+
+    const userName = nameCookie?.value ? decodeURIComponent(nameCookie.value) : defaultName;
+    const userNip = nipCookie?.value ? decodeURIComponent(nipCookie.value) : defaultNip;
+    const userEmail = emailCookie?.value ? decodeURIComponent(emailCookie.value) : defaultEmail;
+    const roleCode = isLurah ? 'superadmin' : 'admin_seklur';
+    const roleTitle = isLurah ? 'Lurah (Superadmin)' : 'Sekretaris Kelurahan (Admin Utama)';
+    const jabatan = isLurah ? 'Lurah Kolongan Satu' : 'Sekretaris Kelurahan';
+
+    return NextResponse.json({
+      authenticated: true,
+      user: {
+        id: userIdCookie?.value || (isLurah ? 'lurah-theresia' : 'seklur-febronia'),
+        name: userName,
+        nip: userNip,
+        email: userEmail,
+        roleCode,
+        roleTitle,
+        jabatan,
+        phone: isLurah ? '0813-4011-2233' : '0895-2917-5850',
+        avatarText: userName
+          .split(' ')
+          .map((n) => n[0])
+          .join('')
+          .slice(0, 2)
+          .toUpperCase(),
+      },
+    });
   }
 
   return NextResponse.json({
