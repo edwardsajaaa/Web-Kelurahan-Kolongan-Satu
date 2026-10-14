@@ -553,8 +553,8 @@ export default function LandingPage() {
                   <div className="relative w-44 h-44 sm:w-48 sm:h-48 2xl:w-56 2xl:h-56 rounded-full overflow-hidden shadow-lg border-4 2xl:border-6 border-white bg-[#f2f3ff]">
                     <img
                       alt="Theresia J. Kaunang, SE - Lurah Kolongan Satu"
-                      className="w-full h-full object-cover"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmkT6Lxix1606pAklH9PB0OUWSCEjrjFzfwpcSlm9ywVv07O2Su_cFxdAg5h0JsNg3dRn1ADxpSno52ixis48MJGvhehRAdU2FOb9ZF7Z_r7_MES5fFjLyAe4iPN62of3xU8GFBILuVfFT06TsS3S2QxpWmW1yChADq4DUcF6D6CI8LxNn5-aqqacCtv1DuPk4Hab5fN6T30VHoWZv6aR7MNqFmDzFWeLxqRpIesFtP-KrsOcBKGnf4Q"
+                      className="w-full h-full object-cover object-top"
+                      src="/images/lurah-theresia.jpg"
                     />
                   </div>
                   <div className="mt-4 2xl:mt-5 text-center">
