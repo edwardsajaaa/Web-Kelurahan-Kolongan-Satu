@@ -23,58 +23,140 @@ const logoKktBase64 = getBase64Image(path.join(__dirname, '../public/images/logo
 const mdPath = path.join(__dirname, '../PANDUAN_PENGGUNAAN.md');
 const mdContent = fs.readFileSync(mdPath, 'utf8');
 
-// 3. Simple Markdown to Rich HTML Parser khusus dokumen PDF
+// 3. Robust & Clean Markdown to HTML Parser
 function markdownToHtml(md) {
-  let lines = md.split('\n');
+  let lines = md.split(/\r?\n/);
   let html = [];
+  
+  let activeList = null; // 'ul' | 'ol' | null
   let inTable = false;
-  let tableHeaderParsed = false;
-  let inList = false;
   let inCodeBlock = false;
+  let inAlert = false;
+  let isMermaid = false;
+
+  function closeList() {
+    if (activeList) {
+      html.push(`</${activeList}>`);
+      activeList = null;
+    }
+  }
+
+  function closeTable() {
+    if (inTable) {
+      html.push('</tbody></table></div>');
+      inTable = false;
+    }
+  }
+
+  function closeAlert() {
+    if (inAlert) {
+      html.push('</div>');
+      inAlert = false;
+    }
+  }
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
 
-    // Code blocks
+    // Check Code blocks & Mermaid
     if (line.startsWith('```')) {
+      closeList();
+      closeTable();
+      closeAlert();
+
       if (inCodeBlock) {
-        html.push('</pre></div>');
+        if (isMermaid) {
+          // Render visual stepper instead of raw code
+          html.push(`
+            <div class="pipeline-flow-container">
+              <div class="pipeline-step">
+                <div class="step-num">1</div>
+                <div class="step-label">Warga Mengajukan</div>
+                <div class="step-sub">Form Mandiri / KTP</div>
+              </div>
+              <div class="pipeline-arrow">➔</div>
+              <div class="pipeline-step">
+                <div class="step-num">2</div>
+                <div class="step-label">Verifikasi Staf</div>
+                <div class="step-sub">Staf Karlin Pieter</div>
+              </div>
+              <div class="pipeline-arrow">➔</div>
+              <div class="pipeline-step">
+                <div class="step-num">3</div>
+                <div class="step-label">Paraf Seklur</div>
+                <div class="step-sub">Seklur Febronia</div>
+              </div>
+              <div class="pipeline-arrow">➔</div>
+              <div class="pipeline-step step-final">
+                <div class="step-num">4</div>
+                <div class="step-label">TTD &amp; Terbit PDF</div>
+                <div class="step-sub">Lurah Theresia (BSrE)</div>
+              </div>
+            </div>
+          `);
+          isMermaid = false;
+        } else {
+          html.push('</pre></div>');
+        }
         inCodeBlock = false;
       } else {
-        if (inList) { html.push('</ul>'); inList = false; }
-        if (inTable) { html.push('</tbody></table></div>'); inTable = false; }
-        html.push('<div class="code-box"><pre>');
-        inCodeBlock = true;
+        if (line.includes('mermaid')) {
+          isMermaid = true;
+          inCodeBlock = true;
+        } else {
+          html.push('<div class="code-box"><pre>');
+          inCodeBlock = true;
+        }
       }
       continue;
     }
 
     if (inCodeBlock) {
-      html.push(line.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+      if (!isMermaid) {
+        html.push(line.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+      }
       continue;
     }
 
-    // Skip Cover & TOC Markdown headings as they are handled in custom cover layout
+    // Skip Cover Headings (Already rendered in Custom Executive Cover)
     if (line.startsWith('# BUKU PANDUAN PENGGUNAAN') || 
         line.startsWith('## SISTEM INFORMASI & PORTAL') ||
         line.startsWith('### Pemerintah Kota Tomohon')) {
       continue;
     }
 
-    // Table parsing
+    // Alert Callouts (> [!IMPORTANT], > [!NOTE], etc.)
+    if (line.startsWith('> [!IMPORTANT]') || line.startsWith('> [!NOTE]') || line.startsWith('> [!TIP]')) {
+      closeList();
+      closeTable();
+      closeAlert();
+
+      let alertType = line.includes('IMPORTANT') ? 'important' : line.includes('TIP') ? 'tip' : 'note';
+      let title = alertType === 'important' ? 'PERINGATAN KEDINASAN' : alertType === 'tip' ? 'PETUNJUK SISTEM' : 'CATATAN KHUSUS';
+      html.push(`<div class="alert-box alert-${alertType}"><div class="alert-title">${title}</div>`);
+      inAlert = true;
+      continue;
+    } else if (line.startsWith('>')) {
+      let content = line.substring(1).trim();
+      html.push(`<p class="alert-content">${formatInline(content)}</p>`);
+      continue;
+    } else if (inAlert && !line.startsWith('>')) {
+      closeAlert();
+    }
+
+    // Tables
     if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
-      if (inList) { html.push('</ul>'); inList = false; }
-      
-      // Separator row
+      closeList();
+      closeAlert();
+
       if (line.includes('---')) {
-        continue;
+        continue; // Separator row
       }
 
       let cells = line.split('|').slice(1, -1).map(c => c.trim());
       
       if (!inTable) {
         inTable = true;
-        tableHeaderParsed = true;
         html.push('<div class="table-container"><table><thead><tr>');
         cells.forEach(c => {
           html.push(`<th>${formatInline(c)}</th>`);
@@ -89,78 +171,100 @@ function markdownToHtml(md) {
       }
       continue;
     } else if (inTable) {
-      html.push('</tbody></table></div>');
-      inTable = false;
-      tableHeaderParsed = false;
+      closeTable();
     }
 
-    // Unordered / Ordered Lists
+    // Unordered Lists (* or -)
     if (line.trim().startsWith('* ') || line.trim().startsWith('- ')) {
-      if (!inList) {
+      closeAlert();
+      closeTable();
+      if (activeList !== 'ul') {
+        closeList();
         html.push('<ul>');
-        inList = true;
+        activeList = 'ul';
       }
       let content = line.trim().substring(2);
       html.push(`<li>${formatInline(content)}</li>`);
       continue;
-    } else if (/^\d+\.\s/.test(line.trim())) {
-      if (!inList) {
+    }
+
+    // Ordered Lists (1. 2. 3.)
+    if (/^\d+\.\s/.test(line.trim())) {
+      closeAlert();
+      closeTable();
+      if (activeList !== 'ol') {
+        closeList();
         html.push('<ol>');
-        inList = true;
+        activeList = 'ol';
       }
       let content = line.trim().replace(/^\d+\.\s/, '');
       html.push(`<li>${formatInline(content)}</li>`);
       continue;
-    } else if (inList && line.trim() === '') {
-      html.push('</ul>');
-      inList = false;
     }
 
-    // Quotes / Alerts
-    if (line.startsWith('> [!IMPORTANT]') || line.startsWith('> [!NOTE]') || line.startsWith('> [!TIP]')) {
-      let alertType = line.includes('IMPORTANT') ? 'important' : line.includes('TIP') ? 'tip' : 'note';
-      let title = alertType === 'important' ? 'PERINGATAN KEDINASAN' : alertType === 'tip' ? 'PETUNJUK PENTING' : 'CATATAN';
-      html.push(`<div class="alert-box alert-${alertType}"><div class="alert-title">${title}</div>`);
-      continue;
-    } else if (line.startsWith('>')) {
-      let content = line.substring(1).trim();
-      html.push(`<p class="alert-content">${formatInline(content)}</p></div>`);
+    // Empty line closes open list
+    if (line.trim() === '') {
+      closeList();
+      closeAlert();
       continue;
     }
 
     // Headings
     if (line.startsWith('## BAB ')) {
-      html.push(`<div class="page-break"></div><h2 class="chapter-heading">${formatInline(line.replace('## ', ''))}</h2>`);
+      closeList();
+      closeTable();
+      closeAlert();
+      html.push(`<div class="chapter-wrapper"><div class="chapter-badge">MODUL KEDINASAN</div><h2 class="chapter-heading">${formatInline(line.replace('## ', ''))}</h2></div>`);
+      continue;
+    }
+    if (line.startsWith('## DAFTAR ISI')) {
+      closeList();
+      closeTable();
+      closeAlert();
+      html.push(`<h2 class="section-heading" style="margin-top:0;">DAFTAR ISI BUKU PANDUAN</h2>`);
       continue;
     }
     if (line.startsWith('## ')) {
+      closeList();
+      closeTable();
+      closeAlert();
       html.push(`<h2 class="section-heading">${formatInline(line.replace('## ', ''))}</h2>`);
       continue;
     }
     if (line.startsWith('### ')) {
+      closeList();
+      closeTable();
+      closeAlert();
       html.push(`<h3 class="subsection-heading">${formatInline(line.replace('### ', ''))}</h3>`);
       continue;
     }
     if (line.startsWith('#### ')) {
+      closeList();
+      closeTable();
+      closeAlert();
       html.push(`<h4 class="minor-heading">${formatInline(line.replace('#### ', ''))}</h4>`);
       continue;
     }
 
     // Horizontal Rule
     if (line.trim() === '---') {
+      closeList();
+      closeTable();
+      closeAlert();
       html.push('<hr class="divider" />');
       continue;
     }
 
     // Normal Paragraph
-    if (line.trim()) {
-      html.push(`<p>${formatInline(line)}</p>`);
-    }
+    closeList();
+    closeTable();
+    closeAlert();
+    html.push(`<p>${formatInline(line)}</p>`);
   }
 
-  if (inList) html.push('</ul>');
-  if (inTable) html.push('</tbody></table></div>');
-  if (inCodeBlock) html.push('</pre></div>');
+  closeList();
+  closeTable();
+  closeAlert();
 
   return html.join('\n');
 }
@@ -176,21 +280,18 @@ function formatInline(text) {
 
 const parsedBodyHtml = markdownToHtml(mdContent);
 
-// 4. Struktur Lengkap Dokumen HTML dengan Desain Cetak Eksekutif A4
+// 4. Struktur Lengkap Dokumen HTML dengan Desain Cetak Eksekutif A4 yang Konsisten
 const fullHtml = `<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <title>Buku Panduan Penggunaan - Kelurahan Kolongan Satu</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
 
     @page {
       size: A4 portrait;
-      margin: 16mm 14mm 18mm 14mm;
-      @bottom-right {
-        content: counter(page);
-      }
+      margin: 18mm 16mm 18mm 16mm;
     }
 
     * {
@@ -199,32 +300,35 @@ const fullHtml = `<!DOCTYPE html>
       print-color-adjust: exact !important;
     }
 
-    body {
+    html, body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      font-size: 9.5pt;
-      line-height: 1.55;
+      font-size: 10pt;
+      line-height: 1.6;
       color: #1e293b;
       margin: 0;
       padding: 0;
       background: #ffffff;
+      width: 100%;
     }
 
-    .page-break {
-      page-break-before: always;
-      break-before: page;
-      clear: both;
+    /* Strict container for all content to prevent shrinking / horizontal blowout */
+    .content-container {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 auto;
     }
 
     /* COVER PAGE */
-    .cover-container {
-      height: 100vh;
+    .cover-page {
+      page-break-after: always;
+      break-after: page;
+      min-height: 250mm;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       border: 3px double #004d77;
-      padding: 35px 30px;
-      position: relative;
-      background: radial-gradient(circle at top right, #f0f7ff, #ffffff 60%);
+      padding: 30px 25px;
+      background: #ffffff;
     }
 
     .cover-header {
@@ -232,11 +336,11 @@ const fullHtml = `<!DOCTYPE html>
       align-items: center;
       justify-content: space-between;
       border-bottom: 2.5px solid #004d77;
-      padding-bottom: 18px;
+      padding-bottom: 15px;
     }
 
     .cover-logo {
-      height: 70px;
+      height: 68px;
       width: auto;
       object-fit: contain;
     }
@@ -249,18 +353,18 @@ const fullHtml = `<!DOCTYPE html>
 
     .cover-header-text h4 {
       margin: 0;
-      font-size: 11pt;
+      font-size: 10.5pt;
       font-weight: 700;
-      letter-spacing: 1px;
-      color: #334155;
+      letter-spacing: 0.8px;
+      color: #475569;
       text-transform: uppercase;
     }
 
     .cover-header-text h3 {
       margin: 2px 0;
-      font-size: 13pt;
+      font-size: 12.5pt;
       font-weight: 800;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
       color: #004d77;
       text-transform: uppercase;
     }
@@ -269,63 +373,61 @@ const fullHtml = `<!DOCTYPE html>
       margin: 0;
       font-size: 15pt;
       font-weight: 900;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.2px;
       color: #0f172a;
       text-transform: uppercase;
     }
 
     .cover-header-text p {
       margin: 3px 0 0 0;
-      font-size: 7.5pt;
+      font-size: 8pt;
       color: #64748b;
     }
 
     .cover-body {
       text-align: center;
-      padding: 40px 10px;
+      padding: 35px 10px;
     }
 
     .cover-tagline {
       display: inline-block;
-      padding: 6px 16px;
-      background: #e0f2fe;
-      color: #0284c7;
+      padding: 5px 14px;
+      background: #f0f9ff;
+      color: #0369a1;
       border-radius: 999px;
-      font-size: 8.5pt;
+      font-size: 8pt;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
       margin-bottom: 18px;
       border: 1px solid #bae6fd;
     }
 
     .cover-title {
-      font-size: 24pt;
+      font-size: 22pt;
       font-weight: 900;
-      line-height: 1.2;
+      line-height: 1.25;
       color: #0f172a;
       margin: 0 0 12px 0;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
 
     .cover-subtitle {
-      font-size: 12.5pt;
+      font-size: 11.5pt;
       font-weight: 600;
       color: #004d77;
       margin: 0 0 25px 0;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .cover-badge-box {
       display: inline-flex;
-      gap: 12px;
+      gap: 16px;
       background: #ffffff;
-      padding: 10px 18px;
-      border-radius: 12px;
+      padding: 10px 20px;
+      border-radius: 10px;
       border: 1px solid #cbd5e1;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      margin-top: 10px;
-      font-size: 8.5pt;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
 
     .badge-item {
@@ -344,11 +446,12 @@ const fullHtml = `<!DOCTYPE html>
     .badge-value {
       font-weight: 800;
       color: #004d77;
+      font-size: 9pt;
     }
 
     .cover-footer {
       border-top: 1.5px solid #cbd5e1;
-      padding-top: 16px;
+      padding-top: 14px;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
@@ -356,17 +459,9 @@ const fullHtml = `<!DOCTYPE html>
       color: #475569;
     }
 
-    .cover-footer-left {
-      text-align: left;
-    }
-
-    .cover-footer-right {
-      text-align: right;
-    }
-
     .stamp-box {
       border: 1.5px dashed #004d77;
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 6px 12px;
       display: inline-block;
       color: #004d77;
@@ -376,17 +471,37 @@ const fullHtml = `<!DOCTYPE html>
       background: #f8fafc;
     }
 
-    /* TYPOGRAPHY IN BODY */
+    /* CHAPTER HEADINGS */
+    .chapter-wrapper {
+      page-break-before: always;
+      break-before: page;
+      margin-top: 0;
+      padding-top: 10px;
+      margin-bottom: 18px;
+    }
+
+    .chapter-badge {
+      display: inline-block;
+      font-size: 7pt;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #0284c7;
+      background: #e0f2fe;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 5px;
+    }
+
     h2.chapter-heading {
-      font-size: 14pt;
+      font-size: 13pt;
       font-weight: 800;
       color: #ffffff;
       background: #004d77;
-      padding: 9px 14px;
-      border-radius: 8px;
-      margin: 0 0 16px 0;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin: 0;
       letter-spacing: -0.2px;
-      border-left: 6px solid #38bdf8;
     }
 
     h2.section-heading {
@@ -394,8 +509,8 @@ const fullHtml = `<!DOCTYPE html>
       font-weight: 800;
       color: #004d77;
       border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 5px;
-      margin: 22px 0 10px 0;
+      padding-bottom: 4px;
+      margin: 20px 0 10px 0;
     }
 
     h3.subsection-heading {
@@ -412,18 +527,24 @@ const fullHtml = `<!DOCTYPE html>
       margin: 12px 0 4px 0;
     }
 
+    /* PARAGRAPHS & LISTS - 100% CONSISTENT SIZING */
     p {
+      font-size: 10pt;
       margin: 0 0 8px 0;
       text-align: justify;
+      color: #1e293b;
     }
 
     ul, ol {
+      font-size: 10pt;
       margin: 0 0 10px 0;
       padding-left: 20px;
+      color: #1e293b;
     }
 
     li {
       margin-bottom: 4px;
+      line-height: 1.55;
     }
 
     code {
@@ -431,7 +552,7 @@ const fullHtml = `<!DOCTYPE html>
       font-size: 8.5pt;
       background: #f1f5f9;
       color: #0f172a;
-      padding: 1.5px 5px;
+      padding: 1px 4px;
       border-radius: 4px;
       border: 1px solid #e2e8f0;
     }
@@ -445,21 +566,23 @@ const fullHtml = `<!DOCTYPE html>
     .divider {
       border: none;
       border-top: 1px solid #e2e8f0;
-      margin: 16px 0;
+      margin: 18px 0;
     }
 
-    /* TABLES */
+    /* TABLES - FIXED LAYOUT (NO OVERFLOW) */
     .table-container {
       margin: 12px 0 16px 0;
-      border-radius: 8px;
+      border-radius: 6px;
       overflow: hidden;
       border: 1px solid #cbd5e1;
+      width: 100%;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 8.5pt;
+      font-size: 9pt;
+      table-layout: fixed;
     }
 
     th {
@@ -470,6 +593,7 @@ const fullHtml = `<!DOCTYPE html>
       padding: 7px 10px;
       border-bottom: 2px solid #cbd5e1;
       border-right: 1px solid #e2e8f0;
+      word-wrap: break-word;
     }
 
     th:last-child {
@@ -477,10 +601,12 @@ const fullHtml = `<!DOCTYPE html>
     }
 
     td {
-      padding: 6.5px 10px;
+      padding: 6px 10px;
       border-bottom: 1px solid #e2e8f0;
       border-right: 1px solid #e2e8f0;
       vertical-align: top;
+      word-wrap: break-word;
+      line-height: 1.45;
     }
 
     td:last-child {
@@ -491,12 +617,12 @@ const fullHtml = `<!DOCTYPE html>
       background: #f8fafc;
     }
 
-    /* ALERTS / CALLOUT BOXES */
+    /* ALERTS */
     .alert-box {
-      border-radius: 8px;
+      border-radius: 6px;
       padding: 10px 14px;
       margin: 12px 0;
-      font-size: 8.5pt;
+      font-size: 9pt;
       border-left: 4px solid;
     }
 
@@ -505,7 +631,7 @@ const fullHtml = `<!DOCTYPE html>
       text-transform: uppercase;
       font-size: 7.5pt;
       letter-spacing: 0.8px;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
 
     .alert-important {
@@ -528,65 +654,115 @@ const fullHtml = `<!DOCTYPE html>
 
     .alert-content {
       margin: 0;
+      font-size: 9pt;
     }
 
-    /* CODE & MERMAID CONTAINER */
+    /* VISUAL PIPELINE WORKFLOW CARD */
+    .pipeline-flow-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px 12px;
+      margin: 14px 0 18px 0;
+    }
+
+    .pipeline-step {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 8px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .pipeline-step.step-final {
+      border-color: #004d77;
+      background: #f0f7ff;
+    }
+
+    .step-num {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      border-radius: 50%;
+      background: #004d77;
+      color: #ffffff;
+      font-size: 7.5pt;
+      font-weight: 800;
+      margin: 0 auto 4px auto;
+    }
+
+    .step-label {
+      font-size: 8pt;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+
+    .step-sub {
+      font-size: 6.5pt;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .pipeline-arrow {
+      color: #94a3b8;
+      font-weight: 800;
+      font-size: 11pt;
+    }
+
     .code-box {
       background: #0f172a;
       color: #f8fafc;
       padding: 10px 14px;
-      border-radius: 8px;
+      border-radius: 6px;
       margin: 10px 0;
-      overflow-x: auto;
     }
 
     .code-box pre {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 8pt;
+      font-size: 8.5pt;
       margin: 0;
       line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-all;
     }
 
     /* HEADER & FOOTER RUNNING */
     .doc-running-header {
       border-bottom: 1px solid #cbd5e1;
       padding-bottom: 4px;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       display: flex;
       justify-content: space-between;
-      font-size: 7.5pt;
+      font-size: 8pt;
       color: #64748b;
       font-weight: 600;
-    }
-
-    .doc-running-footer {
-      border-top: 1px solid #cbd5e1;
-      padding-top: 4px;
-      margin-top: 14px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 7.5pt;
-      color: #94a3b8;
     }
   </style>
 </head>
 <body>
 
   <!-- ======================== HALAMAN SAMPUL (COVER) ======================== -->
-  <div class="cover-container">
+  <div class="cover-page">
     <div class="cover-header">
-      ${logoTomohonBase64 ? `<img src="${logoTomohonBase64}" class="cover-logo" alt="Logo Tomohon" />` : '<div style="width:70px;"></div>'}
+      ${logoTomohonBase64 ? `<img src="${logoTomohonBase64}" class="cover-logo" alt="Logo Tomohon" />` : '<div style="width:68px;"></div>'}
       <div class="cover-header-text">
         <h4>Pemerintah Kota Tomohon</h4>
         <h3>Kecamatan Tomohon Tengah</h3>
         <h2>Kelurahan Kolongan Satu</h2>
         <p>Alamat Kantor: Jl. Lingkungan 1, Kolongan Satu, Tomohon Tengah, Kota Tomohon, Sulawesi Utara</p>
       </div>
-      ${logoKktBase64 ? `<img src="${logoKktBase64}" class="cover-logo" alt="Logo Kolongan Satu" />` : '<div style="width:70px;"></div>'}
+      ${logoKktBase64 ? `<img src="${logoKktBase64}" class="cover-logo" alt="Logo Kolongan Satu" />` : '<div style="width:68px;"></div>'}
     </div>
 
     <div class="cover-body">
-      <div class="cover-tagline">Dokumentasi Standar Operasional & Tata Kelola Digital</div>
+      <div class="cover-tagline">Dokumentasi Standar Operasional &amp; Tata Kelola Digital</div>
       <h1 class="cover-title">BUKU PANDUAN PENGGUNAAN<br>(USER MANUAL)</h1>
       <div class="cover-subtitle">Sistem Informasi Pemerintahan &amp; Portal e-Monografi Digital Kelurahan Kolongan Satu</div>
 
@@ -614,30 +790,25 @@ const fullHtml = `<!DOCTYPE html>
     </div>
 
     <div class="cover-footer">
-      <div class="cover-footer-left">
+      <div>
         <strong>Pemerintah Kelurahan Kolongan Satu</strong><br>
         Lurah: <strong>Theresia J. Kaunang, SE</strong> (NIP. 19731206 200312 2 007)<br>
         Sekretaris: <strong>Febronia L. Pijoh, S.Kom</strong> (NIP. 19780203 200902 2 002)
       </div>
-      <div class="cover-footer-right">
+      <div>
         <div class="stamp-box">Tervalidasi Resmi Kelurahan 2026</div>
       </div>
     </div>
   </div>
 
   <!-- ======================== KONTEN BUKU PANDUAN ======================== -->
-  <div class="page-break"></div>
+  <div class="content-container">
+    <div class="doc-running-header">
+      <span>Buku Panduan Penggunaan Sistem Informasi - Kelurahan Kolongan Satu</span>
+      <span>Edisi Produksi 2026</span>
+    </div>
 
-  <div class="doc-running-header">
-    <span>Buku Panduan Penggunaan Sistem Informasi - Kelurahan Kolongan Satu</span>
-    <span>Edisi Produksi 2026</span>
-  </div>
-
-  ${parsedBodyHtml}
-
-  <div class="doc-running-footer">
-    <span>Pemerintah Kelurahan Kolongan Satu • Kota Tomohon</span>
-    <span>https://kolongansatu.site</span>
+    ${parsedBodyHtml}
   </div>
 
 </body>
