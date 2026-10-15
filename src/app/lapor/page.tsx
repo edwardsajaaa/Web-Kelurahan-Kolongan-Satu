@@ -843,7 +843,7 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
               <span>
                 Hotline Darurat Kelurahan Kolongan Satu:{' '}
                 <strong className="text-slate-800">(0431) 351-001</strong> /{' '}
-                <strong className="text-slate-800">0812-4455-6677</strong>
+                <strong className="text-slate-800">0812-9537-0427</strong>
               </span>
             </div>
             <div className="flex items-center gap-4">

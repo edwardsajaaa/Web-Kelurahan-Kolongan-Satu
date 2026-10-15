@@ -34,16 +34,16 @@ import {
 } from 'lucide-react';
 
 export const PALA_WHATSAPP_CONTACTS: Record<number, { nama: string; phone: string; label: string }> = {
-  1: { nama: 'Meky Mario Turangan', phone: '0895-2917-5850', label: 'Kepala Lingkungan I (Jaga 1)' },
-  2: { nama: 'Devid P.N. Tasie', phone: '0895-2917-5850', label: 'Kepala Lingkungan II (Jaga 2)' },
-  3: { nama: 'Agustinus Sapanany', phone: '0895-2917-5850', label: 'Kepala Lingkungan III (Jaga 3)' },
-  4: { nama: 'Petronella Pusung', phone: '0895-2917-5850', label: 'Kepala Lingkungan IV (Jaga 4)' },
-  5: { nama: 'Vifi Timang', phone: '0895-2917-5850', label: 'Kepala Lingkungan V (Jaga 5)' },
+  1: { nama: 'Meky Mario Turangan', phone: '0812-9537-0427', label: 'Kepala Lingkungan I (Jaga 1)' },
+  2: { nama: 'Devid P.N. Tasie', phone: '0812-9537-0427', label: 'Kepala Lingkungan II (Jaga 2)' },
+  3: { nama: 'Agustinus Sapanany', phone: '0812-9537-0427', label: 'Kepala Lingkungan III (Jaga 3)' },
+  4: { nama: 'Petronella Pusung', phone: '0812-9537-0427', label: 'Kepala Lingkungan IV (Jaga 4)' },
+  5: { nama: 'Vifi Timang', phone: '0812-9537-0427', label: 'Kepala Lingkungan V (Jaga 5)' },
 };
 
 export const KELURAHAN_WHATSAPP_CENTER = {
   nama: 'Sekretariat Kelurahan Kolongan Satu',
-  phone: '0895-2917-5850',
+  phone: '0812-9537-0427',
   label: 'Sekretariat & Pelayanan Umum Kelurahan',
 };
 
@@ -1030,7 +1030,7 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
             <span>
               Hotline Darurat Kelurahan Kolongan Satu:{' '}
               <strong className="text-[#131b2e]">(0431) 351-001</strong> /{' '}
-              <strong className="text-[#131b2e]">0812-4455-6677</strong>
+              <strong className="text-[#131b2e]">0812-9537-0427</strong>
             </span>
           </div>
           <div className="flex items-center gap-4 text-[11px]">
