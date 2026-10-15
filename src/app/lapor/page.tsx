@@ -642,8 +642,8 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
                           Langsung terkirim ke WhatsApp Kepala Lingkungan wilayah yang dipilih untuk peninjauan langsung di lokasi.
                         </span>
                         <div className="flex items-center gap-1.5 text-[#006c49] text-[10px] font-bold mt-2">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>Respon Cepat Lapangan</span>
+                          <Clock className="w-3.5 h-3.5 shrink-0" />
+                          <span>Respon Cepat Lapangan &bull; {PALA_WHATSAPP_CONTACTS[lingkunganId]?.nama} ({PALA_WHATSAPP_CONTACTS[lingkunganId]?.phone})</span>
                         </div>
                       </div>
                     </label>

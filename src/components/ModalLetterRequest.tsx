@@ -165,11 +165,11 @@ export const KATALOG_SURAT_GUIDE: LetterRequirementGuide[] = [
 ];
 
 export const PALA_WHATSAPP_CONTACTS: Record<number, { nama: string; phone: string; label: string }> = {
-  1: { nama: 'Meky Mario Turangan', phone: '0895-2917-5850', label: 'Kepala Lingkungan I (Jaga 1)' },
-  2: { nama: 'Devid P.N. Tasie', phone: '0895-2917-5850', label: 'Kepala Lingkungan II (Jaga 2)' },
-  3: { nama: 'Agustinus Sapanany', phone: '0895-2917-5850', label: 'Kepala Lingkungan III (Jaga 3)' },
-  4: { nama: 'Petronella Pusung', phone: '0895-2917-5850', label: 'Kepala Lingkungan IV (Jaga 4)' },
-  5: { nama: 'Vifi Timang', phone: '0895-2917-5850', label: 'Kepala Lingkungan V (Jaga 5)' },
+  1: { nama: 'Meky Mario Turangan', phone: '0822-9237-9090', label: 'Kepala Lingkungan I (Jaga 1)' },
+  2: { nama: 'Devid Piyoh Hermanus Tasik', phone: '0853-9947-8057', label: 'Kepala Lingkungan II (Jaga 2)' },
+  3: { nama: 'Agustinus Joseph Kaparang', phone: '0821-8731-9388', label: 'Kepala Lingkungan III (Jaga 3)' },
+  4: { nama: 'Nofembly Servasius Pusung', phone: '0852-5633-0178', label: 'Kepala Lingkungan IV (Jaga 4)' },
+  5: { nama: 'Boy Welly Turambi', phone: '0852-9871-0897', label: 'Kepala Lingkungan V (Jaga 5)' },
 };
 
 export const KELURAHAN_PERSURATAN_WHATSAPP = {
