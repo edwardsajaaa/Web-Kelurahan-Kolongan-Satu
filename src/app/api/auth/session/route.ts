@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
         roleCode,
         roleTitle,
         jabatan,
-        phone: isLurah ? '0813-4011-2233' : '0895-2917-5850',
+        phone: isLurah ? '0813-5622-8807' : '0812-9537-0427',
         avatarText: userName
           .split(' ')
           .map((n) => n[0])

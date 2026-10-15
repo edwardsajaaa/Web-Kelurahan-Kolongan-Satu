@@ -545,7 +545,7 @@ function PortalLoginForm() {
                 <p className="text-[11px] text-slate-500">
                   Lupa nomor WhatsApp terdaftar? Hubungi{' '}
                   <a
-                    href="https://wa.me/6289529175850?text=Halo%20Admin%20Kelurahan%20Kolongan%20Satu,%20saya%20membutuhkan%20bantuan%20reset%20kata%20sandi%20portal%20aparatur."
+                    href="https://wa.me/6281295370427?text=Halo%20Admin%20Kelurahan%20Kolongan%20Satu,%20saya%20membutuhkan%20bantuan%20reset%20kata%20sandi%20portal%20aparatur."
                     target="_blank"
                     rel="noreferrer"
                     className="text-primary font-bold hover:underline inline-flex items-center gap-1"

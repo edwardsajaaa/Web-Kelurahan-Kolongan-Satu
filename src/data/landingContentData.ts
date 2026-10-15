@@ -473,7 +473,7 @@ export const INITIAL_ACTIVITY_SLIDES: ActivitySlide[] = [
 ];
 
 export const INITIAL_KONTAK_INFO: KontakInfo = {
-  hotlineWa: '0895-2917-5850',
+  hotlineWa: '0812-9537-0427',
   alamatKantor: 'Jl. Zanosui, Lingkungan II, Kelurahan Kolongan Satu, Tomohon Tengah, Kota Tomohon, Sulawesi Utara 95438',
   email: 'kel.kolongansatu@tomohon.go.id',
   jamSeninKamis: 'Senin - Kamis: 08.00 - 16.00 WITA',

@@ -58,7 +58,7 @@ const SECURE_OFFICIAL_ACCOUNTS = [
     jabatan: 'Sekretaris Kelurahan',
     roleCode: 'admin_seklur' as const,
     roleTitle: 'Sekretaris Kelurahan (Admin Utama)',
-    phone: '0895-2917-5850',
+    phone: '0812-9537-0427',
     // Hash bcrypt dari 'SeklurKKT#2026'
     passwordHash: '$2a$10$wN1k.u5Q8b7zY2vG0wE3yOn8R9sT1u5Q8b7zY2vG0wE3yOn8R9sT2',
     plaintextDefault: 'SeklurKKT#2026',

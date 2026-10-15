@@ -174,7 +174,7 @@ export const PALA_WHATSAPP_CONTACTS: Record<number, { nama: string; phone: strin
 
 export const KELURAHAN_PERSURATAN_WHATSAPP = {
   nama: 'Kantor Kelurahan Kolongan Satu (Layanan Persuratan)',
-  phone: '0895-2917-5850',
+  phone: '0812-9537-0427',
   label: 'Kantor Kelurahan (Layanan Satu Atap)',
 };
 
@@ -371,7 +371,7 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
     setIsSubmitting(true);
     setSubmitError(null);
 
-    let cleanPhone = '6289529175850';
+    let cleanPhone = cleanPhoneTo62(KELURAHAN_PERSURATAN_WHATSAPP.phone);
     let targetLabel = KELURAHAN_PERSURATAN_WHATSAPP.nama;
 
     if (targetTujuan === 'custom') {
@@ -506,7 +506,7 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
     const phoneToUse = waModal.useCustomPhone
       ? waModal.customPhone
       : (waModal.targetPhone || waModal.letter.nomorWaPemohon);
-    const cleanPhone = cleanPhoneTo62(phoneToUse) || '6289529175850';
+    const cleanPhone = cleanPhoneTo62(phoneToUse) || '6281295370427';
 
     const message =
       waModal.type === 'pdf'

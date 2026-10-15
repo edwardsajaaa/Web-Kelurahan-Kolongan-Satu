@@ -87,7 +87,7 @@ export default function ManageKontakView({
                 type="text"
                 value={form.hotlineWa}
                 onChange={(e) => setForm({ ...form, hotlineWa: e.target.value })}
-                placeholder="Contoh: 0895-2917-5850"
+                placeholder="Contoh: 0812-9537-0427"
                 className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 font-mono font-bold text-slate-900"
                 required
               />
