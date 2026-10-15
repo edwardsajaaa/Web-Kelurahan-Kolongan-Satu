@@ -84,8 +84,7 @@ export default function ModalCitizenReport({
   const [isiLaporan, setIsiLaporan] = useState(
     'Lampu jalan mati sejak 2 malam yang lalu sehingga lorong gelap dan membahayakan warga saat malam.'
   );
-  const [targetTujuan, setTargetTujuan] = useState<'pala' | 'kelurahan' | 'custom'>('pala');
-  const [customPhone, setCustomPhone] = useState('');
+  const [targetTujuan, setTargetTujuan] = useState<'pala' | 'kelurahan'>('pala');
 
   // Foto simulasi state
   const [fotoName, setFotoName] = useState<string | null>(null);
@@ -97,9 +96,6 @@ export default function ModalCitizenReport({
   const [copiedPreview, setCopiedPreview] = useState(false);
   const [submittedTicket, setSubmittedTicket] = useState<CitizenReport | null>(null);
   const [lastWaUrl, setLastWaUrl] = useState<string | null>(null);
-
-  // Testing other number on success card
-  const [testOtherPhone, setTestOtherPhone] = useState('');
 
   // Filtering & search in list tab
   const [searchQuery, setSearchQuery] = useState('');
@@ -117,13 +113,6 @@ export default function ModalCitizenReport({
   };
 
   const getResolvedContact = () => {
-    if (targetTujuan === 'custom') {
-      return {
-        nama: 'Nomor Uji Coba Kustom',
-        phone: customPhone.trim() || '0812-0000-0000',
-        label: 'Uji Coba Kirim ke Nomor Kustom',
-      };
-    }
     if (targetTujuan === 'kelurahan') {
       return KELURAHAN_WHATSAPP_CENTER;
     }
@@ -137,9 +126,7 @@ export default function ModalCitizenReport({
     const tujuanStr =
       targetTujuan === 'pala'
         ? 'Kepala Jaga (Pala Lapangan)'
-        : targetTujuan === 'kelurahan'
-        ? 'Sekretariat Kelurahan'
-        : `Uji Coba (${customPhone || 'Nomor Bebas'})`;
+        : 'Sekretariat Kelurahan';
 
     return `*PENGADUAN WARGA KOLONGAN SATU*
 -----------------------------------------
@@ -168,10 +155,6 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
     }
     if (!isiLaporan.trim()) {
       setSubmitError('Uraian permasalahan wajib diisi secara jelas.');
-      return;
-    }
-    if (targetTujuan === 'custom' && !customPhone.trim()) {
-      setSubmitError('Harap masukkan nomor WhatsApp tujuan pengujian kustom.');
       return;
     }
 
@@ -249,16 +232,6 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
     }
   };
 
-  const handleTestSendToOtherPhone = (phoneInput: string) => {
-    if (!phoneInput.trim() || !submittedTicket) return;
-    const clean = cleanPhoneNumber(phoneInput);
-    const message = buildWhatsAppMessage(submittedTicket.ticketNo);
-    const url = `https://api.whatsapp.com/send?phone=${clean}&text=${encodeURIComponent(message)}`;
-    if (typeof window !== 'undefined') {
-      window.open(url, '_blank');
-    }
-  };
-
   const handleCopyText = (text: string) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(text);
@@ -277,7 +250,6 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
     setSubmittedTicket(null);
     setLastWaUrl(null);
     setSubmitError(null);
-    setTestOtherPhone('');
   };
 
   const isStaff = currentOfficial && currentOfficial.roleCode !== 'publik';
@@ -468,31 +440,6 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
                     >
                       Buat Laporan Lainnya
                     </button>
-                  </div>
-
-                  {/* Uji coba nomor lain */}
-                  <div className="p-3.5 bg-[#f0f9ff] rounded-2xl border border-[#bae6fd] space-y-2">
-                    <p className="text-xs font-bold text-[#006194]">
-                      Uji Coba Kirim ke Nomor WhatsApp Lainnya:
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <input
-                        type="tel"
-                        value={testOtherPhone}
-                        onChange={(e) => setTestOtherPhone(e.target.value)}
-                        placeholder="Contoh: 0812-4411-9988..."
-                        className="flex-1 bg-white border border-[#bae6fd] rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#006194]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleTestSendToOtherPhone(testOtherPhone)}
-                        disabled={!testOtherPhone.trim()}
-                        className="px-4 py-2 bg-[#006194] hover:bg-[#004e77] text-white text-xs font-bold rounded-xl transition flex items-center justify-center space-x-1.5 disabled:opacity-50 cursor-pointer"
-                      >
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Tes Kirim ke Nomor Ini</span>
-                      </button>
-                    </div>
                   </div>
                 </div>
               )}
@@ -798,31 +745,6 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
                         </div>
                       </div>
                     </label>
-                  </div>
-
-                  {/* Toggle Opsi Simulasi / Pengujian Nomor Bebas */}
-                  <div className="pt-1 text-right">
-                    <button
-                      type="button"
-                      onClick={() => setTargetTujuan(targetTujuan === 'custom' ? 'pala' : 'custom')}
-                      className="text-[11px] text-[#006194] hover:underline font-semibold"
-                    >
-                      {targetTujuan === 'custom'
-                        ? '▲ Batalkan Pengujian & Gunakan Kontak Resmi'
-                        : '▼ Ingin uji coba kirim ke nomor HP pribadi Anda? Klik di sini'}
-                    </button>
-                    {targetTujuan === 'custom' && (
-                      <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-left flex flex-col sm:flex-row gap-2 items-center">
-                        <span className="text-xs text-amber-900 font-medium">Nomor WhatsApp Tester:</span>
-                        <input
-                          type="tel"
-                          value={customPhone}
-                          onChange={(e) => setCustomPhone(e.target.value)}
-                          placeholder="0812-xxxx-xxxx"
-                          className="flex-1 h-9 px-3 bg-white border border-amber-300 rounded-lg text-xs font-mono"
-                        />
-                      </div>
-                    )}
                   </div>
                 </div>
 

@@ -54,9 +54,7 @@ export default function LaporPage() {
   const [isiLaporan, setIsiLaporan] = useState(
     'Lampu jalan mati sejak 2 malam yang lalu sehingga lorong gelap dan membahayakan warga saat malam.'
   );
-  const [targetTujuan, setTargetTujuan] = useState<'pala' | 'kelurahan' | 'custom'>('pala');
-  const [customPhone, setCustomPhone] = useState('');
-  const [showCustomPhone, setShowCustomPhone] = useState(false);
+  const [targetTujuan, setTargetTujuan] = useState<'pala' | 'kelurahan'>('pala');
 
   // Foto simulasi state
   const [fotoName, setFotoName] = useState<string | null>(null);
@@ -75,13 +73,6 @@ export default function LaporPage() {
   };
 
   const getResolvedContact = () => {
-    if (targetTujuan === 'custom') {
-      return {
-        nama: 'Nomor Uji Coba Kustom',
-        phone: customPhone.trim() || '0812-0000-0000',
-        label: 'Uji Coba Kirim ke Nomor Kustom',
-      };
-    }
     if (targetTujuan === 'kelurahan') {
       return KELURAHAN_WHATSAPP_CENTER;
     }
@@ -94,9 +85,7 @@ export default function LaporPage() {
     const tujuanStr =
       targetTujuan === 'pala'
         ? 'Kepala Jaga (Pala Lapangan)'
-        : targetTujuan === 'kelurahan'
-        ? 'Sekretariat Kelurahan'
-        : `Uji Coba (${customPhone || 'Nomor Bebas'})`;
+        : 'Sekretariat Kelurahan';
 
     return `*PENGADUAN WARGA KOLONGAN SATU*
 -----------------------------------------
@@ -692,32 +681,6 @@ _Dikirim otomatis melalui Portal Resmi Kelurahan Kolongan Satu, Tomohon Tengah._
                         </div>
                       </div>
                     </label>
-                  </div>
-
-                  {/* Toggle Uji Coba Nomor Bebas */}
-                  <div className="mt-2 text-right">
-                    <button
-                      type="button"
-                      onClick={() => setShowCustomPhone(!showCustomPhone)}
-                      className="text-[11px] text-[#006194] hover:underline font-semibold"
-                    >
-                      {showCustomPhone ? '▲ Sembunyikan Uji Coba Nomor HP Lain' : '▼ Ingin uji coba kirim ke nomor HP pribadi Anda? Klik di sini'}
-                    </button>
-                    {showCustomPhone && (
-                      <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-left flex flex-col sm:flex-row gap-2 items-center">
-                        <span className="text-xs text-amber-900 font-medium">Nomor WhatsApp Tester:</span>
-                        <input
-                          type="tel"
-                          value={customPhone}
-                          onChange={(e) => {
-                            setCustomPhone(e.target.value);
-                            setTargetTujuan('custom');
-                          }}
-                          placeholder="0812-xxxx-xxxx"
-                          className="flex-1 h-9 px-3 bg-white border border-amber-300 rounded-lg text-xs font-mono"
-                        />
-                      </div>
-                    )}
                   </div>
                 </div>
 
