@@ -9,7 +9,6 @@ import {
   Building,
   FileText,
   AlertTriangle,
-  Plus,
   LogOut,
   ExternalLink,
 } from 'lucide-react';
@@ -91,21 +90,6 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Quick Action / Primary Add Action */}
-      <div className="px-4 pt-4 pb-2">
-        <button
-          onClick={onOpenInputMonografi}
-          className="w-full py-2.5 px-3.5 bg-gradient-to-r from-brand-600 to-sky-600 hover:from-brand-700 hover:to-sky-700 text-white rounded-xl shadow-xs shadow-brand-500/20 font-semibold text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer"
-          data-purpose="quick-new-entry"
-          title="Tambah / Entri Data Monografi Baru (Ctrl+N)"
-        >
-          <Plus className="w-4 h-4" />
-          <span>+ Entri Data Baru</span>
-          <span className="ml-auto text-[10px] px-1.5 py-0.5 bg-white/20 rounded font-mono">
-            Ctrl+N
-          </span>
-        </button>
-      </div>
 
       {/* Main Navigation Menu */}
       <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-6" data-purpose="sidebar-nav">
