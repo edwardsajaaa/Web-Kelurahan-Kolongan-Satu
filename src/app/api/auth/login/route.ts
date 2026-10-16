@@ -51,16 +51,43 @@ export async function POST(request: NextRequest) {
       user,
     });
 
-    // 7 days cookie session
-    const cookieAge = 60 * 60 * 24 * 7;
+    // Keamanan Ketat: Sesi dibatasi maksimal 2 jam dan wajib login ulang setelah browser ditutup/tidak aktif
+    const cookieAge = 60 * 60 * 2; // 2 jam batas maksimal
     const isProduction = process.env.NODE_ENV === 'production';
+    const now = Date.now().toString();
+    const sessionToken = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `sess_${now}`;
 
-    // Primary Auth Cookie (HttpOnly for security)
+    // Primary Auth Cookie
     response.cookies.set('kkt_portal_auth', authCookieValue, {
       path: '/',
       maxAge: cookieAge,
       sameSite: 'lax',
-      httpOnly: false, // needed by some client middleware checks
+      httpOnly: false,
+      secure: isProduction,
+    });
+
+    // Unique Session Token & Timestamps
+    response.cookies.set('kkt_session_token', sessionToken, {
+      path: '/',
+      maxAge: cookieAge,
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: isProduction,
+    });
+
+    response.cookies.set('kkt_session_created_at', now, {
+      path: '/',
+      maxAge: cookieAge,
+      sameSite: 'lax',
+      httpOnly: false,
+      secure: isProduction,
+    });
+
+    response.cookies.set('kkt_session_last_active', now, {
+      path: '/',
+      maxAge: cookieAge,
+      sameSite: 'lax',
+      httpOnly: false,
       secure: isProduction,
     });
 
@@ -81,7 +108,7 @@ export async function POST(request: NextRequest) {
       secure: isProduction,
     });
 
-    response.cookies.set('kkt_user_name', user.name, {
+    response.cookies.set('kkt_user_name', encodeURIComponent(user.name), {
       path: '/',
       maxAge: cookieAge,
       sameSite: 'lax',

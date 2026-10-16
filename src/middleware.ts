@@ -6,26 +6,66 @@ export async function middleware(request: NextRequest) {
 
   // Security Gate: Protect all /portal routes except /portal/login
   const authCookie = request.cookies.get("kkt_portal_auth");
+  const sessionCreatedAt = request.cookies.get("kkt_session_created_at");
+  const sessionLastActive = request.cookies.get("kkt_session_last_active");
+
+  const now = Date.now();
+  const MAX_SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 jam batas maksimal sesi
+  const MAX_IDLE_TIMEOUT = 15 * 60 * 1000; // 15 menit batas tidak aktif
+
+  let isExpired = false;
+  if (sessionCreatedAt) {
+    const createdAt = parseInt(sessionCreatedAt.value, 10);
+    if (!isNaN(createdAt) && now - createdAt > MAX_SESSION_DURATION) {
+      isExpired = true;
+    }
+  }
+  if (sessionLastActive && !isExpired) {
+    const lastActive = parseInt(sessionLastActive.value, 10);
+    if (!isNaN(lastActive) && now - lastActive > MAX_IDLE_TIMEOUT) {
+      isExpired = true;
+    }
+  }
+
   const isValidAparatur =
+    !isExpired &&
     authCookie &&
     (authCookie.value === "lurah_authenticated" ||
       authCookie.value === "seklur_authenticated" ||
       authCookie.value === "aparatur_authenticated");
 
+  // Proteksi rute portal - wajib login jika sesi habis atau belum login
   if (pathname.startsWith("/portal") && pathname !== "/portal/login") {
     if (!isValidAparatur) {
       const loginUrl = new URL("/portal/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(loginUrl);
+      if (isExpired) {
+        loginUrl.searchParams.set("expired", "idle");
+      }
+      const response = NextResponse.redirect(loginUrl);
+
+      // Bersihkan sisa cookies yang telah kedaluwarsa
+      const cookiesToClear = [
+        "kkt_portal_auth",
+        "kkt_session_user_id",
+        "kkt_session_token",
+        "kkt_session_created_at",
+        "kkt_session_last_active",
+        "kkt_user_role",
+        "kkt_user_name",
+        "kkt_user_nip",
+        "kkt_user_email",
+      ];
+      cookiesToClear.forEach((name) => {
+        response.cookies.delete(name);
+      });
+
+      return response;
     }
   }
 
-  // If user is already authenticated as aparatur and visits /portal/login, redirect to /portal
-  if (pathname === "/portal/login") {
-    if (isValidAparatur) {
-      return NextResponse.redirect(new URL("/portal", request.url));
-    }
-  }
+  // CATATAN KEAMANAN: Halaman /portal/login TIDAK dialihkan otomatis ke /portal
+  // agar setiap perangkat/aparatur dapat melakukan autentikasi ulang secara tegas.
 
   return updateSession(request);
 }

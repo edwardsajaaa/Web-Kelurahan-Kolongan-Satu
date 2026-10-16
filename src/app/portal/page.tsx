@@ -183,6 +183,66 @@ export default function PortalPage() {
     loadBackendData();
   }, []);
 
+  // Security Guard: Inactivity auto-logout (15 menit idle) & session heartbeat
+  useEffect(() => {
+    const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 menit tidak aktif
+    let idleTimer: NodeJS.Timeout;
+
+    const performAutoLogout = async (reason: string = 'idle') => {
+      try {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      } catch (e) {
+        console.warn('Logout error:', e);
+      }
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear();
+        localStorage.removeItem('kkt_portal_auth');
+        localStorage.removeItem('kkt_user_name');
+        localStorage.removeItem('kkt_user_nip');
+        localStorage.removeItem('kkt_user_email');
+        localStorage.removeItem('kkt_user_role');
+        window.location.href = `/portal/login?expired=${reason}`;
+      }
+    };
+
+    const resetIdleTimer = () => {
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        performAutoLogout('idle');
+      }, IDLE_TIMEOUT_MS);
+    };
+
+    const activityEvents = ['mousemove', 'keydown', 'mousedown', 'touchstart', 'scroll'];
+    activityEvents.forEach((evt) => {
+      window.addEventListener(evt, resetIdleTimer, { passive: true });
+    });
+
+    resetIdleTimer();
+
+    // Heartbeat setiap 3 menit untuk memeriksa keabsahan sesi di server
+    const heartbeatInterval = setInterval(async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.authenticated) {
+            performAutoLogout('idle');
+          }
+        }
+      } catch (err) {
+        console.warn('Heartbeat check error:', err);
+      }
+    }, 3 * 60 * 1000);
+
+    return () => {
+      clearTimeout(idleTimer);
+      clearInterval(heartbeatInterval);
+      activityEvents.forEach((evt) => {
+        window.removeEventListener(evt, resetIdleTimer);
+      });
+    };
+  }, []);
+
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
@@ -190,9 +250,12 @@ export default function PortalPage() {
       console.warn('Logout error:', e);
     }
     if (typeof window !== 'undefined') {
+      sessionStorage.clear();
       localStorage.removeItem('kkt_portal_auth');
       localStorage.removeItem('kkt_user_name');
       localStorage.removeItem('kkt_user_nip');
+      localStorage.removeItem('kkt_user_email');
+      localStorage.removeItem('kkt_user_role');
       window.location.href = '/portal/login';
     }
   };

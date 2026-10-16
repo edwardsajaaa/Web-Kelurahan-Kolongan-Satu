@@ -27,6 +27,7 @@ function PortalLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTarget = searchParams.get('redirect') || '/portal';
+  const expiredReason = searchParams.get('expired');
 
   // Login form state
   const [identifier, setIdentifier] = useState('');
@@ -88,14 +89,21 @@ function PortalLoginForm() {
       setRateLimitRemaining(null);
 
       if (typeof window !== 'undefined') {
-        localStorage.setItem(
+        sessionStorage.setItem(
           'kkt_portal_auth',
           data.user.roleCode === 'superadmin' ? 'lurah_authenticated' : 'seklur_authenticated'
         );
-        localStorage.setItem('kkt_user_name', data.user.name);
-        localStorage.setItem('kkt_user_nip', data.user.nip);
-        localStorage.setItem('kkt_user_email', data.user.email);
-        localStorage.setItem('kkt_user_role', data.user.roleCode);
+        sessionStorage.setItem('kkt_user_name', data.user.name);
+        sessionStorage.setItem('kkt_user_nip', data.user.nip);
+        sessionStorage.setItem('kkt_user_email', data.user.email);
+        sessionStorage.setItem('kkt_user_role', data.user.roleCode);
+
+        // Hapus localStorage agar tidak ada kredensial yang tersimpan permanen di perangkat
+        localStorage.removeItem('kkt_portal_auth');
+        localStorage.removeItem('kkt_user_name');
+        localStorage.removeItem('kkt_user_nip');
+        localStorage.removeItem('kkt_user_email');
+        localStorage.removeItem('kkt_user_role');
       }
 
       setTimeout(() => {
@@ -243,6 +251,21 @@ function PortalLoginForm() {
                 Silakan masuk menggunakan <strong>NIP resmi</strong> (18 digit) atau <strong>Email kedinasan</strong> Anda. Sistem dilindungi verifikasi password terenkripsi bcrypt, pembatasan percobaan gagal (*rate limiting*), dan pencatatan audit log otomatis.
               </p>
             </div>
+
+            {/* Expired / Re-authentication Prompt */}
+            {expiredReason && (
+              <div className="text-xs p-3.5 rounded-2xl flex items-start space-x-2.5 bg-amber-50 text-amber-900 border border-amber-200 animate-in fade-in duration-200">
+                <ShieldAlert className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <p className="font-bold">Keamanan Perangkat Aktif</p>
+                  <p className="text-[11px] text-amber-800 leading-relaxed">
+                    {expiredReason === 'idle'
+                      ? 'Sesi ditutup otomatis karena perangkat tidak aktif selama 15 menit. Silakan login kembali untuk melanjutkan.'
+                      : 'Perangkat wajib melakukan autentikasi ulang setiap kali masuk ke Portal Kelurahan.'}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Error / Locked Notifications */}
             {errorMessage && (

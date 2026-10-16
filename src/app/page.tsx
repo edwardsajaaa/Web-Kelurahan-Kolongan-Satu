@@ -288,7 +288,7 @@ export default function LandingPage() {
           {/* Right Action: Masuk Portal */}
           <div className="flex items-center gap-2">
             <Link
-              href="/portal"
+              href="/portal/login"
               className="inline-flex items-center gap-1.5 2xl:gap-2 text-[14px] 2xl:text-[15px] font-semibold text-[#006194] bg-white hover:bg-[#e2e7ff] border border-[#e2e7ff] px-5 2xl:px-7 py-2.5 2xl:py-3 rounded-full shadow-xs hover:shadow-md transition-all duration-300"
             >
               <span className="material-symbols-outlined text-[17px] 2xl:text-[20px]">login</span>
@@ -375,7 +375,7 @@ export default function LandingPage() {
               Tim KKT
             </a>
             <Link
-              href="/portal"
+              href="/portal/login"
               onClick={() => setMobileMenuOpen(false)}
               className="mt-2 inline-flex items-center justify-center gap-2 text-sm font-semibold text-white bg-[#006194] py-2.5 rounded-full shadow-sm"
             >
@@ -1171,11 +1171,11 @@ export default function LandingPage() {
             <div className="flex flex-col gap-2.5 2xl:gap-4">
               <h5 className="text-base 2xl:text-xl text-[#131b2e] font-bold">Tautan Cepat</h5>
               <nav className="flex flex-col space-y-1.5 2xl:space-y-2 text-xs sm:text-sm 2xl:text-base">
-                <Link href="/portal" className="text-[#3f4850] hover:text-[#006194] transition-colors">
-                  Peta Wilayah Lingkungan
+                <Link href="/monografi" className="text-[#3f4850] hover:text-[#006194] transition-colors">
+                  Peta &amp; Monografi Wilayah
                 </Link>
-                <a href="#monografi-wilayah" className="text-[#3f4850] hover:text-[#006194] transition-colors">
-                  Statistik Monografi
+                <a href="#fasilitas" className="text-[#3f4850] hover:text-[#006194] transition-colors">
+                  Fasilitas &amp; Sarana Kelurahan
                 </a>
                 <button
                   onClick={() => setIsLetterModalOpen(true)}
@@ -1183,12 +1183,12 @@ export default function LandingPage() {
                 >
                   Permohonan Surat Keterangan
                 </button>
-                <Link href="/portal" className="text-[#3f4850] hover:text-[#006194] transition-colors">
-                  UMKM &amp; Potensi Desa
-                </Link>
                 <a href="#tim-kkt" className="text-[#3f4850] hover:text-[#006194] transition-colors">
                   Struktur Tim KKT
                 </a>
+                <Link href="/portal/login" className="text-[#006194] font-semibold hover:underline transition-colors pt-1">
+                  Portal Khusus Aparatur (Login)
+                </Link>
               </nav>
             </div>
 

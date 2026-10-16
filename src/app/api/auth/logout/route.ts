@@ -9,6 +9,9 @@ export async function POST(request: NextRequest) {
   const cookiesToClear = [
     'kkt_portal_auth',
     'kkt_session_user_id',
+    'kkt_session_token',
+    'kkt_session_created_at',
+    'kkt_session_last_active',
     'kkt_user_role',
     'kkt_user_name',
     'kkt_user_nip',
