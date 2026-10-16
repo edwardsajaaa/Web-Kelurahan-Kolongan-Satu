@@ -1022,18 +1022,25 @@ export async function updateLandingContentSection<K extends keyof LandingContent
   section: K,
   sectionData: LandingContentPayload[K]
 ): Promise<LandingContentPayload> {
-  inMemoryLandingContent[section] = sectionData;
-
   if (isServerSupabaseConfigured) {
     try {
       const serverClient = createServerClient();
-      // Check if landing_content row exists
       const { data: existing } = await (serverClient as any)
         .from('monografi_rekap')
-        .select('id')
+        .select('*')
         .eq('kategori', 'landing_content')
         .limit(1)
         .maybeSingle();
+
+      if (existing && existing.rincian_data) {
+        const remote = existing.rincian_data as Partial<LandingContentPayload>;
+        inMemoryLandingContent = {
+          ...inMemoryLandingContent,
+          ...remote,
+        };
+      }
+
+      inMemoryLandingContent[section] = sectionData;
 
       if (existing && existing.id) {
         await (serverClient as any)
@@ -1055,7 +1062,10 @@ export async function updateLandingContentSection<K extends keyof LandingContent
       }
     } catch (err) {
       console.warn('[Supabase] Failed to persist landing content section:', err);
+      inMemoryLandingContent[section] = sectionData;
     }
+  } else {
+    inMemoryLandingContent[section] = sectionData;
   }
 
   return inMemoryLandingContent;

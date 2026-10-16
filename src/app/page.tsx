@@ -69,14 +69,57 @@ export default function LandingPage() {
   // Map mode state: 3D interactive map vs classic Google Maps
   const [mapMode, setMapMode] = useState<'3d' | 'gmaps'>('3d');
 
+  // 1. Restore cached landing content instantly on mount (eliminates flash of old sample slides)
   React.useEffect(() => {
-    async function fetchLandingData() {
+    if (typeof window !== 'undefined') {
       try {
-        const [resMonografi, resLetters, resReports, resLanding] = await Promise.all([
+        const cached = localStorage.getItem('kkt_landing_content_cache');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.kegiatan && parsed.kegiatan.length > 0) {
+            setLandingContent((prev) => ({ ...prev, ...parsed }));
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, []);
+
+  // 2. Fetch fresh landing content independently with no-store
+  React.useEffect(() => {
+    async function loadLandingContent() {
+      try {
+        const res = await fetch(`/api/landing-content?t=${Date.now()}`, { cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setLandingContent(json.data);
+            if (typeof window !== 'undefined') {
+              try {
+                localStorage.setItem('kkt_landing_content_cache', JSON.stringify(json.data));
+              } catch (e) {
+                // ignore
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal memuat konten landing page:', err);
+      }
+    }
+
+    loadLandingContent();
+  }, []);
+
+  // 3. Fetch background monografi, letters, and reports
+  React.useEffect(() => {
+    async function fetchBackgroundData() {
+      try {
+        const [resMonografi, resLetters, resReports] = await Promise.all([
           fetch('/api/monografi', { cache: 'no-store' }),
           fetch('/api/surat', { cache: 'no-store' }),
           fetch('/api/lapor', { cache: 'no-store' }),
-          fetch('/api/landing-content', { cache: 'no-store' }),
         ]);
         if (resMonografi.ok) {
           const json = await resMonografi.json();
@@ -105,17 +148,11 @@ export default function LandingPage() {
             setReports(jsonR.data);
           }
         }
-        if (resLanding && resLanding.ok) {
-          const jsonLand = await resLanding.json();
-          if (jsonLand.success && jsonLand.data) {
-            setLandingContent(jsonLand.data);
-          }
-        }
       } catch (err) {
-        console.warn('Gagal sinkronisasi data landing page:', err);
+        console.warn('Gagal sinkronisasi data sekunder:', err);
       }
     }
-    fetchLandingData();
+    fetchBackgroundData();
   }, []);
 
   const is2025 = selectedYear === 2025;

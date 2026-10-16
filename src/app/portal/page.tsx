@@ -173,6 +173,13 @@ export default function PortalPage() {
           const dataLanding = await resLanding.json();
           if (dataLanding.success && dataLanding.data) {
             setLandingContent(dataLanding.data);
+            if (typeof window !== 'undefined') {
+              try {
+                localStorage.setItem('kkt_landing_content_cache', JSON.stringify(dataLanding.data));
+              } catch (e) {
+                // ignore
+              }
+            }
           }
         }
       } catch (err) {
@@ -555,9 +562,24 @@ export default function PortalPage() {
     setIsPrintLetterOpen(true);
   };
 
+  // Helper to persist landing content to localStorage for zero-lag instant landing sync
+  const syncLandingCache = (updater: (prev: LandingContentPayload) => LandingContentPayload) => {
+    setLandingContent((prev) => {
+      const next = updater(prev);
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('kkt_landing_content_cache', JSON.stringify(next));
+        } catch (e) {
+          // ignore
+        }
+      }
+      return next;
+    });
+  };
+
   // Handlers for Landing Page Editable Content
   const handleSaveFasilitas = async (updatedFasilitas: FasilitasItem[]) => {
-    setLandingContent((prev) => ({ ...prev, fasilitas: updatedFasilitas }));
+    syncLandingCache((prev) => ({ ...prev, fasilitas: updatedFasilitas }));
     try {
       await fetch('/api/landing-content', {
         method: 'PUT',
@@ -570,7 +592,7 @@ export default function PortalPage() {
   };
 
   const handleSaveSanitasi = async (updatedSanitasi: SanitasiStats) => {
-    setLandingContent((prev) => ({ ...prev, sanitasi: updatedSanitasi }));
+    syncLandingCache((prev) => ({ ...prev, sanitasi: updatedSanitasi }));
     try {
       await fetch('/api/landing-content', {
         method: 'PUT',
@@ -583,7 +605,7 @@ export default function PortalPage() {
   };
 
   const handleSaveAparatur = async (updatedAparatur: AparaturData) => {
-    setLandingContent((prev) => ({ ...prev, aparatur: updatedAparatur }));
+    syncLandingCache((prev) => ({ ...prev, aparatur: updatedAparatur }));
     try {
       await fetch('/api/landing-content', {
         method: 'PUT',
@@ -596,7 +618,7 @@ export default function PortalPage() {
   };
 
   const handleSaveKegiatan = async (updatedKegiatan: ActivitySlide[]) => {
-    setLandingContent((prev) => ({ ...prev, kegiatan: updatedKegiatan }));
+    syncLandingCache((prev) => ({ ...prev, kegiatan: updatedKegiatan }));
     try {
       await fetch('/api/landing-content', {
         method: 'PUT',
@@ -609,7 +631,7 @@ export default function PortalPage() {
   };
 
   const handleSaveKontak = async (updatedKontak: KontakInfo) => {
-    setLandingContent((prev) => ({ ...prev, kontak: updatedKontak }));
+    syncLandingCache((prev) => ({ ...prev, kontak: updatedKontak }));
     try {
       await fetch('/api/landing-content', {
         method: 'PUT',
