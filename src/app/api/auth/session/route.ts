@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
   const sessionLastActiveCookie = request.cookies.get('kkt_session_last_active');
 
   const now = Date.now();
-  const MAX_SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 jam batas maksimal sesi
-  const MAX_IDLE_TIMEOUT = 15 * 60 * 1000; // 15 menit batas tidak aktif
+  const MAX_SESSION_DURATION = 4 * 60 * 60 * 1000; // 4 jam batas maksimal sesi
+  const MAX_IDLE_TIMEOUT = 60 * 60 * 1000; // 1 jam batas tidak aktif
 
   let isExpired = false;
   let expireReason = '';
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     const createdAt = parseInt(sessionCreatedAtCookie.value, 10);
     if (!isNaN(createdAt) && now - createdAt > MAX_SESSION_DURATION) {
       isExpired = true;
-      expireReason = 'Waktu sesi maksimal (2 jam) telah berakhir.';
+      expireReason = 'Waktu sesi maksimal (4 jam) telah berakhir.';
     }
   }
 
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const lastActive = parseInt(sessionLastActiveCookie.value, 10);
     if (!isNaN(lastActive) && now - lastActive > MAX_IDLE_TIMEOUT) {
       isExpired = true;
-      expireReason = 'Sesi berakhir karena tidak ada aktivitas selama 15 menit.';
+      expireReason = 'Sesi berakhir karena tidak ada aktivitas selama 1 jam.';
     }
   }
 
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
     // Refresh timestamp keaktifan sesi (heartbeat)
     response.cookies.set('kkt_session_last_active', String(now), {
       path: '/',
-      maxAge: 7200,
+      maxAge: 14400,
       sameSite: 'lax',
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',

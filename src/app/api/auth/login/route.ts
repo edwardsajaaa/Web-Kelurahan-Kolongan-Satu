@@ -51,8 +51,8 @@ export async function POST(request: NextRequest) {
       user,
     });
 
-    // Keamanan Ketat: Sesi dibatasi maksimal 2 jam dan wajib login ulang setelah browser ditutup/tidak aktif
-    const cookieAge = 60 * 60 * 2; // 2 jam batas maksimal
+    // Keamanan Ketat: Sesi dibatasi maksimal 4 jam dan batas waktu tidak aktif 1 jam
+    const cookieAge = 60 * 60 * 4; // 4 jam batas maksimal
     const isProduction = process.env.NODE_ENV === 'production';
     const now = Date.now().toString();
     const sessionToken = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `sess_${now}`;

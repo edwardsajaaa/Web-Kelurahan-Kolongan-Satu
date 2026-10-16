@@ -260,7 +260,7 @@ function PortalLoginForm() {
                   <p className="font-bold">Keamanan Perangkat Aktif</p>
                   <p className="text-[11px] text-amber-800 leading-relaxed">
                     {expiredReason === 'idle'
-                      ? 'Sesi ditutup otomatis karena perangkat tidak aktif selama 15 menit. Silakan login kembali untuk melanjutkan.'
+                      ? 'Sesi ditutup otomatis karena perangkat tidak aktif selama 1 jam. Silakan login kembali untuk melanjutkan.'
                       : 'Perangkat wajib melakukan autentikasi ulang setiap kali masuk ke Portal Kelurahan.'}
                   </p>
                 </div>

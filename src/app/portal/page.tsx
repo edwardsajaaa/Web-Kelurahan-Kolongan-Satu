@@ -183,9 +183,9 @@ export default function PortalPage() {
     loadBackendData();
   }, []);
 
-  // Security Guard: Inactivity auto-logout (15 menit idle) & session heartbeat
+  // Security Guard: Inactivity auto-logout (1 jam idle) & session heartbeat
   useEffect(() => {
-    const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // 15 menit tidak aktif
+    const IDLE_TIMEOUT_MS = 60 * 60 * 1000; // 1 jam tidak aktif
     let idleTimer: NodeJS.Timeout;
 
     const performAutoLogout = async (reason: string = 'idle') => {

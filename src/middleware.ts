@@ -10,8 +10,8 @@ export async function middleware(request: NextRequest) {
   const sessionLastActive = request.cookies.get("kkt_session_last_active");
 
   const now = Date.now();
-  const MAX_SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 jam batas maksimal sesi
-  const MAX_IDLE_TIMEOUT = 15 * 60 * 1000; // 15 menit batas tidak aktif
+  const MAX_SESSION_DURATION = 4 * 60 * 60 * 1000; // 4 jam batas maksimal sesi
+  const MAX_IDLE_TIMEOUT = 60 * 60 * 1000; // 1 jam batas tidak aktif
 
   let isExpired = false;
   if (sessionCreatedAt) {
