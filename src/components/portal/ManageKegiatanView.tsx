@@ -12,9 +12,12 @@ import {
   Link as LinkIcon,
   CheckCircle2,
   Loader2,
-  RefreshCw,
   Star,
   Layers,
+  Sliders,
+  MoveVertical,
+  Maximize2,
+  Eye,
 } from 'lucide-react';
 import { ActivitySlide } from '@/data/landingContentData';
 
@@ -34,6 +37,7 @@ export default function ManageKegiatanView({
   const [imageInputMode, setImageInputMode] = useState<'file' | 'url'>('file');
   const [isProcessingImage, setIsProcessingImage] = useState(false);
   const [urlInput, setUrlInput] = useState('');
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [editingSlide, setEditingSlide] = useState<ActivitySlide>({
@@ -44,6 +48,9 @@ export default function ManageKegiatanView({
     badge: '',
     imageUrl: '',
     images: [],
+    imagePosition: 'center',
+    imagePositions: {},
+    imageFit: 'cover',
     alt: '',
   });
 
@@ -51,6 +58,7 @@ export default function ManageKegiatanView({
     setModalMode('add');
     setImageInputMode('file');
     setUrlInput('');
+    setSelectedPhotoIndex(0);
     setEditingSlide({
       id: `slide-${Date.now().toString(36)}`,
       title: '',
@@ -59,6 +67,9 @@ export default function ManageKegiatanView({
       badge: 'Agenda Kelurahan',
       imageUrl: '',
       images: [],
+      imagePosition: 'center',
+      imagePositions: {},
+      imageFit: 'cover',
       alt: 'Dokumentasi Kegiatan Kelurahan Kolongan Satu',
     });
     setIsModalOpen(true);
@@ -75,10 +86,14 @@ export default function ManageKegiatanView({
 
     setImageInputMode(existingImages.some((img) => img.startsWith('data:')) ? 'file' : 'url');
     setUrlInput('');
+    setSelectedPhotoIndex(0);
     setEditingSlide({
       ...slide,
       imageUrl: slide.imageUrl || existingImages[0] || '',
       images: existingImages,
+      imagePosition: slide.imagePosition || 'center',
+      imagePositions: slide.imagePositions || {},
+      imageFit: slide.imageFit || 'cover',
     });
     setIsModalOpen(true);
   };
@@ -207,6 +222,7 @@ export default function ManageKegiatanView({
         imageUrl: list[0],
       };
     });
+    setSelectedPhotoIndex(0);
     showToast('Foto sampul utama berhasil diperbarui!');
   };
 
@@ -221,6 +237,7 @@ export default function ManageKegiatanView({
         imageUrl: list[0] || '',
       };
     });
+    setSelectedPhotoIndex((prev) => Math.max(0, prev - 1));
   };
 
   // Hapus semua foto
@@ -229,6 +246,38 @@ export default function ManageKegiatanView({
       ...prev,
       images: [],
       imageUrl: '',
+      imagePositions: {},
+    }));
+    setSelectedPhotoIndex(0);
+  };
+
+  // Posisi vertikal fokus per foto dalam persen (0% s/d 100%)
+  const getPhotoPositionPercent = (idx: number): number => {
+    const pos = editingSlide.imagePositions?.[idx] || editingSlide.imagePosition || 'center';
+    if (pos === 'top' || pos === 'center 0%') return 0;
+    if (pos === 'bottom' || pos === 'center 100%') return 100;
+    if (pos === 'center' || pos === 'center center' || pos === 'center 50%') return 50;
+    const match = pos.match(/(\d+)%/);
+    if (match) return parseInt(match[1], 10);
+    return 50;
+  };
+
+  const handlePositionChange = (percent: number) => {
+    const posString = `center ${percent}%`;
+    setEditingSlide((prev) => ({
+      ...prev,
+      imagePosition: posString,
+      imagePositions: {
+        ...(prev.imagePositions || {}),
+        [selectedPhotoIndex]: posString,
+      },
+    }));
+  };
+
+  const handleFitChange = (fit: 'cover' | 'contain') => {
+    setEditingSlide((prev) => ({
+      ...prev,
+      imageFit: fit,
     }));
   };
 
@@ -262,6 +311,9 @@ export default function ManageKegiatanView({
       ...editingSlide,
       imageUrl: currentImages[0],
       images: currentImages,
+      imagePosition: editingSlide.imagePosition || `center ${getPhotoPositionPercent(0)}%`,
+      imagePositions: editingSlide.imagePositions || {},
+      imageFit: editingSlide.imageFit || 'cover',
     };
 
     let updated: ActivitySlide[];
@@ -287,6 +339,11 @@ export default function ManageKegiatanView({
       ? [editingSlide.imageUrl]
       : [];
 
+  const currentActivePhotoUrl =
+    activeImageList[selectedPhotoIndex] || activeImageList[0] || '';
+  const currentPhotoPercent = getPhotoPositionPercent(selectedPhotoIndex);
+  const currentFit = editingSlide.imageFit || 'cover';
+
   return (
     <div className="space-y-6">
       {/* Top Action Bar */}
@@ -301,7 +358,7 @@ export default function ManageKegiatanView({
             </h2>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Setiap kegiatan kini dapat memuat banyak foto dokumentasi sekaligus yang ditampilkan secara bergantian di landing page.
+            Mendukung multi-foto dan penyesuaian sudut/posisi foto secara manual agar wajah dan orang tidak terpotong di banner depan.
           </p>
         </div>
 
@@ -325,16 +382,19 @@ export default function ManageKegiatanView({
               ? [item.imageUrl]
               : [];
 
+          const cardPos = item.imagePosition || 'center';
+
           return (
             <div
               key={item.id}
               className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between group"
             >
               <div>
-                <div className="h-44 w-full relative bg-slate-100 overflow-hidden">
+                <div className="h-44 w-full relative bg-slate-900 overflow-hidden">
                   <img
                     src={item.imageUrl || itemImages[0]}
                     alt={item.alt || item.title}
+                    style={{ objectPosition: cardPos }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src =
@@ -352,6 +412,15 @@ export default function ManageKegiatanView({
                       </span>
                     )}
                   </div>
+
+                  {item.imagePosition && item.imagePosition !== 'center' && (
+                    <div className="absolute bottom-2 right-2">
+                      <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-black/60 text-white backdrop-blur-xs flex items-center gap-1">
+                        <MoveVertical className="w-2.5 h-2.5 text-brand-300" />
+                        <span>{item.imagePosition}</span>
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Strip Pratinjau Foto Banyak jika ada */}
@@ -396,7 +465,7 @@ export default function ManageKegiatanView({
                     type="button"
                     onClick={() => handleOpenEdit(item)}
                     className="p-1.5 rounded-lg bg-slate-100 hover:bg-brand-50 text-slate-600 hover:text-brand-600 transition cursor-pointer"
-                    title="Edit Slide"
+                    title="Edit Slide & Atur Posisi Foto"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
@@ -415,10 +484,10 @@ export default function ManageKegiatanView({
         })}
       </div>
 
-      {/* Modal Add / Edit Slide (Multi-Photo Support) */}
+      {/* Modal Add / Edit Slide (Multi-Photo & Manual Position Tuning) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl overflow-hidden max-h-[92vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden max-h-[94vh] flex flex-col">
             <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
@@ -428,7 +497,7 @@ export default function ManageKegiatanView({
                   <h3 className="text-sm font-bold text-slate-900">
                     {modalMode === 'add' ? 'Tambah Kegiatan Dokumentasi' : 'Edit Kegiatan Dokumentasi'}
                   </h3>
-                  <p className="text-[11px] text-slate-500">Mendukung unggah lebih dari 1 foto dokumentasi</p>
+                  <p className="text-[11px] text-slate-500">Unggah banyak foto dan sesuaikan sudut/posisi tampilan secara manual</p>
                 </div>
               </div>
               <button
@@ -440,14 +509,14 @@ export default function ManageKegiatanView({
               </button>
             </div>
 
-            <form onSubmit={handleSaveModal} className="p-6 space-y-4 overflow-y-auto">
+            <form onSubmit={handleSaveModal} className="p-5 sm:p-6 space-y-4 overflow-y-auto">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-slate-700">Judul Kegiatan</label>
                 <input
                   type="text"
                   value={editingSlide.title}
                   onChange={(e) => setEditingSlide({ ...editingSlide, title: e.target.value })}
-                  placeholder="Contoh: Musrenbang Kelurahan, Gotong Royong Kebersihan..."
+                  placeholder="Contoh: Pentahbisan & Peresmian Gereja GMIM Elohim..."
                   className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 font-bold"
                   required
                 />
@@ -460,7 +529,7 @@ export default function ManageKegiatanView({
                     type="text"
                     value={editingSlide.category}
                     onChange={(e) => setEditingSlide({ ...editingSlide, category: e.target.value })}
-                    placeholder="Pemerintahan, Lingkungan Hidup, dsb."
+                    placeholder="KEAGAMAAN, Pemerintahan, dsb."
                     className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
                     required
                   />
@@ -472,7 +541,7 @@ export default function ManageKegiatanView({
                     type="text"
                     value={editingSlide.badge}
                     onChange={(e) => setEditingSlide({ ...editingSlide, badge: e.target.value })}
-                    placeholder="Agenda Tahunan, Kegiatan Swadaya..."
+                    placeholder="Kegiatan Peresmian Gedung, dsb."
                     className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500"
                     required
                   />
@@ -586,11 +655,11 @@ export default function ManageKegiatanView({
 
                 {/* DAFTAR FOTO TERUNGGAH (GALLERY GRID) */}
                 {activeImageList.length > 0 && (
-                  <div className="space-y-2.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                  <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                        <span>Daftar Foto Dokumentasi ({activeImageList.length} Foto Siap Tampil)</span>
+                        <span>Daftar Foto Dokumentasi ({activeImageList.length} Foto)</span>
                       </span>
 
                       <div className="flex items-center gap-2">
@@ -615,78 +684,258 @@ export default function ManageKegiatanView({
                       </div>
                     </div>
 
-                    {/* Thumbnail Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1">
-                      {activeImageList.map((imgUrl, idx) => (
-                        <div
-                          key={idx}
-                          className={`relative rounded-xl overflow-hidden border-2 bg-slate-900 group shadow-2xs ${
-                            idx === 0
-                              ? 'border-brand-500 ring-2 ring-brand-200'
-                              : 'border-slate-200 hover:border-slate-400'
-                          }`}
-                        >
-                          <div className="h-28 w-full relative">
-                            <img
-                              src={imgUrl}
-                              alt={`Foto ${idx + 1}`}
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src =
-                                  'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=400&q=80';
-                              }}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                    {/* Thumbnail Cards Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-52 overflow-y-auto pr-1">
+                      {activeImageList.map((imgUrl, idx) => {
+                        const isSelected = idx === selectedPhotoIndex;
+                        return (
+                          <div
+                            key={idx}
+                            onClick={() => setSelectedPhotoIndex(idx)}
+                            className={`relative rounded-xl overflow-hidden border-2 bg-slate-900 group shadow-2xs cursor-pointer transition-all ${
+                              isSelected
+                                ? 'border-brand-500 ring-2 ring-brand-300 scale-[1.02]'
+                                : 'border-slate-200 hover:border-slate-400'
+                            }`}
+                          >
+                            <div className="h-28 w-full relative">
+                              <img
+                                src={imgUrl}
+                                alt={`Foto ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src =
+                                    'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=400&q=80';
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
 
-                            {/* Badge Posisi */}
-                            <div className="absolute top-1.5 left-1.5">
-                              {idx === 0 ? (
-                                <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-brand-600 text-white shadow-xs flex items-center gap-0.5">
-                                  <Star className="w-2.5 h-2.5 fill-current" />
-                                  <span>Sampul</span>
-                                </span>
-                              ) : (
-                                <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-black/60 text-white backdrop-blur-xs">
-                                  #{idx + 1}
-                                </span>
+                              {/* Top Badges */}
+                              <div className="absolute top-1.5 left-1.5 flex items-center gap-1">
+                                {idx === 0 ? (
+                                  <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-brand-600 text-white shadow-xs flex items-center gap-0.5">
+                                    <Star className="w-2.5 h-2.5 fill-current" />
+                                    <span>Sampul</span>
+                                  </span>
+                                ) : (
+                                  <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-black/60 text-white backdrop-blur-xs">
+                                    #{idx + 1}
+                                  </span>
+                                )}
+                              </div>
+
+                              {isSelected && (
+                                <div className="absolute top-1.5 right-1.5">
+                                  <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-500 text-white shadow-xs flex items-center gap-0.5">
+                                    <Eye className="w-2.5 h-2.5" />
+                                    <span>Dipilih</span>
+                                  </span>
+                                </div>
                               )}
-                            </div>
 
-                            {/* Tombol Aksi */}
-                            <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between text-white">
-                              {idx !== 0 ? (
+                              {/* Bottom Controls */}
+                              <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between text-white">
+                                {idx !== 0 ? (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleSetAsCover(idx);
+                                    }}
+                                    className="text-[9px] bg-white/20 hover:bg-brand-600 px-1.5 py-0.5 rounded text-white font-semibold transition cursor-pointer"
+                                    title="Jadikan sebagai foto sampul utama"
+                                  >
+                                    Jadikan Sampul
+                                  </button>
+                                ) : (
+                                  <span className="text-[9px] text-emerald-400 font-bold">Foto Utama</span>
+                                )}
                                 <button
                                   type="button"
-                                  onClick={() => handleSetAsCover(idx)}
-                                  className="text-[9px] bg-white/20 hover:bg-brand-600 px-1.5 py-0.5 rounded text-white font-semibold transition cursor-pointer"
-                                  title="Jadikan sebagai foto sampul utama"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleRemovePhoto(idx);
+                                  }}
+                                  className="text-[9px] bg-rose-600/80 hover:bg-rose-700 px-1.5 py-0.5 rounded text-white font-semibold transition cursor-pointer"
+                                  title="Hapus foto ini"
                                 >
-                                  Jadikan Sampul
+                                  Hapus
                                 </button>
-                              ) : (
-                                <span className="text-[9px] text-emerald-400 font-bold">Foto Utama</span>
-                              )}
-                              <button
-                                type="button"
-                                onClick={() => handleRemovePhoto(idx)}
-                                className="text-[9px] bg-rose-600/80 hover:bg-rose-700 px-1.5 py-0.5 rounded text-white font-semibold transition cursor-pointer"
-                                title="Hapus foto ini"
-                              >
-                                Hapus
-                              </button>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <p className="text-[10px] text-slate-500">
+                      * Klik pada foto di atas untuk memilih foto yang ingin Anda sesuaikan posisi sudut atau tampilannya di bawah ini.
+                    </p>
+
+                    {/* ======================================================== */}
+                    {/* PANEL PENYESUAIAN POSISI & SUDUT TAMPILAN FOTO SECARA MANUAL */}
+                    {/* ======================================================== */}
+                    {currentActivePhotoUrl && (
+                      <div className="mt-3 pt-3 border-t border-slate-200/90 space-y-3 bg-white p-3.5 rounded-xl border">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <label className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                            <Sliders className="w-4 h-4 text-brand-600" />
+                            <span>Sesuaikan Posisi Foto #{selectedPhotoIndex + 1} {selectedPhotoIndex === 0 ? '(Sampul)' : ''}</span>
+                          </label>
+
+                          <span className="text-[11px] font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded-lg border border-brand-200">
+                            {currentFit === 'contain'
+                              ? 'Mode Foto Utuh (Tanpa Potong)'
+                              : `Posisi: ${currentPhotoPercent}% ${
+                                  currentPhotoPercent >= 75
+                                    ? '(Fokus Bawah / Orang)'
+                                    : currentPhotoPercent <= 25
+                                    ? '(Fokus Atas)'
+                                    : '(Fokus Tengah)'
+                                }`}
+                          </span>
+                        </div>
+
+                        {/* Quick Presets Buttons */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleFitChange('cover');
+                              handlePositionChange(85);
+                            }}
+                            className={`px-2.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer border ${
+                              currentFit !== 'contain' && currentPhotoPercent >= 75
+                                ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
+                          >
+                            <span>👥 Fokus Orang (Bawah)</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleFitChange('cover');
+                              handlePositionChange(50);
+                            }}
+                            className={`px-2.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer border ${
+                              currentFit !== 'contain' && currentPhotoPercent > 25 && currentPhotoPercent < 75
+                                ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
+                          >
+                            <span>🔘 Fokus Tengah</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleFitChange('cover');
+                              handlePositionChange(15);
+                            }}
+                            className={`px-2.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer border ${
+                              currentFit !== 'contain' && currentPhotoPercent <= 25
+                                ? 'bg-brand-600 text-white border-brand-600 shadow-xs'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
+                          >
+                            <span>⬆️ Fokus Atas</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleFitChange(currentFit === 'contain' ? 'cover' : 'contain')}
+                            className={`px-2.5 py-2 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer border ${
+                              currentFit === 'contain'
+                                ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                                : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
+                            title="Tampilkan seluruh foto tanpa terpotong sama sekali"
+                          >
+                            <Maximize2 className="w-3.5 h-3.5" />
+                            <span>Tampilkan Utuh</span>
+                          </button>
+                        </div>
+
+                        {/* Slider Vertikal Manual */}
+                        {currentFit !== 'contain' && (
+                          <div className="space-y-1.5 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                            <div className="flex justify-between items-center text-[10px] text-slate-600 font-semibold">
+                              <span>⬆️ Atas (0%)</span>
+                              <span className="text-brand-600 font-bold">Geser Manual: {currentPhotoPercent}%</span>
+                              <span>⬇️ Bawah (100%)</span>
+                            </div>
+                            <input
+                              type="range"
+                              min={0}
+                              max={100}
+                              step={5}
+                              value={currentPhotoPercent}
+                              onChange={(e) => handlePositionChange(Number(e.target.value))}
+                              className="w-full accent-brand-600 cursor-pointer h-2 bg-slate-200 rounded-lg"
+                            />
+                            <p className="text-[10px] text-slate-400 text-center">
+                              💡 Geser ke arah kanan (80% - 100%) jika orang/warga berdiri di barisan bawah foto.
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Live Banner Preview Box */}
+                        <div className="space-y-1">
+                          <span className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                            <Eye className="w-3 h-3 text-brand-600" />
+                            <span>Pratinjau Hasil di Banner Depan:</span>
+                          </span>
+
+                          <div className="relative rounded-2xl overflow-hidden border border-slate-300 shadow-md bg-slate-950 aspect-[2.1/1] w-full">
+                            {currentFit === 'contain' ? (
+                              <div className="relative w-full h-full flex items-center justify-center bg-black/90 overflow-hidden">
+                                <img
+                                  src={currentActivePhotoUrl}
+                                  alt=""
+                                  className="absolute inset-0 w-full h-full object-cover filter blur-xl opacity-40 scale-125"
+                                />
+                                <img
+                                  src={currentActivePhotoUrl}
+                                  alt=""
+                                  className="relative z-1 max-w-full max-h-full object-contain"
+                                />
+                              </div>
+                            ) : (
+                              <img
+                                src={currentActivePhotoUrl}
+                                alt=""
+                                style={{ objectPosition: `center ${currentPhotoPercent}%` }}
+                                className="w-full h-full object-cover transition-all duration-200"
+                              />
+                            )}
+
+                            {/* Banner Gradient Simulation Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent flex flex-col justify-between p-3.5 pointer-events-none">
+                              <div className="flex justify-between items-start">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-xs border border-white/10">
+                                  Pratinjau Banner Web
+                                </span>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-600 text-white shadow-xs">
+                                  Foto #{selectedPhotoIndex + 1}
+                                </span>
+                              </div>
+                              <div className="text-white">
+                                <p className="text-xs font-bold drop-shadow-sm line-clamp-1">
+                                  {editingSlide.title || 'Judul Kegiatan'}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                    <p className="text-[10px] text-slate-500 italic">
-                      * Foto bertanda <strong>Sampul</strong> akan tampil sebagai sampul utama kegiatan. Klik &quot;Jadikan Sampul&quot; pada foto lain untuk memindahkannya ke posisi pertama.
-                    </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 pt-1">
                 <label className="text-xs font-bold text-slate-700">Ringkasan / Subjudul Kegiatan</label>
                 <textarea
                   rows={3}

@@ -68,6 +68,9 @@ export interface ActivitySlide {
   badge: string;
   imageUrl: string;
   images?: string[];
+  imagePosition?: string;
+  imagePositions?: Record<number, string>;
+  imageFit?: 'cover' | 'contain';
   alt: string;
 }
 

@@ -9,6 +9,9 @@ export interface ActivitySlide {
   badge: string;
   imageUrl: string;
   images?: string[];
+  imagePosition?: string;
+  imagePositions?: Record<number, string>;
+  imageFit?: 'cover' | 'contain';
   alt: string;
 }
 
@@ -136,9 +139,20 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
     : [currentSlide.imageUrl];
   const activeImage = currentImages[activeSubIndex] || currentImages[0] || currentSlide.imageUrl;
 
+  const getPosition = (slide: ActivitySlide, subIdx: number) => {
+    if (slide.imagePositions && slide.imagePositions[subIdx]) {
+      return slide.imagePositions[subIdx];
+    }
+    return slide.imagePosition || 'center';
+  };
+
+  const getFit = (slide: ActivitySlide) => {
+    return slide.imageFit || 'cover';
+  };
+
   return (
     <div
-      className="relative w-full rounded-2xl 2xl:rounded-3xl overflow-hidden shadow-xl bg-[#131b2e] aspect-[16/9] md:aspect-[21/9] lg:aspect-[2.3/1] max-h-[500px] lg:max-h-[560px] 2xl:max-h-[680px] 3xl:max-h-[760px] select-none group"
+      className="relative w-full rounded-2xl 2xl:rounded-3xl overflow-hidden shadow-xl bg-[#0b111e] aspect-[16/10] sm:aspect-[16/9] md:aspect-[2/1] lg:aspect-[2.15/1] min-h-[400px] sm:min-h-[460px] md:min-h-[500px] max-h-[600px] lg:max-h-[660px] 2xl:max-h-[740px] select-none group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -149,7 +163,11 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
       {/* Background Slides with smooth fade transition */}
       {activeSlides.map((slide, index) => {
         const isActive = index === currentIndex;
+        const currentSubIdx = isActive ? activeSubIndex : 0;
         const slideImg = isActive ? activeImage : slide.imageUrl;
+        const position = getPosition(slide, currentSubIdx);
+        const fit = getFit(slide);
+
         return (
           <div
             key={slide.id}
@@ -157,18 +175,40 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
               isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
             }`}
           >
-            <img
-              src={slideImg}
-              alt={slide.alt}
-              loading={index === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-              className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${
-                isActive ? 'scale-105' : 'scale-100'
-              }`}
-            />
-            {/* Elegant multi-layer overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#131b2e] via-[#131b2e]/60 to-[#131b2e]/20" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#131b2e]/80 via-transparent to-black/20" />
+            {fit === 'contain' ? (
+              <div className="relative w-full h-full flex items-center justify-center bg-black/90 overflow-hidden">
+                {/* Ambient blurred backdrop so no empty black borders feel harsh */}
+                <img
+                  src={slideImg}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-cover filter blur-2xl opacity-45 scale-125"
+                />
+                {/* Crisp 100% full uncropped image */}
+                <img
+                  src={slideImg}
+                  alt={slide.alt}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  className="relative z-1 max-w-full max-h-full object-contain drop-shadow-2xl"
+                />
+              </div>
+            ) : (
+              <img
+                src={slideImg}
+                alt={slide.alt}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                style={{ objectPosition: position }}
+                className={`w-full h-full object-cover transition-transform duration-7000 ease-out ${
+                  isActive ? 'scale-105' : 'scale-100'
+                }`}
+              />
+            )}
+
+            {/* Elegant multi-layer overlay gradient with clean upper clarity for faces */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0b111e]/95 via-[#0b111e]/35 via-35% to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0b111e]/75 via-transparent to-black/10 pointer-events-none" />
           </div>
         );
       })}
