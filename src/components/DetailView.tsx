@@ -507,77 +507,82 @@ export default function DetailView({
               <button
                 type="button"
                 onClick={handleAddCustomMetric}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold transition-colors border border-brand-200/80 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold transition-colors border border-brand-200/80 cursor-pointer shadow-2xs"
               >
-                <Plus className="w-4 h-4" />
-                <span>+ Tambah Baris Indikator</span>
+                <Plus className="w-4 h-4 text-brand-600" />
+                <span>Tambah Baris Indikator</span>
               </button>
             </div>
 
             {/* Dynamic List Container */}
-            <div className="bg-slate-50/70 rounded-2xl border border-slate-200/90 overflow-hidden divide-y divide-slate-200/70">
+            <div className="bg-slate-50/70 rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs">
               {customMetrics.length === 0 ? (
                 <div className="p-8 text-center text-xs text-slate-400 italic">
-                  Belum ada baris indikator variabel khusus. Klik tombol "+ Tambah Baris Indikator" di atas.
+                  Belum ada baris indikator variabel khusus. Klik tombol &quot;Tambah Baris Indikator&quot; di atas.
                 </div>
               ) : (
-                customMetrics.map((metric, idx) => (
-                  <div
-                    key={idx}
-                    className="p-4 sm:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-white transition-colors"
-                  >
-                    <div className="flex items-center gap-3 md:w-1/2">
-                      <span className="w-8 h-8 rounded-lg bg-sky-100 text-sky-700 font-bold text-xs flex items-center justify-center shrink-0">
-                        {String(idx + 1).padStart(2, '0')}
-                      </span>
-                      <div className="flex-1 space-y-1">
-                        <input
-                          type="text"
-                          value={metric.label}
-                          onChange={(e) =>
-                            handleCustomMetricChange(idx, 'label', e.target.value)
-                          }
-                          placeholder="Nama Indikator / Variabel"
-                          className="w-full text-xs font-bold text-slate-900 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
-                        />
-                        <input
-                          type="text"
-                          value={metric.note || ''}
-                          onChange={(e) =>
-                            handleCustomMetricChange(idx, 'note', e.target.value)
-                          }
-                          placeholder="Keterangan singkat parameter..."
-                          className="w-full text-[11px] text-slate-500 bg-transparent border-0 p-0 focus:ring-0 focus:outline-none"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex-1 flex items-center justify-end gap-3">
-                      <div className="w-full sm:w-64 relative rounded-xl border border-slate-200 bg-white shadow-2xs focus-within:border-brand-500 focus-within:ring-1 focus-within:ring-brand-500">
-                        <input
-                          className="w-full text-right font-bold text-sm text-slate-900 pr-12 py-2 border-0 bg-transparent focus:ring-0 focus:outline-none"
-                          type="text"
-                          value={metric.value}
-                          onChange={(e) =>
-                            handleCustomMetricChange(idx, 'value', e.target.value)
-                          }
-                          placeholder="Nilai"
-                        />
-                        <span className="absolute right-3 top-2.5 text-xs font-medium text-slate-400 pointer-events-none">
-                          Satuan
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveCustomMetric(idx)}
-                        className="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
-                        title="Hapus Indikator"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                <>
+                  <div className="hidden sm:flex items-center justify-between px-6 py-2.5 bg-slate-100/70 border-b border-slate-200/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                    <span>Nama Parameter &amp; Keterangan</span>
+                    <span className="pr-12">Nilai &amp; Satuan</span>
                   </div>
-                ))
+                  <div className="divide-y divide-slate-200/70">
+                    {customMetrics.map((metric, idx) => (
+                      <div
+                        key={idx}
+                        className="p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white transition-colors"
+                      >
+                        <div className="flex items-center gap-3.5 flex-1 min-w-0">
+                          <span className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 font-extrabold text-xs flex items-center justify-center shrink-0 border border-sky-200/80 shadow-2xs">
+                            {String(idx + 1).padStart(2, '0')}
+                          </span>
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <input
+                              type="text"
+                              value={metric.label}
+                              onChange={(e) =>
+                                handleCustomMetricChange(idx, 'label', e.target.value)
+                              }
+                              placeholder="Nama Indikator / Variabel..."
+                              className="w-full text-xs font-bold text-slate-900 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-200 focus:border-brand-500 rounded-lg px-2 py-1 transition focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-slate-400"
+                            />
+                            <input
+                              type="text"
+                              value={metric.note || ''}
+                              onChange={(e) =>
+                                handleCustomMetricChange(idx, 'note', e.target.value)
+                              }
+                              placeholder="Keterangan singkat parameter..."
+                              className="w-full text-[11px] text-slate-500 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-200 focus:border-brand-500 rounded-lg px-2 py-0.5 transition focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-slate-400"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2.5 shrink-0">
+                          <div className="w-full sm:w-56">
+                            <input
+                              className="w-full text-right font-bold text-xs text-slate-900 px-3.5 py-2 rounded-xl border border-slate-200 bg-white shadow-2xs focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none transition placeholder:text-slate-400"
+                              type="text"
+                              value={metric.value}
+                              onChange={(e) =>
+                                handleCustomMetricChange(idx, 'value', e.target.value)
+                              }
+                              placeholder="Contoh: 1.245 Jiwa"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCustomMetric(idx)}
+                            className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition-colors border border-transparent hover:border-rose-100 cursor-pointer shrink-0"
+                            title="Hapus Indikator"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           </div>
