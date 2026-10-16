@@ -13,7 +13,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Loader2,
-  Database,
   Building,
   Key,
   ShieldAlert,
@@ -224,10 +223,6 @@ function PortalLoginForm() {
           <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-[#dae2fd] p-6 sm:p-8 space-y-6">
             {/* Header */}
             <div className="text-center space-y-2">
-              <div className="inline-flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 px-3.5 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase">
-                <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-                <span>Portal Aparatur Resmi</span>
-              </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                 Masuk Portal <span className="text-primary">Aparatur</span>
               </h1>
@@ -316,7 +311,7 @@ function PortalLoginForm() {
                     disabled={isLocked}
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="Contoh: 19780203 200902 2 002 atau seklur@kolongansatu.tomohon.go.id"
+                    placeholder="Masukkan NIP atau Email resmi kedinasan"
                     className="w-full bg-slate-50 border border-[#dae2fd] focus:border-primary focus:bg-white rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 transition font-mono disabled:opacity-50"
                   />
                 </div>
@@ -378,18 +373,6 @@ function PortalLoginForm() {
                 )}
               </button>
             </form>
-
-            {/* Supabase Security Badge Footer */}
-            <div className="pt-3 border-t border-[#dae2fd] flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 gap-2">
-              <span className="flex items-center gap-1.5">
-                <Database className="w-3.5 h-3.5 text-primary" />
-                <span>Supabase PostgreSQL Security Hub</span>
-              </span>
-              <span className="font-semibold text-emerald-700 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Bcrypt &amp; Audit Trail Aktif</span>
-              </span>
-            </div>
           </div>
         </div>
       </main>
@@ -459,7 +442,7 @@ function PortalLoginForm() {
                     required
                     value={forgotIdentifier}
                     onChange={(e) => setForgotIdentifier(e.target.value)}
-                    placeholder="Contoh: 19780203 200902 2 002"
+                    placeholder="Masukkan 18 digit NIP resmi kedinasan"
                     className="w-full bg-white border border-[#dae2fd] focus:border-primary rounded-xl pl-9 pr-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-primary font-mono"
                   />
                 </div>
