@@ -219,14 +219,10 @@ export default function ModalLetterRequest({
   const [keperluan, setKeperluan] = useState('');
   const [berkasName, setBerkasName] = useState('KTP_dan_KK_Pemohon.pdf');
 
-  // WhatsApp Target State (Kelurahan, Pala, atau Nomor Uji Coba Kustom)
-  const [targetTujuan, setTargetTujuan] = useState<'kelurahan' | 'pala' | 'custom'>('kelurahan');
-  const [customWaNumber, setCustomWaNumber] = useState('');
+  // WhatsApp Target State (Kelurahan atau Pala)
+  const [targetTujuan, setTargetTujuan] = useState<'kelurahan' | 'pala'>('kelurahan');
   const [lastWaUrl, setLastWaUrl] = useState('');
   const [lastTargetName, setLastTargetName] = useState('');
-
-  // Uji coba nomor lain di layar sukses permohonan
-  const [testOtherWaNumber, setTestOtherWaNumber] = useState('');
 
   // Dialog interaktif pengiriman WhatsApp (Kirim Status & Berkas PDF)
   const [waModal, setWaModal] = useState<{
@@ -363,10 +359,6 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
       setSubmitError('Mohon lengkapi NIK, Nama Pemohon, Nomor WhatsApp, dan Keperluan permohonan!');
       return;
     }
-    if (targetTujuan === 'custom' && !customWaNumber.trim()) {
-      setSubmitError('Mohon masukkan nomor WhatsApp tujuan uji coba kustom!');
-      return;
-    }
 
     setIsSubmitting(true);
     setSubmitError(null);
@@ -374,10 +366,7 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
     let cleanPhone = cleanPhoneTo62(KELURAHAN_PERSURATAN_WHATSAPP.phone);
     let targetLabel = KELURAHAN_PERSURATAN_WHATSAPP.nama;
 
-    if (targetTujuan === 'custom') {
-      cleanPhone = cleanPhoneTo62(customWaNumber);
-      targetLabel = `Nomor Uji Coba (${customWaNumber})`;
-    } else if (targetTujuan === 'pala') {
+    if (targetTujuan === 'pala') {
       const pala = PALA_WHATSAPP_CONTACTS[lingkunganId] || PALA_WHATSAPP_CONTACTS[1];
       cleanPhone = cleanPhoneTo62(pala.phone);
       targetLabel = pala.label;
@@ -520,16 +509,6 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
     setWaModal((prev) => ({ ...prev, isOpen: false }));
   };
 
-  // Helper untuk testing nomor lain pada saat surat baru diajukan
-  const handleTestOtherPhoneOnSubmittedLetter = (phoneInput: string) => {
-    if (!phoneInput.trim() || !submittedLetter) return;
-    const clean = cleanPhoneTo62(phoneInput);
-    const message = getComposedWhatsAppMessage(submittedLetter);
-    const url = `https://api.whatsapp.com/send?phone=${clean}&text=${encodeURIComponent(message)}`;
-    if (typeof window !== 'undefined') {
-      window.open(url, '_blank');
-    }
-  };
 
   // Tracking Search Function
   const handleSearchTracking = async (queryToSearch: string) => {
@@ -1365,36 +1344,6 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
                       </a>
                     )}
 
-                    {/* Fitur Uji Coba Kirim ke Nomor WhatsApp Lainnya */}
-                    <div className="p-3.5 bg-[#f0f9ff] rounded-2xl border border-[#bae6fd] space-y-2">
-                      <div className="flex items-center gap-2">
-                        <MessageCircle className="w-4 h-4 text-[#006194]" />
-                        <span className="text-xs font-bold text-[#006194]">
-                          Uji Coba Kirim ke Nomor WhatsApp Lainnya:
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-600">
-                        Ingin menguji coba pengiriman pesan permohonan ini ke nomor WhatsApp Anda sendiri atau nomor lain?
-                      </p>
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <input
-                          type="tel"
-                          value={testOtherWaNumber}
-                          onChange={(e) => setTestOtherWaNumber(e.target.value)}
-                          placeholder="Masukkan nomor WA (Contoh: 0812-4411-9988)..."
-                          className="flex-1 bg-white border border-[#bae6fd] rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#006194]"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleTestOtherPhoneOnSubmittedLetter(testOtherWaNumber)}
-                          disabled={!testOtherWaNumber.trim()}
-                          className="px-4 py-2 bg-[#006194] hover:bg-[#004e77] text-white text-xs font-bold rounded-xl transition flex items-center justify-center space-x-1.5 disabled:opacity-50 cursor-pointer"
-                        >
-                          <Send className="w-3.5 h-3.5" />
-                          <span>Tes Kirim ke Nomor Ini</span>
-                        </button>
-                      </div>
-                    </div>
 
                     <div className="flex flex-wrap items-center gap-3">
                       <button
@@ -1497,11 +1446,11 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
                         onChange={(e) => setLingkunganId(Number(e.target.value))}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500"
                       >
-                        <option value={1}>Lingkungan I (Pala Meky Turangan)</option>
-                        <option value={2}>Lingkungan II (Pala Devid Tasie)</option>
-                        <option value={3}>Lingkungan III (Pala Agustinus Sapanany)</option>
-                        <option value={4}>Lingkungan IV (Pala Petronella Pusung)</option>
-                        <option value={5}>Lingkungan V (Pala Vifi Timang)</option>
+                        <option value={1}>Lingkungan I (Pala Meky Mario Turangan)</option>
+                        <option value={2}>Lingkungan II (Pala Devid Piyoh Hermanus Tasik)</option>
+                        <option value={3}>Lingkungan III (Pala Agustinus Joseph Kaparang)</option>
+                        <option value={4}>Lingkungan IV (Pala Nofembly Servasius Pusung)</option>
+                        <option value={5}>Lingkungan V (Pala Boy Welly Turambi)</option>
                       </select>
                     </div>
 
@@ -1581,10 +1530,10 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {/* Option 1: Kantor Kelurahan */}
                         <label
-                          className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+                          className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition ${
                             targetTujuan === 'kelurahan'
                               ? 'bg-sky-50/80 border-sky-400 text-sky-950 font-semibold shadow-2xs ring-1 ring-sky-300'
                               : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
@@ -1606,7 +1555,7 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
 
                         {/* Option 2: Kepala Lingkungan */}
                         <label
-                          className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+                          className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs cursor-pointer transition ${
                             targetTujuan === 'pala'
                               ? 'bg-emerald-50/80 border-emerald-400 text-emerald-950 font-semibold shadow-2xs ring-1 ring-emerald-300'
                               : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
@@ -1625,49 +1574,7 @@ _Sekretariat Kantor Kelurahan Kolongan Satu, Tomohon Tengah_`;
                             <span className="text-[10px] text-slate-500 block mt-0.5">{PALA_WHATSAPP_CONTACTS[lingkunganId]?.nama}</span>
                           </div>
                         </label>
-
-                        {/* Option 3: Uji Coba Nomor Lain */}
-                        <label
-                          className={`flex items-start gap-2.5 p-2.5 rounded-xl border text-xs cursor-pointer transition ${
-                            targetTujuan === 'custom'
-                              ? 'bg-amber-50/80 border-amber-400 text-amber-950 font-semibold shadow-2xs ring-1 ring-amber-300'
-                              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                          }`}
-                        >
-                          <input
-                            type="radio"
-                            name="targetWa"
-                            checked={targetTujuan === 'custom'}
-                            onChange={() => setTargetTujuan('custom')}
-                            className="mt-0.5 text-amber-600 focus:ring-amber-500"
-                          />
-                          <div className="leading-tight">
-                            <span className="font-bold block text-slate-900">Uji Coba Nomor Lain</span>
-                            <span className="text-[11px] text-amber-800 font-semibold block mt-0.5">Kirim ke Nomor Sendiri</span>
-                            <span className="text-[10px] text-slate-500 block mt-0.5">Ketik nomor uji coba</span>
-                          </div>
-                        </label>
                       </div>
-
-                      {/* Input Nomor Kustom jika memilih opsi 3 */}
-                      {targetTujuan === 'custom' && (
-                        <div className="p-3 bg-white rounded-xl border border-amber-300 animate-in fade-in space-y-1">
-                          <label className="block text-xs font-bold text-amber-900">
-                            Masukkan Nomor WhatsApp Tujuan Pengujian:
-                          </label>
-                          <input
-                            type="tel"
-                            required={targetTujuan === 'custom'}
-                            value={customWaNumber}
-                            onChange={(e) => setCustomWaNumber(e.target.value)}
-                            placeholder="Contoh: 0812-4411-9988..."
-                            className="w-full bg-slate-50 border border-amber-200 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                          />
-                          <span className="text-[10px] text-slate-500 block">
-                            Pesan permohonan surat akan dikirim ke nomor WhatsApp ini untuk tujuan testing simulasi.
-                          </span>
-                        </div>
-                      )}
 
                       <p className="text-[11px] text-slate-500 leading-normal flex items-start gap-1.5 pt-0.5">
                         <span className="text-emerald-600 font-bold">ℹ</span>
