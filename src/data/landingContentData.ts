@@ -67,6 +67,7 @@ export interface ActivitySlide {
   category: string;
   badge: string;
   imageUrl: string;
+  images?: string[];
   alt: string;
 }
 

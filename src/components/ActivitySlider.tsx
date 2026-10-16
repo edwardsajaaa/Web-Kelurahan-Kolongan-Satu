@@ -8,6 +8,7 @@ export interface ActivitySlide {
   category: string;
   badge: string;
   imageUrl: string;
+  images?: string[];
   alt: string;
 }
 
@@ -19,6 +20,7 @@ export const ACTIVITY_SLIDES: ActivitySlide[] = [
     category: 'Pemerintahan & Partisipasi Mahasiswa',
     badge: 'Dinas Pangan Provinsi dan Dinas Pangan Kota Tomohon',
     imageUrl: '/images/kegiatan/kegiatan-1.jpg',
+    images: ['/images/kegiatan/kegiatan-1.jpg'],
     alt: 'Dokumentasi Gerakan Pangan Murah Kolongan Satu',
   },
   {
@@ -28,6 +30,7 @@ export const ACTIVITY_SLIDES: ActivitySlide[] = [
     category: 'Lingkungan Hidup & Kebersihan',
     badge: 'Kegiatan Swadaya Warga',
     imageUrl: '/images/kegiatan/kegiatan-2.jpg',
+    images: ['/images/kegiatan/kegiatan-2.jpg'],
     alt: 'Dokumentasi Kerja Bakti Kebersihan Lingkungan Kolongan Satu',
   },
   {
@@ -37,6 +40,7 @@ export const ACTIVITY_SLIDES: ActivitySlide[] = [
     category: 'Kesehatan & Kesejahteraan',
     badge: 'Layanan Terpadu Bulanan',
     imageUrl: '/images/kegiatan/kegiatan-3.jpg',
+    images: ['/images/kegiatan/kegiatan-3.jpg'],
     alt: 'Dokumentasi Penyaluran Air Bersih untuk Warga',
   },
   {
@@ -46,6 +50,7 @@ export const ACTIVITY_SLIDES: ActivitySlide[] = [
     category: 'Inovasi & Digitalisasi Portal',
     badge: 'Pemutahiran Data Masyarakat',
     imageUrl: '/images/kegiatan/kegiatan-4.jpg',
+    images: ['/images/kegiatan/kegiatan-4.jpg'],
     alt: 'Dokumentasi Pemutakhiran Data Warga Si Andal',
   },
   {
@@ -55,6 +60,7 @@ export const ACTIVITY_SLIDES: ActivitySlide[] = [
     category: 'Sosial & Pemberdayaan',
     badge: 'Program Kerja Mahasiswa',
     imageUrl: '/images/kegiatan/kegiatan-5.jpg',
+    images: ['/images/kegiatan/kegiatan-5.jpg'],
     alt: 'Dokumentasi Kunjungan Mahasiswa KKT UNSRAT di SD Inpres',
   },
 ];
@@ -66,9 +72,15 @@ interface ActivitySliderProps {
 export default function ActivitySlider({ slides }: ActivitySliderProps) {
   const activeSlides = slides && slides.length > 0 ? slides : ACTIVITY_SLIDES;
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [activeSubIndex, setActiveSubIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+
+  // Reset active photo index whenever parent slide changes
+  useEffect(() => {
+    setActiveSubIndex(0);
+  }, [currentIndex]);
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % activeSlides.length);
@@ -82,14 +94,20 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
     setCurrentIndex(index);
   };
 
-  // Auto-play timer (5 seconds) with pause on hover
+  // Auto-play timer: if current activity has multiple photos, cycle sub-photos or next slide
   useEffect(() => {
     if (isPaused) return;
     const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
+      const slide = activeSlides[currentIndex] || activeSlides[0];
+      const images = slide.images && slide.images.length > 0 ? slide.images : [slide.imageUrl];
+      if (images.length > 1 && activeSubIndex < images.length - 1) {
+        setActiveSubIndex((prev) => prev + 1);
+      } else {
+        nextSlide();
+      }
+    }, 4500);
     return () => clearInterval(interval);
-  }, [isPaused, nextSlide]);
+  }, [isPaused, currentIndex, activeSubIndex, nextSlide, activeSlides]);
 
   // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -113,6 +131,10 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
   };
 
   const currentSlide = activeSlides[currentIndex] || activeSlides[0];
+  const currentImages = currentSlide.images && currentSlide.images.length > 0
+    ? currentSlide.images
+    : [currentSlide.imageUrl];
+  const activeImage = currentImages[activeSubIndex] || currentImages[0] || currentSlide.imageUrl;
 
   return (
     <div
@@ -127,6 +149,7 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
       {/* Background Slides with smooth fade transition */}
       {activeSlides.map((slide, index) => {
         const isActive = index === currentIndex;
+        const slideImg = isActive ? activeImage : slide.imageUrl;
         return (
           <div
             key={slide.id}
@@ -135,7 +158,7 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
             }`}
           >
             <img
-              src={slide.imageUrl}
+              src={slideImg}
               alt={slide.alt}
               loading={index === 0 ? 'eager' : 'lazy'}
               decoding="async"
@@ -150,7 +173,13 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
         );
       })}
 
-
+      {/* MULTI-PHOTO INDICATOR BADGE (Top Right) */}
+      {currentImages.length > 1 && (
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] sm:text-xs font-semibold border border-white/20 shadow-lg">
+          <span className="material-symbols-outlined text-[16px] text-[#93ccff]">photo_library</span>
+          <span>Foto {activeSubIndex + 1} dari {currentImages.length}</span>
+        </div>
+      )}
 
       {/* NAVIGATION ARROWS (Left & Right) */}
       <button
@@ -173,19 +202,50 @@ export default function ActivitySlider({ slides }: ActivitySliderProps) {
         </span>
       </button>
 
-      {/* BOTTOM CONTENT: Active Activity Title, Description & Progress Dots */}
+      {/* BOTTOM CONTENT: Active Activity Title, Sub-Photos Gallery Strip & Indicators */}
       <div className="absolute bottom-3 left-3 right-3 sm:bottom-6 sm:left-6 sm:right-6 2xl:bottom-8 2xl:left-8 2xl:right-8 z-20 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        {/* Title and Description */}
+        {/* Title, Sub-Thumbnails, and Category */}
         <div className="max-w-2xl 2xl:max-w-3xl text-white">
-          <span className="text-[11px] sm:text-xs 2xl:text-sm tracking-wider uppercase text-[#93ccff] font-bold block mb-1">
-            {currentSlide.category}
-          </span>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[11px] sm:text-xs 2xl:text-sm tracking-wider uppercase text-[#93ccff] font-bold">
+              {currentSlide.category}
+            </span>
+            <span className="text-white/40">•</span>
+            <span className="text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-xs font-semibold">
+              {currentSlide.badge}
+            </span>
+          </div>
+
           <h2 className="text-lg sm:text-2xl md:text-3xl 2xl:text-4xl text-white font-bold leading-tight drop-shadow-sm transition-all duration-300">
             {currentSlide.title}
           </h2>
+
+          {/* Sub-Photos Thumbnail Strip (When this activity has multiple photos) */}
+          {currentImages.length > 1 && (
+            <div className="flex items-center gap-2 mt-3 pt-2">
+              {currentImages.map((imgUrl, pIdx) => (
+                <button
+                  key={pIdx}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveSubIndex(pIdx);
+                  }}
+                  className={`relative h-9 w-14 sm:h-11 sm:w-18 rounded-lg overflow-hidden border-2 transition-all cursor-pointer shadow-md ${
+                    pIdx === activeSubIndex
+                      ? 'border-brand-400 ring-2 ring-brand-400/60 scale-105 opacity-100'
+                      : 'border-white/30 opacity-60 hover:opacity-100 hover:border-white'
+                  }`}
+                  aria-label={`Pilih foto ${pIdx + 1}`}
+                >
+                  <img src={imgUrl} alt={`Foto ${pIdx + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Indicators & Thumbnails */}
+        {/* Indicators for Main Activity Slides */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 bg-black/40 backdrop-blur-md px-3 py-2 rounded-full border border-white/15 self-start md:self-end">
           {activeSlides.map((slide, index) => {
             const isActive = index === currentIndex;

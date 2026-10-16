@@ -8,13 +8,13 @@ import {
   Trash2,
   Save,
   X,
-  ExternalLink,
-  Sparkles,
   Upload,
   Link as LinkIcon,
   CheckCircle2,
   Loader2,
   RefreshCw,
+  Star,
+  Layers,
 } from 'lucide-react';
 import { ActivitySlide } from '@/data/landingContentData';
 
@@ -33,6 +33,7 @@ export default function ManageKegiatanView({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [imageInputMode, setImageInputMode] = useState<'file' | 'url'>('file');
   const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const [urlInput, setUrlInput] = useState('');
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [editingSlide, setEditingSlide] = useState<ActivitySlide>({
@@ -42,19 +43,22 @@ export default function ManageKegiatanView({
     category: '',
     badge: '',
     imageUrl: '',
+    images: [],
     alt: '',
   });
 
   const handleOpenAdd = () => {
     setModalMode('add');
     setImageInputMode('file');
+    setUrlInput('');
     setEditingSlide({
       id: `slide-${Date.now().toString(36)}`,
       title: '',
       subtitle: '',
       category: 'Pemerintahan & Pelayanan Warga',
       badge: 'Agenda Kelurahan',
-      imageUrl: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=1920&q=80',
+      imageUrl: '',
+      images: [],
       alt: 'Dokumentasi Kegiatan Kelurahan Kolongan Satu',
     });
     setIsModalOpen(true);
@@ -62,76 +66,170 @@ export default function ManageKegiatanView({
 
   const handleOpenEdit = (slide: ActivitySlide) => {
     setModalMode('edit');
-    setImageInputMode(slide.imageUrl.startsWith('data:') ? 'file' : 'url');
-    setEditingSlide({ ...slide });
+    const existingImages =
+      slide.images && slide.images.length > 0
+        ? [...slide.images]
+        : slide.imageUrl
+        ? [slide.imageUrl]
+        : [];
+
+    setImageInputMode(existingImages.some((img) => img.startsWith('data:')) ? 'file' : 'url');
+    setUrlInput('');
+    setEditingSlide({
+      ...slide,
+      imageUrl: slide.imageUrl || existingImages[0] || '',
+      images: existingImages,
+    });
     setIsModalOpen(true);
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Helper untuk kompresi file gambar menjadi dataUrl via Canvas
+  const compressImageFile = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const maxDim = 1600;
+            let width = img.width;
+            let height = img.height;
 
-    if (!file.type.startsWith('image/')) {
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              reject(new Error('Canvas context tidak tersedia'));
+              return;
+            }
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            resolve(dataUrl);
+          } catch (err) {
+            reject(err);
+          }
+        };
+        img.onerror = () => reject(new Error('Format gambar tidak terbaca'));
+        img.src = event.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Gagal membaca file gambar'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle upload satu atau banyak file foto sekaligus
+  const handleFilesSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const validFiles = Array.from(files).filter((f) => f.type.startsWith('image/'));
+    if (validFiles.length === 0) {
       showToast('Mohon pilih file bertipe gambar (JPG, PNG, atau WebP).');
       return;
     }
 
     setIsProcessingImage(true);
+    try {
+      const newUrls: string[] = [];
+      for (const file of validFiles) {
+        const dataUrl = await compressImageFile(file);
+        newUrls.push(dataUrl);
+      }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        try {
-          // Kompresi otomatis resolusi maksimal 1600px full HD banner
-          const maxDim = 1600;
-          let width = img.width;
-          let height = img.height;
+      setEditingSlide((prev) => {
+        const currentList =
+          prev.images && prev.images.length > 0
+            ? prev.images
+            : prev.imageUrl
+            ? [prev.imageUrl]
+            : [];
+        const combined = [...currentList, ...newUrls];
+        return {
+          ...prev,
+          imageUrl: combined[0] || '',
+          images: combined,
+          alt: prev.alt || validFiles[0]?.name.replace(/\.[^/.]+$/, ''),
+        };
+      });
 
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, width, height);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-            setEditingSlide((prev) => ({
-              ...prev,
-              imageUrl: dataUrl,
-              alt: prev.alt || file.name.replace(/\.[^/.]+$/, ''),
-            }));
-            showToast(`Foto "${file.name}" berhasil dimuat!`);
-          }
-        } catch (err) {
-          console.error('Gagal mengompresi gambar:', err);
-          showToast('Gagal memproses gambar. Silakan coba file lain.');
-        } finally {
-          setIsProcessingImage(false);
-        }
-      };
-      img.onerror = () => {
-        setIsProcessingImage(false);
-        showToast('Format gambar tidak dapat dibaca.');
-      };
-      img.src = event.target?.result as string;
-    };
-    reader.onerror = () => {
+      showToast(`Berhasil menambahkan ${validFiles.length} foto dokumentasi!`);
+    } catch (err) {
+      console.error('Gagal mengompresi gambar:', err);
+      showToast('Sebagian foto gagal diproses. Silakan coba file lain.');
+    } finally {
       setIsProcessingImage(false);
-      showToast('Gagal membaca file gambar.');
-    };
-    reader.readAsDataURL(file);
+      e.target.value = '';
+    }
+  };
 
-    e.target.value = '';
+  // Tambah tautan URL
+  const handleAddUrl = () => {
+    if (!urlInput.trim()) return;
+    setEditingSlide((prev) => {
+      const currentList =
+        prev.images && prev.images.length > 0
+          ? prev.images
+          : prev.imageUrl
+          ? [prev.imageUrl]
+          : [];
+      const combined = [...currentList, urlInput.trim()];
+      return {
+        ...prev,
+        imageUrl: combined[0] || '',
+        images: combined,
+      };
+    });
+    setUrlInput('');
+    showToast('Tautan foto berhasil ditambahkan ke daftar!');
+  };
+
+  // Jadikan foto tertentu sebagai foto sampul utama (posisi pertama)
+  const handleSetAsCover = (index: number) => {
+    setEditingSlide((prev) => {
+      const list = [...(prev.images || (prev.imageUrl ? [prev.imageUrl] : []))];
+      if (index <= 0 || index >= list.length) return prev;
+      const [chosen] = list.splice(index, 1);
+      list.unshift(chosen);
+      return {
+        ...prev,
+        images: list,
+        imageUrl: list[0],
+      };
+    });
+    showToast('Foto sampul utama berhasil diperbarui!');
+  };
+
+  // Hapus satu foto dari daftar
+  const handleRemovePhoto = (index: number) => {
+    setEditingSlide((prev) => {
+      const list = [...(prev.images || (prev.imageUrl ? [prev.imageUrl] : []))];
+      list.splice(index, 1);
+      return {
+        ...prev,
+        images: list,
+        imageUrl: list[0] || '',
+      };
+    });
+  };
+
+  // Hapus semua foto
+  const handleClearAllPhotos = () => {
+    setEditingSlide((prev) => ({
+      ...prev,
+      images: [],
+      imageUrl: '',
+    }));
   };
 
   const handleDelete = async (id: string, title: string) => {
@@ -147,26 +245,47 @@ export default function ManageKegiatanView({
       alert('Judul kegiatan wajib diisi.');
       return;
     }
-    if (!editingSlide.imageUrl.trim()) {
-      alert('Foto dokumentasi kegiatan wajib diunggah atau diisi URL-nya.');
+
+    const currentImages =
+      editingSlide.images && editingSlide.images.length > 0
+        ? editingSlide.images
+        : editingSlide.imageUrl
+        ? [editingSlide.imageUrl]
+        : [];
+
+    if (currentImages.length === 0) {
+      alert('Foto dokumentasi kegiatan wajib diunggah (minimal 1 foto).');
       return;
     }
 
+    const finalSlide: ActivitySlide = {
+      ...editingSlide,
+      imageUrl: currentImages[0],
+      images: currentImages,
+    };
+
     let updated: ActivitySlide[];
     if (modalMode === 'add') {
-      updated = [editingSlide, ...kegiatan];
+      updated = [finalSlide, ...kegiatan];
     } else {
-      updated = kegiatan.map((k) => (k.id === editingSlide.id ? editingSlide : k));
+      updated = kegiatan.map((k) => (k.id === finalSlide.id ? finalSlide : k));
     }
 
     await onSaveKegiatan(updated);
     setIsModalOpen(false);
     showToast(
       modalMode === 'add'
-        ? `Dokumentasi kegiatan baru berhasil ditambahkan!`
-        : `Pembaruan kegiatan "${editingSlide.title}" berhasil disimpan!`
+        ? `Dokumentasi kegiatan baru (${currentImages.length} foto) berhasil ditambahkan!`
+        : `Pembaruan kegiatan "${finalSlide.title}" (${currentImages.length} foto) berhasil disimpan!`
     );
   };
+
+  const activeImageList =
+    editingSlide.images && editingSlide.images.length > 0
+      ? editingSlide.images
+      : editingSlide.imageUrl
+      ? [editingSlide.imageUrl]
+      : [];
 
   return (
     <div className="space-y-6">
@@ -178,11 +297,11 @@ export default function ManageKegiatanView({
               <ImageIcon className="w-4 h-4" />
             </div>
             <h2 className="text-base font-bold text-slate-900">
-              Dokumentasi &amp; Berita Kegiatan Slider ({kegiatan.length} Slide)
+              Dokumentasi &amp; Berita Kegiatan Slider ({kegiatan.length} Kegiatan)
             </h2>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Slide ini berputar otomatis pada spanduk kegiatan utama di halaman depan (landing page).
+            Setiap kegiatan kini dapat memuat banyak foto dokumentasi sekaligus yang ditampilkan secara bergantian di landing page.
           </p>
         </div>
 
@@ -192,77 +311,114 @@ export default function ManageKegiatanView({
           className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-xs flex items-center gap-2 cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Tambah Slide Kegiatan</span>
+          <span>+ Tambah Kegiatan Baru</span>
         </button>
       </div>
 
       {/* Grid of Slide Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {kegiatan.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between group"
-          >
-            <div>
-              <div className="h-44 w-full relative bg-slate-100 overflow-hidden">
-                <img
-                  src={item.imageUrl}
-                  alt={item.alt || item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=800&q=80';
-                  }}
-                />
-                <div className="absolute top-3 left-3 flex gap-2">
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-900/80 text-white backdrop-blur-xs">
-                    {item.badge}
+        {kegiatan.map((item) => {
+          const itemImages =
+            item.images && item.images.length > 0
+              ? item.images
+              : item.imageUrl
+              ? [item.imageUrl]
+              : [];
+
+          return (
+            <div
+              key={item.id}
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition flex flex-col justify-between group"
+            >
+              <div>
+                <div className="h-44 w-full relative bg-slate-100 overflow-hidden">
+                  <img
+                    src={item.imageUrl || itemImages[0]}
+                    alt={item.alt || item.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=800&q=80';
+                    }}
+                  />
+                  <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-900/80 text-white backdrop-blur-xs">
+                      {item.badge}
+                    </span>
+                    {itemImages.length > 1 && (
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-600 text-white backdrop-blur-xs flex items-center gap-1 shadow-xs">
+                        <ImageIcon className="w-3 h-3" />
+                        <span>{itemImages.length} Foto</span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Strip Pratinjau Foto Banyak jika ada */}
+                {itemImages.length > 1 && (
+                  <div className="px-4 pt-3 flex items-center gap-1.5 overflow-x-auto pb-1">
+                    {itemImages.map((img, idx) => (
+                      <div
+                        key={idx}
+                        className={`relative w-12 h-9 rounded-lg overflow-hidden border shrink-0 ${
+                          idx === 0 ? 'border-brand-500 ring-1 ring-brand-300' : 'border-slate-200'
+                        }`}
+                        title={idx === 0 ? 'Foto Sampul Utama' : `Foto #${idx + 1}`}
+                      >
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                        {idx === 0 && (
+                          <div className="absolute bottom-0 inset-x-0 bg-brand-600/90 text-white text-[8px] font-bold text-center leading-tight">
+                            Sampul
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="p-4 space-y-2">
+                  <span className="text-[11px] font-bold text-brand-600 block">
+                    {item.category}
                   </span>
+                  <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
+                    {item.subtitle}
+                  </p>
                 </div>
               </div>
 
-              <div className="p-4 space-y-2">
-                <span className="text-[11px] font-bold text-brand-600 block">
-                  {item.category}
-                </span>
-                <h3 className="text-sm font-bold text-slate-900 leading-snug line-clamp-2">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">
-                  {item.subtitle}
-                </p>
+              <div className="p-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[10px] text-slate-400 font-mono">ID: {item.id}</span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEdit(item)}
+                    className="p-1.5 rounded-lg bg-slate-100 hover:bg-brand-50 text-slate-600 hover:text-brand-600 transition cursor-pointer"
+                    title="Edit Slide"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(item.id, item.title)}
+                    className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition cursor-pointer"
+                    title="Hapus Slide"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
-
-            <div className="p-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[10px] text-slate-400 font-mono">ID: {item.id}</span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => handleOpenEdit(item)}
-                  className="p-1.5 rounded-lg bg-slate-100 hover:bg-brand-50 text-slate-600 hover:text-brand-600 transition cursor-pointer"
-                  title="Edit Slide"
-                >
-                  <Edit2 className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDelete(item.id, item.title)}
-                  className="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 transition cursor-pointer"
-                  title="Hapus Slide"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Modal Add / Edit Slide */}
+      {/* Modal Add / Edit Slide (Multi-Photo Support) */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-xl overflow-hidden max-h-[92vh] flex flex-col">
             <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
@@ -270,9 +426,9 @@ export default function ManageKegiatanView({
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
-                    {modalMode === 'add' ? 'Tambah Slide Dokumentasi' : 'Edit Slide Kegiatan'}
+                    {modalMode === 'add' ? 'Tambah Kegiatan Dokumentasi' : 'Edit Kegiatan Dokumentasi'}
                   </h3>
-                  <p className="text-[11px] text-slate-500">Spanduk Interaktif Landing Page</p>
+                  <p className="text-[11px] text-slate-500">Mendukung unggah lebih dari 1 foto dokumentasi</p>
                 </div>
               </div>
               <button
@@ -323,11 +479,12 @@ export default function ManageKegiatanView({
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* SECTION: FOTO DOKUMENTASI (MULTI-IMAGE SUPPORT) */}
+              <div className="space-y-3 pt-1">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <ImageIcon className="w-3.5 h-3.5 text-brand-600" />
-                    <span>Gambar Dokumentasi Kegiatan *</span>
+                  <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-brand-600" />
+                    <span>Foto Dokumentasi Kegiatan ({activeImageList.length} Foto) *</span>
                   </label>
 
                   {/* Mode Selector: Unggah File vs Tautan URL */}
@@ -364,9 +521,10 @@ export default function ManageKegiatanView({
                     <input
                       ref={fileInputRef}
                       type="file"
+                      multiple
                       accept="image/png,image/jpeg,image/jpg,image/webp"
                       className="hidden"
-                      onChange={handleFileSelect}
+                      onChange={handleFilesSelect}
                     />
 
                     <div
@@ -380,7 +538,7 @@ export default function ManageKegiatanView({
                       {isProcessingImage ? (
                         <>
                           <Loader2 className="w-6 h-6 text-brand-600 animate-spin" />
-                          <p className="text-xs font-bold text-brand-700">Mengoptimalkan gambar...</p>
+                          <p className="text-xs font-bold text-brand-700">Mengoptimalkan dan mengompresi foto...</p>
                         </>
                       ) : (
                         <>
@@ -389,73 +547,141 @@ export default function ManageKegiatanView({
                           </div>
                           <div>
                             <p className="text-xs font-bold text-slate-800">
-                              Klik di sini untuk memilih foto dari perangkat Anda
+                              Klik di sini untuk memilih foto (bisa pilih banyak sekaligus)
                             </p>
                             <p className="text-[11px] text-slate-500 mt-0.5">
-                              Format PNG, JPG, JPEG, atau WebP (Kompresi otomatis)
+                              Format PNG, JPG, JPEG, WebP • Tahan tombol <kbd className="px-1 py-0.5 bg-slate-200 rounded text-[10px]">Ctrl</kbd> / <kbd className="px-1 py-0.5 bg-slate-200 rounded text-[10px]">Shift</kbd> untuk memilih lebih dari 1
                             </p>
                           </div>
                           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-[11px] font-bold border border-brand-200/80">
-                            Pilih Foto dari Komputer / HP
+                            + Pilih Foto dari Komputer / HP
                           </span>
                         </>
                       )}
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-1.5">
-                    <input
-                      type="url"
-                      value={editingSlide.imageUrl}
-                      onChange={(e) => setEditingSlide({ ...editingSlide, imageUrl: e.target.value })}
-                      placeholder="https://images.unsplash.com/... atau tautan web foto"
-                      className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 font-mono"
-                    />
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={urlInput}
+                        onChange={(e) => setUrlInput(e.target.value)}
+                        placeholder="Tempel tautan URL foto: https://images.unsplash.com/..."
+                        className="flex-1 px-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 font-mono"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddUrl}
+                        className="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white transition shrink-0 cursor-pointer"
+                      >
+                        + Tambah
+                      </button>
+                    </div>
                     <p className="text-[11px] text-slate-400">
-                      Gunakan tautan URL gambar eksternal yang dapat diakses publik.
+                      Anda dapat memasukkan lebih dari satu URL foto untuk kegiatan ini.
                     </p>
                   </div>
                 )}
 
-                {/* Pratinjau Foto Langsung */}
-                {editingSlide.imageUrl && (
-                  <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 mt-2 shadow-xs">
-                    <div className="h-36 w-full relative">
-                      <img
-                        src={editingSlide.imageUrl}
-                        alt={editingSlide.alt || 'Pratinjau Slide'}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=800&q=80';
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent flex items-end justify-between p-3 text-white">
-                        <span className="text-[11px] font-bold flex items-center gap-1.5 bg-black/50 px-2.5 py-1 rounded-full backdrop-blur-xs">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>Foto Siap Ditampilkan</span>
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          {imageInputMode === 'file' && (
-                            <button
-                              type="button"
-                              onClick={() => fileInputRef.current?.click()}
-                              className="text-[11px] bg-white/20 hover:bg-white/30 text-white font-semibold px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer"
-                            >
-                              <RefreshCw className="w-3 h-3" />
-                              <span>Ganti File</span>
-                            </button>
-                          )}
+                {/* DAFTAR FOTO TERUNGGAH (GALLERY GRID) */}
+                {activeImageList.length > 0 && (
+                  <div className="space-y-2.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>Daftar Foto Dokumentasi ({activeImageList.length} Foto Siap Tampil)</span>
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        {imageInputMode === 'file' && (
                           <button
                             type="button"
-                            onClick={() => setEditingSlide({ ...editingSlide, imageUrl: '' })}
-                            className="text-[11px] bg-rose-600/90 hover:bg-rose-700 text-white font-semibold px-2.5 py-1 rounded-lg transition cursor-pointer"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="text-[11px] font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1 cursor-pointer"
                           >
-                            Hapus
+                            <Plus className="w-3 h-3" />
+                            <span>Tambah Foto</span>
                           </button>
-                        </div>
+                        )}
+                        <span className="text-slate-300">|</span>
+                        <button
+                          type="button"
+                          onClick={handleClearAllPhotos}
+                          className="text-[11px] font-bold text-rose-600 hover:text-rose-700 cursor-pointer"
+                        >
+                          Hapus Semua
+                        </button>
                       </div>
                     </div>
+
+                    {/* Thumbnail Grid */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-56 overflow-y-auto pr-1">
+                      {activeImageList.map((imgUrl, idx) => (
+                        <div
+                          key={idx}
+                          className={`relative rounded-xl overflow-hidden border-2 bg-slate-900 group shadow-2xs ${
+                            idx === 0
+                              ? 'border-brand-500 ring-2 ring-brand-200'
+                              : 'border-slate-200 hover:border-slate-400'
+                          }`}
+                        >
+                          <div className="h-28 w-full relative">
+                            <img
+                              src={imgUrl}
+                              alt={`Foto ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&w=400&q=80';
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+
+                            {/* Badge Posisi */}
+                            <div className="absolute top-1.5 left-1.5">
+                              {idx === 0 ? (
+                                <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-brand-600 text-white shadow-xs flex items-center gap-0.5">
+                                  <Star className="w-2.5 h-2.5 fill-current" />
+                                  <span>Sampul</span>
+                                </span>
+                              ) : (
+                                <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-black/60 text-white backdrop-blur-xs">
+                                  #{idx + 1}
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Tombol Aksi */}
+                            <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between text-white">
+                              {idx !== 0 ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleSetAsCover(idx)}
+                                  className="text-[9px] bg-white/20 hover:bg-brand-600 px-1.5 py-0.5 rounded text-white font-semibold transition cursor-pointer"
+                                  title="Jadikan sebagai foto sampul utama"
+                                >
+                                  Jadikan Sampul
+                                </button>
+                              ) : (
+                                <span className="text-[9px] text-emerald-400 font-bold">Foto Utama</span>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => handleRemovePhoto(idx)}
+                                className="text-[9px] bg-rose-600/80 hover:bg-rose-700 px-1.5 py-0.5 rounded text-white font-semibold transition cursor-pointer"
+                                title="Hapus foto ini"
+                              >
+                                Hapus
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-slate-500 italic">
+                      * Foto bertanda <strong>Sampul</strong> akan tampil sebagai sampul utama kegiatan. Klik &quot;Jadikan Sampul&quot; pada foto lain untuk memindahkannya ke posisi pertama.
+                    </p>
                   </div>
                 )}
               </div>
@@ -482,10 +708,11 @@ export default function ManageKegiatanView({
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+                  disabled={isProcessingImage}
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 text-white transition shadow-xs flex items-center gap-1.5 cursor-pointer"
                 >
                   <Save className="w-3.5 h-3.5" />
-                  <span>Simpan Slide</span>
+                  <span>Simpan Kegiatan</span>
                 </button>
               </div>
             </form>
