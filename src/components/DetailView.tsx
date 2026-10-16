@@ -39,6 +39,46 @@ interface DetailViewProps {
   onTriggerWhatsApp?: (item: MonografiItem) => void;
 }
 
+// Helper memisahkan angka/nilai dan satuan agar pengguna hanya perlu mengedit nilai tanpa perlu repot mengetik/mengubah satuan
+function parseValueAndUnit(raw: string | number, label?: string): { numberVal: string; unitVal: string } {
+  const str = String(raw ?? '').trim();
+
+  // Pattern seperti "23°C" atau "23 °C"
+  const degMatch = str.match(/^([\d.,\-–—\s]+)\s*(°C|C)$/i);
+  if (degMatch) {
+    return { numberVal: degMatch[1].trim(), unitVal: '°C' };
+  }
+
+  // Pattern seperti "1.245 Jiwa", "208,25 Ha", "700–900 mdpl", "16 KK", "14 Titik", "1 Unit Aktif"
+  const match = str.match(/^([\d.,\-–—\s]+)\s+([A-Za-z°%][A-Za-z0-9°%/.\s]*)$/);
+  if (match) {
+    return { numberVal: match[1].trim(), unitVal: match[2].trim() };
+  }
+
+  // Fallback deteksi satuan otomatis dari nama parameter
+  const detectUnit = (lbl?: string) => {
+    if (!lbl) return '';
+    const l = lbl.toLowerCase();
+    if (l.includes('pemilu') || l.includes('dpt') || l.includes('jiwa') || l.includes('penduduk') || l.includes('warga')) return 'Jiwa';
+    if (l.includes('luas') || l.includes('wilayah') || l.includes('lahan')) return 'Ha';
+    if (l.includes('suhu') || l.includes('temperatur')) return '°C';
+    if (l.includes('topografi') || l.includes('ketinggian') || l.includes('elevasi')) return 'mdpl';
+    if (l.includes('mata air') || l.includes('sumber air')) return 'Titik';
+    if (l.includes('pkh') || l.includes('bansos') || l.includes('keluarga')) return 'KK';
+    if (l.includes('pos') || l.includes('sarana')) return 'Unit';
+    return '';
+  };
+
+  const detected = detectUnit(label);
+
+  // Jika input hanya berisi angka/karakter angka saja tanpa satuan (misal user baru ketik "1245")
+  if (/^[\d.,\-–—\s]+$/.test(str)) {
+    return { numberVal: str.trim(), unitVal: detected };
+  }
+
+  return { numberVal: str, unitVal: detected };
+}
+
 export default function DetailView({
   item,
   currentOfficial,
@@ -116,10 +156,11 @@ export default function DetailView({
       setCustomMetrics(item.metrics.customMetrics.map((c) => ({ ...c })));
     } else if (item.id.includes('kependudukan') || item.categoryKey === 'kependudukan') {
       setCustomMetrics([
-        { label: 'Hak Pilih Pemilu (DPT)', value: '1.245', note: 'Pemilih tetap aktif terdaftar di PPS' },
-        { label: 'Luas Total Wilayah', value: '208,25', note: 'Cakupan teritorial Kelurahan Kolongan Satu' },
-        { label: 'Suhu Udara Rata-rata', value: '23', note: 'Kondisi klimatologi perbukitan Tomohon' },
-        { label: 'Sumber Air Baku / Mata Air Alami', value: '14', note: 'Titik sumber air bersih aktif lingkungan' },
+        { label: 'Hak Pilih Pemilu (DPT)', value: '1.245 Jiwa', note: 'Pemilih tetap aktif terdaftar di PPS' },
+        { label: 'Luas Total Wilayah', value: '208,25 Ha', note: 'Cakupan teritorial Kelurahan Kolongan Satu' },
+        { label: 'Suhu Udara Rata-rata', value: '23°C', note: 'Kondisi klimatologi perbukitan Tomohon' },
+        { label: 'Topografi Wilayah', value: '700–900 mdpl', note: 'Ketinggian wilayah dari permukaan laut' },
+        { label: 'Sumber Air Baku / Mata Air Alami', value: '14 Titik', note: 'Titik sumber air bersih aktif lingkungan' },
       ]);
     } else {
       setCustomMetrics([]);
@@ -527,60 +568,81 @@ export default function DetailView({
                     <span className="pr-12">Nilai &amp; Satuan</span>
                   </div>
                   <div className="divide-y divide-slate-200/70">
-                    {customMetrics.map((metric, idx) => (
-                      <div
-                        key={idx}
-                        className="p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white transition-colors"
-                      >
-                        <div className="flex items-center gap-3.5 flex-1 min-w-0">
-                          <span className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 font-extrabold text-xs flex items-center justify-center shrink-0 border border-sky-200/80 shadow-2xs">
-                            {String(idx + 1).padStart(2, '0')}
-                          </span>
-                          <div className="flex-1 min-w-0 space-y-1">
-                            <input
-                              type="text"
-                              value={metric.label}
-                              onChange={(e) =>
-                                handleCustomMetricChange(idx, 'label', e.target.value)
-                              }
-                              placeholder="Nama Indikator / Variabel..."
-                              className="w-full text-xs font-bold text-slate-900 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-200 focus:border-brand-500 rounded-lg px-2 py-1 transition focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-slate-400"
-                            />
-                            <input
-                              type="text"
-                              value={metric.note || ''}
-                              onChange={(e) =>
-                                handleCustomMetricChange(idx, 'note', e.target.value)
-                              }
-                              placeholder="Keterangan singkat parameter..."
-                              className="w-full text-[11px] text-slate-500 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-200 focus:border-brand-500 rounded-lg px-2 py-0.5 transition focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-slate-400"
-                            />
+                    {customMetrics.map((metric, idx) => {
+                      const { numberVal, unitVal } = parseValueAndUnit(metric.value, metric.label);
+                      return (
+                        <div
+                          key={idx}
+                          className="p-4 sm:px-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-white transition-colors"
+                        >
+                          <div className="flex items-center gap-3.5 flex-1 min-w-0">
+                            <span className="w-8 h-8 rounded-xl bg-sky-100 text-sky-800 font-extrabold text-xs flex items-center justify-center shrink-0 border border-sky-200/80 shadow-2xs">
+                              {String(idx + 1).padStart(2, '0')}
+                            </span>
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <input
+                                type="text"
+                                value={metric.label}
+                                onChange={(e) =>
+                                  handleCustomMetricChange(idx, 'label', e.target.value)
+                                }
+                                placeholder="Nama Indikator / Variabel..."
+                                className="w-full text-xs font-bold text-slate-900 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-200 focus:border-brand-500 rounded-lg px-2 py-1 transition focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-slate-400"
+                              />
+                              <input
+                                type="text"
+                                value={metric.note || ''}
+                                onChange={(e) =>
+                                  handleCustomMetricChange(idx, 'note', e.target.value)
+                                }
+                                placeholder="Keterangan singkat parameter..."
+                                className="w-full text-[11px] text-slate-500 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-200 focus:border-brand-500 rounded-lg px-2 py-0.5 transition focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder:text-slate-400"
+                              />
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="flex items-center justify-end gap-2.5 shrink-0">
-                          <div className="w-full sm:w-56">
-                            <input
-                              className="w-full text-right font-bold text-xs text-slate-900 px-3.5 py-2 rounded-xl border border-slate-200 bg-white shadow-2xs focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none transition placeholder:text-slate-400"
-                              type="text"
-                              value={metric.value}
-                              onChange={(e) =>
-                                handleCustomMetricChange(idx, 'value', e.target.value)
-                              }
-                              placeholder="Contoh: 1.245 Jiwa"
-                            />
+                          <div className="flex items-center justify-end gap-2.5 shrink-0">
+                            <div className="flex items-center w-full sm:w-60 bg-white border border-slate-200 hover:border-slate-300 rounded-xl overflow-hidden shadow-2xs focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20 transition">
+                              <input
+                                className="w-full text-right font-bold text-xs text-slate-900 px-3.5 py-2 bg-transparent focus:outline-none placeholder:text-slate-400 font-mono sm:font-sans"
+                                type="text"
+                                value={numberVal}
+                                onChange={(e) => {
+                                  const newNum = e.target.value;
+                                  if (!newNum) {
+                                    handleCustomMetricChange(idx, 'value', '');
+                                    return;
+                                  }
+                                  const combined = unitVal
+                                    ? unitVal === '°C'
+                                      ? `${newNum}${unitVal}`
+                                      : `${newNum} ${unitVal}`.trim()
+                                    : newNum;
+                                  handleCustomMetricChange(idx, 'value', combined);
+                                }}
+                                placeholder="0"
+                              />
+                              {unitVal && (
+                                <span
+                                  className="bg-slate-100/90 border-l border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 select-none shrink-0 min-w-[56px] text-center"
+                                  title="Satuan tetap (tidak perlu diubah)"
+                                >
+                                  {unitVal}
+                                </span>
+                              )}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCustomMetric(idx)}
+                              className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition-colors border border-transparent hover:border-rose-100 cursor-pointer shrink-0"
+                              title="Hapus Indikator"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveCustomMetric(idx)}
-                            className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-rose-600 rounded-xl hover:bg-rose-50 transition-colors border border-transparent hover:border-rose-100 cursor-pointer shrink-0"
-                            title="Hapus Indikator"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </>
               )}

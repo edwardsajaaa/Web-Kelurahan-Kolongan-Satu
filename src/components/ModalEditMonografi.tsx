@@ -24,6 +24,42 @@ interface ModalEditMonografiProps {
   onSave: (updatedItem: MonografiItem) => Promise<void> | void;
 }
 
+// Helper memisahkan angka/nilai dan satuan agar pengguna hanya perlu mengedit nilai tanpa perlu repot mengetik/mengubah satuan
+function parseValueAndUnit(raw: string | number, label?: string): { numberVal: string; unitVal: string } {
+  const str = String(raw ?? '').trim();
+
+  const degMatch = str.match(/^([\d.,\-–—\s]+)\s*(°C|C)$/i);
+  if (degMatch) {
+    return { numberVal: degMatch[1].trim(), unitVal: '°C' };
+  }
+
+  const match = str.match(/^([\d.,\-–—\s]+)\s+([A-Za-z°%][A-Za-z0-9°%/.\s]*)$/);
+  if (match) {
+    return { numberVal: match[1].trim(), unitVal: match[2].trim() };
+  }
+
+  const detectUnit = (lbl?: string) => {
+    if (!lbl) return '';
+    const l = lbl.toLowerCase();
+    if (l.includes('pemilu') || l.includes('dpt') || l.includes('jiwa') || l.includes('penduduk') || l.includes('warga')) return 'Jiwa';
+    if (l.includes('luas') || l.includes('wilayah') || l.includes('lahan')) return 'Ha';
+    if (l.includes('suhu') || l.includes('temperatur')) return '°C';
+    if (l.includes('topografi') || l.includes('ketinggian') || l.includes('elevasi')) return 'mdpl';
+    if (l.includes('mata air') || l.includes('sumber air')) return 'Titik';
+    if (l.includes('pkh') || l.includes('bansos') || l.includes('keluarga')) return 'KK';
+    if (l.includes('pos') || l.includes('sarana')) return 'Unit';
+    return '';
+  };
+
+  const detected = detectUnit(label);
+
+  if (/^[\d.,\-–—\s]+$/.test(str)) {
+    return { numberVal: str.trim(), unitVal: detected };
+  }
+
+  return { numberVal: str, unitVal: detected };
+}
+
 export default function ModalEditMonografi({
   isOpen,
   onClose,
@@ -375,36 +411,59 @@ export default function ModalEditMonografi({
               </p>
             ) : (
               <div className="space-y-2.5">
-                {customMetrics.map((cm, idx) => (
-                  <div key={idx} className="flex items-center gap-2 bg-[#faf8ff] p-2.5 rounded-xl border border-[#dae2fd]">
-                    <div className="flex-1">
-                      <input
-                        type="text"
-                        placeholder="Nama Indikator (misal: Luas Pemukiman)"
-                        value={cm.label}
-                        onChange={(e) => handleUpdateCustomMetric(idx, 'label', e.target.value)}
-                        className="w-full bg-white border border-[#dae2fd] rounded-lg px-2.5 py-1 text-xs text-[#131b2e] font-semibold"
-                      />
+                {customMetrics.map((cm, idx) => {
+                  const { numberVal, unitVal } = parseValueAndUnit(cm.value, cm.label);
+                  return (
+                    <div key={idx} className="flex items-center gap-2 bg-[#faf8ff] p-2.5 rounded-xl border border-[#dae2fd]">
+                      <div className="flex-1">
+                        <input
+                          type="text"
+                          placeholder="Nama Indikator (misal: Luas Pemukiman)"
+                          value={cm.label}
+                          onChange={(e) => handleUpdateCustomMetric(idx, 'label', e.target.value)}
+                          className="w-full bg-white border border-[#dae2fd] rounded-lg px-2.5 py-1 text-xs text-[#131b2e] font-semibold"
+                        />
+                      </div>
+                      <div className="flex items-center w-40 bg-white border border-[#dae2fd] rounded-lg overflow-hidden focus-within:ring-1 focus-within:ring-primary focus-within:border-primary transition">
+                        <input
+                          type="text"
+                          placeholder="0"
+                          value={numberVal}
+                          onChange={(e) => {
+                            const newNum = e.target.value;
+                            if (!newNum) {
+                              handleUpdateCustomMetric(idx, 'value', '');
+                              return;
+                            }
+                            const combined = unitVal
+                              ? unitVal === '°C'
+                                ? `${newNum}${unitVal}`
+                                : `${newNum} ${unitVal}`.trim()
+                              : newNum;
+                            handleUpdateCustomMetric(idx, 'value', combined);
+                          }}
+                          className="w-full text-right px-2 py-1 text-xs text-[#131b2e] font-mono font-bold bg-transparent focus:outline-none"
+                        />
+                        {unitVal && (
+                          <span
+                            className="bg-[#f2f3ff] text-[#424754] border-l border-[#dae2fd] px-2 py-1 text-[11px] font-bold select-none shrink-0 min-w-[42px] text-center"
+                            title="Satuan tetap (tidak perlu diubah)"
+                          >
+                            {unitVal}
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCustomMetric(idx)}
+                        className="p-1 text-rose-500 hover:text-rose-700 transition"
+                        title="Hapus indikator"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
-                    <div className="w-36">
-                      <input
-                        type="text"
-                        placeholder="Nilai (misal: 34.50 Ha)"
-                        value={cm.value}
-                        onChange={(e) => handleUpdateCustomMetric(idx, 'value', e.target.value)}
-                        className="w-full bg-white border border-[#dae2fd] rounded-lg px-2.5 py-1 text-xs text-[#131b2e] font-mono font-bold"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveCustomMetric(idx)}
-                      className="p-1 text-rose-500 hover:text-rose-700 transition"
-                      title="Hapus indikator"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
